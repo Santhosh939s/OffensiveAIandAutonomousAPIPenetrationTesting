@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large Archives & Model Weights (managed via Kaggle Datasets & local storage)
+*.zip
+*.tar.gz
+*.safetensors
+*.pt
+*.pth
+*.bin
+
+# Local environments & credentials
+.venv/
+venv/
+.env
+kaggle.json
+access_token
+
+# Scratch and OS metadata
+.DS_Store
+Thumbs.db
