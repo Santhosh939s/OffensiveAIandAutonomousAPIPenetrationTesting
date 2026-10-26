@@ -1,0 +1,35 @@
+name: Kaggle Kernel Automation Runner
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'kaggle_kernel/**'
+      - 'finetuning/**'
+      - 'evaluation/**'
+      - '.github/workflows/kaggle_runner.yml'
+  workflow_dispatch:
+
+jobs:
+  dispatch_kaggle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Kaggle CLI
+        run: |
+          pip install --upgrade "kaggle>=2.2.0"
+
+      - name: Push Kernel to Kaggle GPU
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        run: |
+          kaggle kernels push -p kaggle_kernel
+          kaggle kernels status santhosh939s/urop-offensive-ai
