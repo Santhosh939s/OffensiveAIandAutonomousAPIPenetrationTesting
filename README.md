@@ -20,6 +20,7 @@ Anyone exploring this repository can immediately locate all datasets, models, co
 ### 2. 📁 Datasets & Records Directory
 | Dataset / Path | Records | Description |
 | :--- | :---: | :--- |
+| **[`DATASET_PROVENANCE_AND_PREPARATION.md`](./DATASET_PROVENANCE_AND_PREPARATION.md)** | — | **Comprehensive Provenance Guide:** Upstream repo links, download URLs, raw schemas, the 3-stage 9,000-sample selection pipeline, and formatting specifications. |
 | **[`finetuning/rebuilt_v5_pilot/`](./finetuning/rebuilt_v5_pilot/)** | **1,000** | **RebuiltV5 Multi-Task Pilot Dataset** spanning all 5 offensive capabilities (Anchor Classification, Evidence Reasoning, Safe Tool Selection, OWASP Test Planning, Grounded Reporting). |
 | ├── [`train.jsonl`](./finetuning/rebuilt_v5_pilot/train.jsonl) | 800 | 80% training split (160 scenario families, 0 overlap with val/test). |
 | ├── [`val.jsonl`](./finetuning/rebuilt_v5_pilot/val.jsonl) | 100 | 10% validation split for Trainer evaluation. |
@@ -58,6 +59,61 @@ Because model weights exceed GitHub's 100MB file limit, they are tracked via pri
 * **[`RUN_LEDGER.jsonl`](./RUN_LEDGER.jsonl):** Complete append-only audit trail recording every benchmark run, timestamp, Git commit, Kaggle kernel version, and composite scores.
 * **[`PROJECT_STATUS.md`](./PROJECT_STATUS.md):** Active project status, component health, and verification ledger.
 * **[`PROJECT_RECOVERY_NOTES.md`](./PROJECT_RECOVERY_NOTES.md):** Historical disaster recovery audit and architecture specifications.
+
+---
+
+## 📦 Dataset Provenance & The 9,000-Record RebuiltV4 Pipeline
+
+### Upstream Source Repository & Academic Origin
+The foundational training data originates from the **API Traffic Research Dataset Framework (ATRDF)**, developed for the Ariel Cyber Innovation Center (ACIC) and Cisco API Security Competition by Shmuel Lavian (Ariel University):
+* **Upstream GitHub Repository:** [`https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge`](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge)
+* **Direct Official Dataset Downloads:**
+  * [Dataset 1 Train (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_1_train.7z) | [Dataset 1 Val (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_1_val.7z) (4,282 train records)
+  * [Dataset 2 Train (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_2_train.7z) | [Dataset 2 Val (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_2_val.7z) (127,500 train records)
+  * [Dataset 3 Train (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_3_train.7z) | [Dataset 3 Val (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_3_val.7z) (144,500 train records)
+  * [Dataset 4 Train (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_4_train.7z) | [Dataset 4 Val (7z)](https://github.com/ArielCyber/Cisco_Ariel_Uni_API_security_challenge/blob/b41481d6c1e4cc34cbf78f895c862ce949820402/Datasets/dataset_4_val.7z) (182,767 train records)
+  * **Total Raw Available:** **459,049 records** across 8 attack categories.
+
+### How the 9,000 Records Were Selected from 459,049
+To eliminate extreme class imbalance (Benign was 85.3% of raw data) and accelerate training without losing rare attack sensitivity, records were processed through three deterministic stages:
+
+1. **Stage 1 (`Cell 164` $\rightarrow$ `rebuilt_v2`):** Loaded all 459,049 records from Datasets 1–4, preserved all headers (`Set-Cookie`, `Date`, etc.), sorted dictionary keys deterministically, and partitioned by class using `random_seed = 42`.
+2. **Stage 2 (`Cell 166` $\rightarrow$ `rebuilt_v3`):** To prevent identical requests from appearing across splits, every input was hashed via SHA-256 (`hashlib.sha256(input)`). All records sharing the same input were grouped atomically into the same split, guaranteeing **zero cross-split data leakage**.
+3. **Stage 3 (`Cell 199` $\rightarrow$ `rebuilt_v4`):** From `rebuilt_v3/train.jsonl`, category-stratified random sampling without replacement (`rng.sample`) was applied with fixed seed `SEED = 42`:
+   * **Benign:** Exactly 2,000 records
+   * **Cookie Injection:** Exactly 1,000 records
+   * **Directory Traversal:** Exactly 1,000 records
+   * **LOG4J:** Exactly 1,000 records
+   * **Log Forging:** Exactly 1,000 records
+   * **RCE:** Exactly 1,000 records
+   * **SQL Injection:** Exactly 1,000 records
+   * **XSS:** Exactly 1,000 records
+   * **Final Combined Dataset:** **9,000 records** (shuffled globally with `rng.shuffle`).
+
+### Originating Source Breakdown of the 9,000 Records:
+* **Dataset 4:** 4,760 records (52.9%)
+* **Dataset 3:** 2,326 records (25.8%)
+* **Dataset 2:** 1,670 records (18.6%)
+* **Dataset 1:** 244 records (2.7%)
+
+### How Records Were Formatted for Fine-Tuning
+Each record in the dataset is structured as:
+```json
+{
+  "input": "Classify this HTTP request into exactly one category: Benign, Cookie Injection, Directory Traversal, LOG4J, Log Forging, RCE, SQL Injection, or XSS.\nReturn only the category name.\nHTTP request:\n{\"body\": \"\", \"headers\": {\"Host\": \"127.0.0.1:5000\", \"User-Agent\": \"...\"}, \"method\": \"GET\", \"url\": \"http://127.0.0.1:5000/...\"}",
+  "category": "SQL Injection",
+  "binary_label": "Malware",
+  "source_dataset": "dataset_4_train",
+  "source_index": 12845
+}
+```
+During training, the dataset loader maps this into the canonical Qwen2.5 chat template:
+* **System Prompt:** `"You are an API security classifier. Classify the HTTP request into exactly one of these categories: Benign, Cookie Injection, Directory Traversal, LOG4J, Log Forging, RCE, SQL Injection, or XSS. Return only the category name."`
+* **User Prompt:** The serialized HTTP request JSON.
+* **Assistant Completion (Trained):** The category name (e.g. `SQL Injection`).
+* **Loss Masking:** All prompt tokens are masked with `-100`, computing loss strictly on the assistant tokens.
+
+*(For full implementation scripts and reproduction steps, see [`DATASET_PROVENANCE_AND_PREPARATION.md`](./DATASET_PROVENANCE_AND_PREPARATION.md)).*
 
 ---
 
