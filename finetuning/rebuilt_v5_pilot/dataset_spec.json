@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "description": "RebuiltV5 Multi-Task Pilot Dataset Specification",
+  "model_target": "Qwen/Qwen2.5-1.5B-Instruct",
+  "tasks": {
+    "task_1_classification": {
+      "name": "8-Class HTTP Request Classification Anchor",
+      "samples": 300,
+      "classes": {
+        "Benign": 80,
+        "SQL Injection": 35,
+        "XSS": 35,
+        "Directory Traversal": 35,
+        "RCE": 30,
+        "Cookie Injection": 30,
+        "Log Forging": 30,
+        "LOG4J": 25
+      }
+    },
+    "task_2_evidence_reasoning": {
+      "name": "Request-Response Pair Evidence Reasoning",
+      "samples": 200,
+      "classes": {
+        "NOT_DEMONSTRATED": 95,
+        "CONFIRMED": 70,
+        "SUSPECTED": 35
+      }
+    },
+    "task_3_tool_selection": {
+      "name": "Safe Tool Selection with Strict Allowlisted Schema",
+      "samples": 200,
+      "classes": {
+        "http_request": 60,
+        "fuzz_parameter": 50,
+        "inspect_jwt": 40,
+        "no_action": 50
+      }
+    },
+    "task_4_test_planning": {
+      "name": "OWASP API Security Test Planning",
+      "samples": 150,
+      "classes": {
+        "BOLA_Planning": 45,
+        "Broken_Auth_Planning": 35,
+        "BFLA_Planning": 35,
+        "Mass_Assignment_Planning": 25,
+        "Low_Risk_Planning": 10
+      }
+    },
+    "task_5_report_generation": {
+      "name": "Evidence-Grounded Reporting & Explicit Abstention",
+      "samples": 150,
+      "classes": {
+        "Confirmed_Report": 60,
+        "Low_Severity_Report": 40,
+        "Benign_Negative_Control": 25,
+        "Unknown_Abstention_Report": 25
+      }
+    }
+  }
+}

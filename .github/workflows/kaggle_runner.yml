@@ -1,21 +1,35 @@
-name: Kaggle Kernel Automation Runner
+name: Kaggle GPU Pipeline Orchestrator
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'kaggle_kernel/**'
-      - 'finetuning/**'
-      - 'evaluation/**'
-      - '.github/workflows/kaggle_runner.yml'
   workflow_dispatch:
+    inputs:
+      task:
+        description: 'Select workflow task to execute'
+        required: true
+        default: 'eval_step4500_smoke'
+        type: choice
+        options:
+          - eval_step4500_smoke
+          - eval_step4500_full
+          - eval_rebuiltv4_ckpt200
+          - eval_rebuiltv4_ckpt300
+          - eval_rebuiltv4_both
+          - resume_training_rebuiltv4
+      publish_dataset:
+        description: 'Publish verified outputs to persistent dataset (santhosh939s/offensive-ai-runs)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: kaggle-runner
+  cancel-in-progress: false
 
 jobs:
-  dispatch_kaggle:
+  orchestrate_kaggle_run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -23,13 +37,68 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Kaggle CLI
+      - name: Install Dependencies
         run: |
           pip install --upgrade "kaggle>=2.2.0"
 
-      - name: Push Kernel to Kaggle GPU
+      - name: Configure Kaggle Authentication
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
         run: |
-          kaggle kernels push -p kaggle_kernel
-          kaggle kernels status santhosh939s/urop-offensive-ai
+          mkdir -p ~/.kaggle
+          echo "$KAGGLE_API_TOKEN" > ~/.kaggle/access_token
+          chmod 600 ~/.kaggle/access_token
+
+      - name: Preflight Check & Duplicate Trigger Protection
+        run: |
+          echo "Checking active Kaggle kernel status..."
+          STATUS=$(kaggle kernels status santhosh939s/urop-offensive-ai | grep -o 'KernelWorkerStatus\.[A-Z]*' || true)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == *"RUNNING"* || "$STATUS" == *"QUEUED"* ]]; then
+            echo "ERROR: Kernel is currently busy. Aborting to avoid interrupting active run."
+            exit 1
+          fi
+
+      - name: Submit Kernel to Kaggle GPU
+        run: |
+          echo "Submitting task: ${{ github.event.inputs.task }}"
+          kaggle kernels push -p kaggle_kernel --accelerator NvidiaTeslaT4
+
+      - name: Monitor Kernel Execution Loop
+        run: |
+          echo "Monitoring kernel execution..."
+          for i in {1..120}; do
+            STATUS=$(kaggle kernels status santhosh939s/urop-offensive-ai | grep -o 'KernelWorkerStatus\.[A-Z]*' || true)
+            echo "[$((i*15))s] Status: $STATUS"
+            if [[ "$STATUS" == *"COMPLETE"* ]]; then
+              echo "Execution finished successfully."
+              break
+            elif [[ "$STATUS" == *"ERROR"* ]]; then
+              echo "ERROR: Kernel execution failed on Kaggle."
+              kaggle kernels logs santhosh939s/urop-offensive-ai
+              exit 1
+            fi
+            sleep 15
+          done
+
+      - name: Download Output Artifacts
+        run: |
+          mkdir -p downloaded_run
+          kaggle kernels output santhosh939s/urop-offensive-ai -p downloaded_run
+          ls -la downloaded_run
+
+      - name: Verify Artifact Integrity
+        run: |
+          python -m automation.verify_run downloaded_run
+
+      - name: Publish to Persistent Dataset (If Approved)
+        if: ${{ github.event.inputs.publish_dataset == 'true' }}
+        run: |
+          RUN_ID="run_gh_${{ github.run_id }}_${{ github.event.inputs.task }}"
+          python -m automation.dataset_manager --run-dir downloaded_run --run-id "$RUN_ID" --task-name "${{ github.event.inputs.task }}" --no-dry-run
+
+      - name: Upload Artifacts to GitHub Actions Storage
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaggle-run-${{ github.event.inputs.task }}-${{ github.run_id }}
+          path: downloaded_run/

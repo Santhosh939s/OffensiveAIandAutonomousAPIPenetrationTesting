@@ -1,0 +1,33 @@
+{
+  "dataset_name": "rebuiltv5_pilot_multitask_1000",
+  "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "total_records": 1000,
+  "split_counts": {
+    "train": 800,
+    "val": 100,
+    "test": 100
+  },
+  "task_counts": {
+    "task_1_classification": 300,
+    "task_2_evidence_reasoning": 200,
+    "task_3_tool_selection": 200,
+    "task_4_test_planning": 150,
+    "task_5_report_generation": 150
+  },
+  "type_counts": {
+    "straightforward": 760,
+    "negative_control": 150,
+    "ambiguous": 35,
+    "malformed_input": 55
+  },
+  "quarantined_benchmarks": [
+    "scratch/test_suite_capabilities.json (20 cases)",
+    "evaluation/test_sample_2000.jsonl (2,000 cases)"
+  ],
+  "file_checksums": {
+    "train.jsonl": "04aebe9dae7289eb782007421fb76b22d14b31a6f457e82d198b36d7fd34a4c7",
+    "val.jsonl": "30bfe0164452c657aff10abaa80d479701ea2fec008d65ba3b5994834e3c1105",
+    "test.jsonl": "295c11952975b4f55466ba66e114e6514d5b519c9ebe0f4be7e01b85ee0c785c",
+    "pilot_1000_full.jsonl": "5162702b5980c82a5894c12a2a7b7345aa457728d80ae10969631a1d9f333866"
+  }
+}

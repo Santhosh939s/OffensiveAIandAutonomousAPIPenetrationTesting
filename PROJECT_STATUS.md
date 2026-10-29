@@ -1,126 +1,73 @@
-# Project Status: API Security Classification (Qwen2.5-1.5B-Instruct + LoRA)
+# Project Status: API Security Classification & Automation Pipeline
 
-**Document Version:** 2.0.0  
-**Audit Date:** 2026-10-26  
+**Document Version:** 4.2.0  
+**Audit Timestamp:** 2026-10-26T19:00:00+05:30  
 **Auditor:** Senior ML & Automation Engineer  
-**Workspace:** `s:\UROP\offensive AI and autonomous APi penetration testing`  
-**GitHub Remote:** `https://github.com/Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting.git`  
-**Kaggle Kernel:** `https://www.kaggle.com/code/santhosh939s/urop-offensive-ai`
+**Workspace:** `S:\UROP\offensive AI and autonomous APi penetration testing`  
+**GitHub Repository:** `https://github.com/Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting` (Branch: `main`, Commit: `41613a9`)  
+**Kaggle Kernel:** `santhosh939s/urop-offensive-ai` (Version 18 - Restore-Only Verification PASS)  
+**Kaggle Master Recovery Dataset:** `santhosh939s/recovery` (Read-Only / Untouched)  
+**Kaggle Adapters Dataset:** `santhosh939s/rebuiltv4-adapters` (Active / 148 MB / Inference Only)  
+**Kaggle Training Checkpoints Dataset:** `santhosh939s/rebuiltv4-training-checkpoints` (Version 1 - Verified & Restored / 445 MB)  
+**Kaggle Output Runs Dataset:** `santhosh939s/offensive-ai-runs` (Version 1 - Published & Verified)  
 
 ---
 
-## 1. Executive Summary & Inventory Audit
+## 1. Inventory & Resource Comparison Matrix
 
-A comprehensive local and remote audit was conducted across the workspace, recovery archives, local downloads, Kaggle API, and GitHub.
-
-### Verified Artifact Inventory
-
-| Artifact / File | Location / Source | Size / Date | Contents & Verification |
-| :--- | :--- | :--- | :--- |
-| **Recovery Archive** | `API_Security_Recovery_20261020_114027.zip` | 761.8 MB (2026-10-20) | Full recovery package containing checkpoint-4500, checkpoint-200, checkpoint-300, training scripts, 2000-sample test set, evaluation reports |
-| **Original Model Checkpoint ZIP** | `API_Security_Model_step4500.zip` | 70.6 MB (2026-10-20) | Original adapter and tokenizer for step 4500 |
-| **Downloaded Adapter Backup** | `C:\Users\santhosh\Downloads\final_qwen_api_adapter_backup.zip` | 18.2 MB (2026-10-19) | Standalone PEFT adapter weights and tokenizer |
-| **Training Script** | `finetuning/train_rebuilt_v4.py` | 6.9 KB | 2x Tesla T4 DDP training script with 4-bit NF4 quantization & explicit prompt completion collator |
-| **Test Dataset Sample** | `evaluation/test_sample_2000.jsonl` | 2,000 records | Standardized held-out evaluation dataset |
-| **Evaluation Reports** | `evaluation/original_sample2000.json`<br/>`evaluation/rebuiltv4_sample2000.json` | 31.7 KB / 31.5 KB | Detailed per-class precision, recall, F1, and confusion data |
-| **Kaggle Kernel & Metadata** | `kaggle_kernel/urop-offensive-ai.ipynb`<br/>`kaggle_kernel/kernel-metadata.json` | 492.7 KB | Pulled directly from Kaggle via API |
+| Resource / File | Local Laptop (`S:\...`) | GitHub (`main`) | Kaggle Cloud Resource | Status & Verification |
+| :--- | :--- | :--- | :--- | :--- |
+| **Master Recovery Archive** (`API_Security_Recovery_...zip`) | **Present** (761.8 MB) | *Excluded* (.gitignore) | `santhosh939s/recovery` | Untouched, read-only baseline |
+| **Step-4500 Adapter** | **Present** | *Excluded* | `santhosh939s/recovery` | Verified in Kernel V14 |
+| **RebuiltV4 Checkpoints 200 & 300 (Inference)** | **Present** | *Excluded* | `santhosh939s/rebuiltv4-adapters` | Staged & verified in Kernel V15 |
+| **RebuiltV4 Checkpoints 200 & 300 (Full Resumption)** | **Present** (inside local archive) | *Excluded* | `santhosh939s/rebuiltv4-training-checkpoints` | **Version 1 Restored & Verified (Kernel V18 PASS)** |
+| **Test Set (2,000 samples)** | **Present** (2.96 MB) | **Tracked** | All datasets | SHA256 verified identical |
+| **Local Offline Run Archives** | **Preserved** in `runs/` | *Excluded* (.gitignore) | N/A | Persistent local offline backup |
+| **Dedicated Runs Dataset** | `staging_offensive_ai_runs/` | *Excluded* | `santhosh939s/offensive-ai-runs` | **Version 1 Published & Verified** |
+| **Automation Suite** | `automation/*.py` | **Tracked** | N/A | 9/9 unit tests passing |
 
 ---
 
-## 2. Checkpoints & Resume-Training Feasibility
+## 2. Kernel Execution History (`santhosh939s/urop-offensive-ai`)
 
-All trainer, optimizer, and scheduler states were analyzed to confirm resume feasibility:
-
-| Checkpoint | Global Step | Max Steps | Optimizer State (`optimizer.pt`) | Scheduler State (`scheduler.pt`) | Trainer State (`trainer_state.json`) | Status / Resumption Feasibility |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Original Checkpoint-4500** | 4,500 | 4,500 | **Present** (PyTorch state dict) | **Present** (Linear schedule) | **Present** (loss: 0.0086, ep: 0.205) | **Completed run.** Can resume training from step 4,500 with full optimizer momentum and scaler states preserved. |
-| **RebuiltV4 Checkpoint-200** | 200 | 300 | **Present** | **Present** | **Present** (eval_loss: 0.0088) | **Valid checkpoint.** Can resume training from step 200. |
-| **RebuiltV4 Checkpoint-300** | 300 | 300 | **Present** | **Present** | **Present** (eval_loss: 0.0091) | **Completed run.** Can resume training from step 300. |
-| **Downloaded Adapter Backup** | N/A | N/A | **Missing** | **Missing** | **Missing** | **Inference/Eval only.** Exported PEFT weights; cannot resume exact optimizer state. |
-
----
-
-## 3. LoRA Adapter Architectural Comparison
-
-| Parameter | Original Model (Step 4500) | RebuiltV4 (Step 300) | Note |
-| :--- | :--- | :--- | :--- |
-| **Base Model** | `Qwen/Qwen2.5-1.5B-Instruct` | `Qwen/Qwen2.5-1.5B-Instruct` | 1.5B parameter instruction model |
-| **Target Modules** | `["q_proj", "k_proj", "v_proj", "o_proj"]` | `["q_proj", "k_proj", "v_proj", "o_proj", "up_proj", "down_proj", "gate_proj"]` | RebuiltV4 includes MLP projections for richer representation |
-| **Rank ($r$)** | 16 | 16 | Standard rank |
-| **Alpha ($\alpha$)** | 32 | 32 | Scaling factor = 2.0 |
-| **Dropout** | 0.05 | 0.05 | Regularization |
-| **Quantization** | 4-bit NF4 (`load_in_4bit=True`) | 4-bit NF4 (`load_in_4bit=True`) | BitsAndBytes NF4 double-quant |
-| **Compute Precision** | FP16 | FP16 | FP16 mixed compute |
-| **Collator** | Standard / custom | `ExplicitCompletionCollator` | Loss calculated strictly on assistant response |
+- **Version 13 (Smoke Test):** Tesla T4, 10 samples, latency 0.081s/sample, verified 4-bit NF4 greedy inference.
+- **Version 14 (Step-4500 Baseline Evaluation):** Tesla T4, 2,000 samples, completed in ~13.5 min. Accuracy: **98.65%**, Macro F1: **0.9731**, 20 false positives on Benign, 7 invalid Cookie outputs.
+- **Version 15 (RebuiltV4 Dual Checkpoint Evaluation):** Tesla T4, 2,000 samples each on Checkpoint-200 and Checkpoint-300, completed in ~26 min.
+  - **Checkpoint-200 (Top Performer):** Accuracy: **99.65%** (1,993/2,000), Macro F1: **0.9924**, **0 false positives on Benign**, 100% precision on Benign and SQL Injection.
+  - **Checkpoint-300 (Final Step):** Accuracy: **99.60%** (1,992/2,000), Macro F1: **0.9911**, **0 false positives on Benign**.
+  - **Cookie Injection Analysis:** The 7 unresolved cases (`[24, 867, 1614, 1671, 1790, 1874, 1983]`) are raw HTTP header echoing hallucinations; Checkpoint-200 eliminated false positive SQL alarms on these cases.
+- **Version 18 (Restore-Only Verification - PASS):** Kaggle CPU (0 GPU quota consumed), executed in fresh session.
+  - Restored Version 1 files into `/tmp/restore_verification_fresh`.
+  - Cryptographically matched all 28 SHA256 checksums.
+  - Confirmed all 13 components present in `checkpoint-200` and `checkpoint-300`.
+  - Resolved `Qwen/Qwen2.5-1.5B-Instruct` base model registry and tokenizer without downloading weights.
+  - Deserialized PyTorch 32-bit AdamW optimizer states (392 tensors, 2 param groups), learning rate schedulers, GradScaler, RNG states, and training arguments.
+  - Verified intended resume steps: Step 200 (momentum LR: `6.8e-05`) and Step 300 (momentum LR: `1.33e-06`).
+  - Zero optimizer steps executed. Report saved to `runs/restore_verification_v18/restore_verification_report.json`.
 
 ---
 
-## 4. Evaluation Performance on Held-Out Test Sample (2,000 Examples)
+## 3. Remote Dataset Publications
 
-Target classes: `Benign`, `Cookie Injection`, `Directory Traversal`, `LOG4J`, `Log Forging`, `RCE`, `SQL Injection`, `XSS`.
+### A. Training Resumption Dataset (`santhosh939s/rebuiltv4-training-checkpoints`)
+- **Dataset URL:** `https://www.kaggle.com/datasets/santhosh939s/rebuiltv4-training-checkpoints`
+- **Current Version:** `1` (Initial Release, Private)
+- **Status:** `ready` / `is_frozen: True` / **Verified Restorable**
+- **Total Files:** 30 remote files (466,872,615 bytes / 445.24 MB)
+- **Included Artifacts:** Complete weights, 32-bit AdamW optimizer states (`optimizer.pt`), LR schedulers (`scheduler.pt`), GradScaler (`scaler.pt`), Trainer states (`trainer_state.json`), training args, RNG states, tokenizer assets, and canonical training script `train_rebuilt_v4.py`.
 
-| Metric | Original Model (Step 4500) | RebuiltV4 (Step 300) | Delta / Analysis |
-| :--- | :--- | :--- | :--- |
-| **Overall Accuracy** | 99.20% | **99.65%** | +0.45% improvement |
-| **Macro F1** | 0.9828 | **0.9924** | +0.0096 improvement |
-| **Weighted F1** | 0.9937 | **0.9981** | +0.0044 improvement |
-| **Invalid Predictions** | 7 (0.35%) | 7 (0.35%) | Identical unparsed formatting |
-| **Benign (P / R / F1)** | 1.000 / 0.995 / 0.997 | **1.000 / 1.000 / 1.000** | Perfect benign recall in RebuiltV4 |
-| **Cookie Injection (P / R / F1)** | 1.000 / 0.885 / 0.939 | 1.000 / 0.885 / 0.939 | Both models exhibit 88.52% recall |
-| **Directory Traversal** | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | Perfect classification |
-| **LOG4J** | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | Perfect on this 30-sample slice |
-| **Log Forging** | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | Perfect classification |
-| **RCE** | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | Perfect classification |
-| **SQL Injection (P / R / F1)** | 0.897 / 1.000 / 0.946 | **1.000 / 1.000 / 1.000** | RebuiltV4 resolved false positives |
-| **XSS (P / R / F1)** | 0.961 / 1.000 / 0.980 | **1.000 / 1.000 / 1.000** | RebuiltV4 resolved false positives |
-
-### LOG4J Focused Evaluation (687 Examples)
-- **Original Model**: 684/687 detected (99.56% recall, 3 invalid outputs)
-- **RebuiltV4**: 683/687 detected (99.42% recall, 3 invalid outputs, 1 misclassified as RCE)
+### B. Benchmark Runs Dataset (`santhosh939s/offensive-ai-runs`)
+- **Dataset URL:** `https://www.kaggle.com/datasets/santhosh939s/offensive-ai-runs`
+- **Current Version:** `1` (Initial Release, Private)
+- **Status:** `ready` / `is_frozen: True`
+- **Included Artifacts (16 remote items, 2.31 MB):** Predictions JSONLs, metrics JSONs, comparative summaries, confusion matrix comparison plots, execution logs, audit ledger, and publication manifests.
 
 ---
 
-## 5. Unresolved Technical Challenges
+## 4. Safety & Governance Status
 
-1. **Cookie Injection False Negatives:** Both models drop 7 Cookie Injection samples out of 61 (88.52% recall). Payload boundary inspection needed.
-2. **Invalid Output Generation (7 samples):** The model occasionally outputs unexpected characters or empty tokens instead of the strict category name. Greedy decoding constraints or post-processing logit masking will resolve this.
-3. **Full Dataset Validation:** Model selection should not rely exclusively on the 2,000-sample slice. A full test on the 45,912-example test set is required.
-
----
-
-## 6. Automation & Execution Architecture
-
-```mermaid
-flowchart TD
-    subgraph Local [Local Environment - Antigravity IDE]
-        Code[Code, Configs & Test Scripts]
-        Git[Git Version Control]
-        Audit[PROJECT_STATUS.md & Reports]
-    end
-
-    subgraph GitHub [GitHub Repository]
-        RemoteRepo["Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting"]
-    end
-
-    subgraph Kaggle [Kaggle Cloud Infrastructure]
-        KCLI[Kaggle API CLI v2.2.5]
-        Kernel["Notebook: santhosh939s/urop-offensive-ai (2x Tesla T4)"]
-        Dataset[Versioned Kaggle Datasets]
-    end
-
-    Code -->|git push| RemoteRepo
-    Code -->|kaggle kernels push| Kernel
-    Kernel -->|Evaluation / Checkpoints| Dataset
-    Dataset -->|kaggle dataset download| Local
-```
-
----
-
-## 7. Next Actions (Phase 4 & Phase 5)
-
-1. [x] Phase 1: Identify all checkpoints, trainer states, optimizer states, evaluation results.
-2. [x] Phase 1: Document all findings in `PROJECT_STATUS.md`.
-3. [x] Phase 2: Configure Kaggle API CLI (v2.2.5 with `KGAT_` token support).
-4. [x] Phase 2: Pull existing Kaggle notebook and kernel metadata via API.
-5. [ ] Push initial Git commit to GitHub repository (`main` branch).
-6. [ ] Implement automated Phase 4 evaluation pipeline script comparing both checkpoints on Kaggle.
+1. **Master Recovery Dataset (`santhosh939s/recovery`):** Strictly unmodified and preserved.
+2. **Local Backup:** Stored in `runs/run_20261026_rebuiltv4_dual_benchmark/`, `staging_rebuiltv4_training_checkpoints/`, `runs/restore_verification_v18/`, and `kaggle_output_full_eval_step4500/`.
+3. **Resumption Assurance:** **PROVEN.** Deserialization and step recovery tested in live Kaggle session.
+4. **Credentials:** No API tokens, keys, or credentials committed or stored in git.
+5. **GPU Quota:** >24 hours of T4 GPU quota remain intact (Verification ran on CPU).

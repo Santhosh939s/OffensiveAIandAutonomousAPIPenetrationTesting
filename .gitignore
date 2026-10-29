@@ -21,3 +21,14 @@ access_token
 # Scratch and OS metadata
 .DS_Store
 Thumbs.db
+
+# Automation & Local Runs
+runs/
+staging_dataset/
+staging_offensive_ai_runs/
+staging_rebuiltv4_training_checkpoints/
+staging*/
+downloaded_run/
+downloaded_verification/
+kaggle_output*/
+kaggle_kernel_pull/
