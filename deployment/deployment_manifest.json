@@ -1,0 +1,40 @@
+{
+  "manifest_version": "1.0",
+  "created_at": "2026-10-31T11:20:00Z",
+  "model_id": "qwen2.5-1.5b-rebuiltv4",
+  "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "adapter_source": "staging_rebuiltv4_training_checkpoints/checkpoint-200",
+  "adapter_checkpoint": "checkpoint-200",
+  "deployment_target": "Windows 10/11 x64, 8 GB RAM, Intel i3-class CPU (Offline)",
+  "quantization": "Q4_K_M",
+  "file_name": "qwen2.5-1.5b-rebuiltv4.Q4_K_M.gguf",
+  "file_size_bytes": 986048320,
+  "file_size_mb": 940.37,
+  "sha256": "2a77e5cc85faa3210db9267c3c7a5076d3aee2c1001a7adb5b569ff9a567d1bb",
+  "runtime_engine": "llama-cpp-python / llama.cpp",
+  "architecture": {
+    "family": "qwen2",
+    "block_count": 28,
+    "context_length": 32768,
+    "embedding_length": 1536,
+    "feed_forward_length": 8960,
+    "head_count": 12,
+    "head_count_kv": 2,
+    "tensor_count": 338,
+    "gguf_version": 3
+  },
+  "recommended_config": {
+    "n_ctx": 1536,
+    "n_threads": 4,
+    "n_batch": 128,
+    "use_mmap": true,
+    "estimated_ram_mb": 920.0
+  },
+  "provenance": {
+    "training_environment": "Kaggle Tesla T4 GPU (RebuiltV4 LoRA)",
+    "export_environment": "Kaggle GPU Kernel Version 26 (urop-offensive-ai)",
+    "conversion_tool": "llama.cpp convert_hf_to_gguf.py",
+    "quantization_tool": "llama.cpp llama-quantize Q4_K_M"
+  }
+}
+

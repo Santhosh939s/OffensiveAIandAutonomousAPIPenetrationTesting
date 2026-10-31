@@ -1,0 +1,42 @@
+{
+  "validation_timestamp": "2026-10-31T11:22:00Z",
+  "status": "VALIDATED",
+  "artifact": {
+    "file_name": "qwen2.5-1.5b-rebuiltv4.Q4_K_M.gguf",
+    "file_size_bytes": 986048320,
+    "file_size_mb": 940.37,
+    "sha256": "2a77e5cc85faa3210db9267c3c7a5076d3aee2c1001a7adb5b569ff9a567d1bb",
+    "gguf_magic": "GGUF",
+    "gguf_version": 3,
+    "tensor_count": 338,
+    "metadata_kv_count": 34
+  },
+  "architecture_verification": {
+    "general.architecture": "qwen2",
+    "general.name": "Qwen2.5 1.5B Instruct",
+    "general.finetune": "Instruct",
+    "general.size_label": "1.5B",
+    "qwen2.block_count": 28,
+    "qwen2.context_length": 32768,
+    "qwen2.embedding_length": 1536,
+    "qwen2.feed_forward_length": 8960,
+    "qwen2.attention.head_count": 12,
+    "qwen2.attention.head_count_kv": 2,
+    "tokenizer.ggml.model": "gpt2",
+    "tokenizer.ggml.pre": "qwen2"
+  },
+  "provenance_verification": {
+    "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "adapter_path": "staging_rebuiltv4_training_checkpoints/checkpoint-200",
+    "adapter_safetensors_bytes": 73911112,
+    "adapter_rank": 16,
+    "adapter_alpha": 32,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  },
+  "runtime_compatibility": {
+    "target_hardware": "Windows 10/11 x64, 8 GB RAM, Intel Core i3 (Offline)",
+    "recommended_threads": 4,
+    "recommended_ctx": 1536,
+    "estimated_ram_footprint_mb": 920.0
+  }
+}

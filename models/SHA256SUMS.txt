@@ -1,0 +1,1 @@
+2a77e5cc85faa3210db9267c3c7a5076d3aee2c1001a7adb5b569ff9a567d1bb  qwen2.5-1.5b-rebuiltv4.Q4_K_M.gguf
