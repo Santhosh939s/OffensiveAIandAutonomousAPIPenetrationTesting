@@ -1,0 +1,118 @@
+openapi: 3.0.3
+info:
+  title: Local Vulnerable API Laboratory
+  version: 1.0.0
+  description: Intentionally vulnerable REST API lab designed for autonomous penetration
+    testing.
+servers:
+- url: http://127.0.0.1:5000
+  description: Local test lab
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /health:
+    get:
+      summary: Health Check
+      operationId: get_health
+      responses:
+        '200':
+          description: Service is healthy
+  /api/users:
+    get:
+      summary: List Users
+      operationId: list_users
+      responses:
+        '200':
+          description: Public list of users
+  /api/users/{id}:
+    get:
+      summary: Get User Details (BOLA / IDOR)
+      operationId: get_user_by_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: User identifier
+      responses:
+        '200':
+          description: User record with sensitive attributes
+        '404':
+          description: User not found
+    put:
+      summary: Update User Profile (Mass Assignment)
+      operationId: update_user_by_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+                is_admin:
+                  type: integer
+      responses:
+        '200':
+          description: Profile updated
+  /api/login:
+    post:
+      summary: User Login Simulation (Weak Auth / None JWT)
+      operationId: login_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+              - username
+      responses:
+        '200':
+          description: JWT authentication token issued
+        '401':
+          description: Authentication failed
+  /api/search:
+    get:
+      summary: Catalog Search (Unsafe Query / SQL Injection)
+      operationId: search_items
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Search keyword
+      responses:
+        '200':
+          description: Matching catalog items
+        '500':
+          description: Database query error
+  /api/items:
+    get:
+      summary: List Catalog Items
+      operationId: list_items
+      responses:
+        '200':
+          description: List of catalog items
