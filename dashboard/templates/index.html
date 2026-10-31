@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous API Penetration Testing Live Console</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body class="dark-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-shield">
+                    <span class="shield-icon">🛡️</span>
+                </div>
+                <div class="logo-text">
+                    <h2>OFFENSIVE AI</h2>
+                    <span class="subtext">Autonomous API Agent</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-tab active" data-tab="dashboard">
+                    <span class="nav-icon">📊</span> Overview
+                </button>
+                <button class="nav-tab" data-tab="new-assessment">
+                    <span class="nav-icon">🎯</span> New Assessment
+                </button>
+                <button class="nav-tab" data-tab="live-activity">
+                    <span class="nav-icon">⚡</span> Live Activity
+                    <span id="live-indicator" class="status-dot hidden"></span>
+                </button>
+                <button class="nav-tab" data-tab="traffic-inspector">
+                    <span class="nav-icon">🔍</span> Traffic Inspector
+                </button>
+                <button class="nav-tab" data-tab="security-findings">
+                    <span class="nav-icon">🚨</span> Security Findings
+                    <span id="findings-count-badge" class="badge-pill">0</span>
+                </button>
+                <button class="nav-tab" data-tab="reports">
+                    <span class="nav-icon">📑</span> Reports
+                </button>
+                <button class="nav-tab" data-tab="settings">
+                    <span class="nav-icon">⚙️</span> Diagnostics & Scope
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status-pill">
+                    <span class="status-light" id="system-status-indicator"></span>
+                    <span id="system-status-text">Connecting...</span>
+                </div>
+                <div class="system-details">
+                    <small id="brain-mode-label">Brain: Mock</small>
+                    <small id="zap-status-label">ZAP: Checking...</small>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="session-info-bar">
+                    <span class="label">Active Target:</span>
+                    <span id="current-target-display" class="highlight-val">None (Agent Idle)</span>
+                    <span class="sep">|</span>
+                    <span class="label">Session ID:</span>
+                    <span id="current-session-display" class="code-val">None</span>
+                </div>
+                <div class="top-actions">
+                    <span id="assessment-badge" class="badge badge-idle">IDLE</span>
+                    <button id="cancel-btn" class="btn btn-danger btn-sm" disabled>Cancel Scan</button>
+                </div>
+            </header>
+
+            <div class="content-container">
+                <!-- 1. OVERVIEW / DASHBOARD TAB -->
+                <section id="tab-dashboard" class="tab-pane active">
+                    <div class="section-title">
+                        <h2>Assessment Ecosystem Overview</h2>
+                        <p class="subtitle">Autonomous API security orchestration, telemetry, and evidence verification</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-blue">🎯</div>
+                            <div class="stat-body">
+                                <h3>Total Sessions</h3>
+                                <p class="stat-number" id="stat-total-sessions">0</p>
+                                <span class="stat-sub">Executed assessments</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-red">🚨</div>
+                            <div class="stat-body">
+                                <h3>Confirmed Bugs</h3>
+                                <p class="stat-number" id="stat-confirmed-findings">0</p>
+                                <span class="stat-sub">Reproducible vulnerabilities</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-amber">⚠️</div>
+                            <div class="stat-body">
+                                <h3>Suspected Anomaly</h3>
+                                <p class="stat-number" id="stat-suspected-findings">0</p>
+                                <span class="stat-sub">Anomalies awaiting verification</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-green">🛡️</div>
+                            <div class="stat-body">
+                                <h3>Safe / Abstentions</h3>
+                                <p class="stat-number" id="stat-abstentions">0</p>
+                                <span class="stat-sub">Verified defensible endpoints</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-box mt-4">
+                        <div class="panel-header">
+                            <h3>Recent Assessment Sessions</h3>
+                            <button id="refresh-sessions-btn" class="btn btn-secondary btn-sm">Refresh List</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="sessions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Session ID</th>
+                                        <th>Target Base URL</th>
+                                        <th>Status</th>
+                                        <th>Turns</th>
+                                        <th>Requests</th>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="7" class="text-center">Loading recent sessions...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. NEW ASSESSMENT TAB -->
+                <section id="tab-new-assessment" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Configure & Launch Assessment</h2>
+                        <p class="subtitle">Specify target constraints, testing budgets, and decision engine configuration</p>
+                    </div>
+
+                    <form id="assessment-form" class="form-container">
+                        <div class="form-grid">
+                            <div class="form-group col-2">
+                                <label for="target_url">Target Base API URL <span class="required">*</span></label>
+                                <input type="url" id="target_url" name="target_url" placeholder="http://127.0.0.1:5050" value="http://127.0.0.1:5050" required>
+                                <small class="form-hint">Must resolve to an authorized localhost endpoint or host explicitly defined in scope.</small>
+                            </div>
+
+                            <div class="form-group col-2">
+                                <label for="allowed_hosts">Permitted Scope Hosts (comma-separated)</label>
+                                <input type="text" id="allowed_hosts" name="allowed_hosts" value="127.0.0.1, localhost, 127.0.0.1:5050" required>
+                                <small class="form-hint">PolicyEngine strictly rejects any outbound traffic to hosts not in this list.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="assessment_name">Assessment Label / Campaign</label>
+                                <input type="text" id="assessment_name" name="assessment_name" value="Local Lab Audit (Phase 6 Live)">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="brain_mode">Decision Engine (AI Brain)</label>
+                                <select id="brain_mode" name="brain_mode">
+                                    <option value="local_cpu" selected>Local CPU GGUF Brain (Standalone Offline, 8 GB RAM)</option>
+                                    <option value="mock">Deterministic Mock Brain (Offline Verification)</option>
+                                    <option value="remote">Remote Qwen2.5-1.5B Brain (Kaggle / Colab GPU Tunnel)</option>
+                                    <option value="local_qwen">Local Qwen2.5-1.5B LoRA Brain (Requires Local GPU)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-2" id="remote-endpoint-group" style="display: none;">
+                                <label for="remote_endpoint">Remote Brain Endpoint URL</label>
+                                <input type="url" id="remote_endpoint" name="remote_endpoint" placeholder="https://xxxx-your-tunnel.ngrok-free.app/generate">
+                                <small class="form-hint">POST endpoint running our FastAPI inference worker with RebuiltV4 Checkpoint-200.</small>
+                            </div>
+
+                            <div class="form-group col-2">
+                                <label for="spec_source">OpenAPI Specification Source (Optional)</label>
+                                <input type="text" id="spec_source" name="spec_source" value="lab/openapi_spec.json" placeholder="e.g. lab/openapi_spec.json or http://127.0.0.1:5050/openapi.json">
+                                <small class="form-hint">Local file path or URL for schema parsing and endpoint seed generation.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="max_turns">Max ReAct Turns</label>
+                                <input type="number" id="max_turns" name="max_turns" min="1" max="50" value="8">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="max_requests">Max HTTP Requests</label>
+                                <input type="number" id="max_requests" name="max_requests" min="1" max="100" value="25">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="max_model_calls">Max Model Reasoning Calls</label>
+                                <input type="number" id="max_model_calls" name="max_model_calls" min="1" max="100" value="20">
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="zap_active_scan" name="zap_active_scan">
+                                    Enable OWASP ZAP Active Scan (Strict Scope Only)
+                                </label>
+                                <small class="form-hint text-warning">Passive scanning and spidering are always enabled when ZAP is reachable.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-actions mt-4">
+                            <button type="submit" id="start-btn" class="btn btn-primary">
+                                <span class="btn-icon">🚀</span> Start Autonomous Assessment
+                            </button>
+                            <span id="start-status-msg" class="status-msg"></span>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- 3. LIVE ACTIVITY TAB -->
+                <section id="tab-live-activity" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Live Agent Execution Telemetry</h2>
+                        <p class="subtitle">Real-time ReAct loop monitoring, tool executions, and Qwen decision trace</p>
+                    </div>
+
+                    <div class="progress-card">
+                        <div class="progress-header">
+                            <div>
+                                <strong>Assessment Progress:</strong>
+                                <span id="progress-summary">Turn 0 / 0 | Requests: 0 | Model Calls: 0</span>
+                            </div>
+                            <div id="execution-state-label" class="badge badge-info">Idle</div>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="execution-progress-bar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="console-box mt-3">
+                        <div class="console-header">
+                            <div class="console-title">
+                                <span class="terminal-dot red"></span>
+                                <span class="terminal-dot amber"></span>
+                                <span class="terminal-dot green"></span>
+                                <span class="ml-2">Live Controller Event Feed</span>
+                            </div>
+                            <div class="console-actions">
+                                <label class="auto-scroll-toggle">
+                                    <input type="checkbox" id="auto-scroll-checkbox" checked> Auto-Scroll
+                                </label>
+                                <button id="clear-feed-btn" class="btn btn-ghost btn-xs">Clear View</button>
+                            </div>
+                        </div>
+                        <div class="console-feed" id="live-event-feed">
+                            <div class="empty-feed">Awaiting assessment start. Select "New Assessment" to launch.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. TRAFFIC INSPECTOR TAB -->
+                <section id="tab-traffic-inspector" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Traffic Inspector & Evidence Capture</h2>
+                        <p class="subtitle">Complete HTTP/HTTPX request and response records with sensitive data masking</p>
+                    </div>
+
+                    <div class="inspector-layout">
+                        <div class="traffic-list-pane">
+                            <div class="pane-header">
+                                <h3>Logged Requests</h3>
+                                <button id="refresh-traffic-btn" class="btn btn-secondary btn-xs">Refresh</button>
+                            </div>
+                            <div class="traffic-list-table-container">
+                                <table class="data-table" id="traffic-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Method</th>
+                                            <th>Endpoint</th>
+                                            <th>Status</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="traffic-table-body">
+                                        <tr><td colspan="4" class="text-center">No traffic recorded yet.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="traffic-detail-pane">
+                            <div class="pane-header">
+                                <h3>Request & Response Details</h3>
+                                <span id="selected-traffic-status" class="badge badge-secondary">Select an item</span>
+                            </div>
+                            <div class="traffic-detail-body" id="traffic-detail-container">
+                                <div class="detail-placeholder">Click any traffic row on the left to inspect raw headers, payloads, and response bodies.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. SECURITY FINDINGS TAB -->
+                <section id="tab-security-findings" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Verified Security Findings</h2>
+                        <p class="subtitle">Evidence-based vulnerability assessments and structured abstentions</p>
+                    </div>
+
+                    <div class="findings-filter-bar">
+                        <div class="filter-group">
+                            <label>Filter Status:</label>
+                            <select id="findings-status-filter">
+                                <option value="ALL">All Findings</option>
+                                <option value="CONFIRMED">CONFIRMED (Reproducible)</option>
+                                <option value="SUSPECTED">SUSPECTED (Investigation Needed)</option>
+                                <option value="NOT_DEMONSTRATED">NOT DEMONSTRATED (Abstained / Safe)</option>
+                            </select>
+                        </div>
+                        <button id="refresh-findings-btn" class="btn btn-secondary btn-sm">Refresh Findings</button>
+                    </div>
+
+                    <div class="findings-container mt-3" id="findings-list">
+                        <div class="empty-feed">No security findings recorded for the current session.</div>
+                    </div>
+                </section>
+
+                <!-- 6. REPORTS TAB -->
+                <section id="tab-reports" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Autonomous Security Report</h2>
+                        <p class="subtitle">Markdown report generated by ReportGenerator including methodology and evidence</p>
+                    </div>
+
+                    <div class="report-actions-bar">
+                        <button id="download-report-btn" class="btn btn-primary btn-sm">
+                            <span class="btn-icon">📥</span> Download Report (.md)
+                        </button>
+                        <button id="refresh-report-btn" class="btn btn-secondary btn-sm">Refresh Preview</button>
+                    </div>
+
+                    <div class="report-viewer-card mt-3">
+                        <pre class="markdown-preview" id="report-content-preview">No report generated yet. Reports are finalized upon assessment completion or cancellation.</pre>
+                    </div>
+                </section>
+
+                <!-- 7. SETTINGS / DIAGNOSTICS TAB -->
+                <section id="tab-settings" class="tab-pane">
+                    <div class="section-title">
+                        <h2>System Diagnostics & Policy Guardrails</h2>
+                        <p class="subtitle">Current controller safety policy, tool integration state, and host diagnostics</p>
+                    </div>
+
+                    <div class="diagnostics-grid">
+                        <div class="panel-box">
+                            <div class="panel-header">
+                                <h3>PolicyEngine Guardrails</h3>
+                            </div>
+                            <div class="diagnostic-list">
+                                <div class="diag-item">
+                                    <span class="diag-label">Default Permitted Hosts</span>
+                                    <span class="diag-val" id="diag-allowed-hosts">127.0.0.1, localhost</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Safe HTTP Methods</span>
+                                    <span class="diag-val">GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Blocked Dangerous Methods</span>
+                                    <span class="diag-val text-danger">TRACE, CONNECT</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Request Timeout</span>
+                                    <span class="diag-val">8.0s per request</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Evidence Storage</span>
+                                    <span class="diag-val">SQLite (evidence/evidence.db)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-box">
+                            <div class="panel-header">
+                                <h3>Engine & Model Connectivity</h3>
+                            </div>
+                            <div class="diagnostic-list">
+                                <div class="diag-item">
+                                    <span class="diag-label">OWASP ZAP Daemon URL</span>
+                                    <span class="diag-val" id="diag-zap-url">http://127.0.0.1:8080</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">OWASP ZAP Status</span>
+                                    <span class="diag-val" id="diag-zap-status">Checking...</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Fine-Tuned Adapter Checkpoint</span>
+                                    <span class="diag-val">RebuiltV4 Checkpoint-200 (NF4 LoRA)</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Local Adapter Path</span>
+                                    <span class="diag-val">staging_rebuiltv4_training_checkpoints/checkpoint-200</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Target Architecture</span>
+                                    <span class="diag-val">Qwen/Qwen2.5-1.5B-Instruct</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-box col-2">
+                            <div class="panel-header">
+                                <h3>Host Resources & 8 GB RAM Optimization Profile</h3>
+                            </div>
+                            <div class="diagnostic-list">
+                                <div class="diag-item">
+                                    <span class="diag-label">System Physical RAM</span>
+                                    <span class="diag-val" id="diag-system-ram">Detecting...</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Available System RAM</span>
+                                    <span class="diag-val" id="diag-avail-ram">Detecting...</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Agent Process RAM Footprint</span>
+                                    <span class="diag-val" id="diag-proc-ram">Detecting...</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Recommended Inference Strategy</span>
+                                    <span class="diag-val highlight-val" id="diag-rec-mode">Detecting...</span>
+                                </div>
+                                <div class="diag-item">
+                                    <span class="diag-label">Resource Optimization Advisory</span>
+                                    <span class="diag-val" id="diag-mode-rationale">Analyzing system headroom...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
+
