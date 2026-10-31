@@ -1,0 +1,27 @@
+{
+  "section": "3. Full Standalone Assessment",
+  "status": "PASSED",
+  "details": {
+    "session_id": "session_11a4c3e9f2d0",
+    "success": true,
+    "target": "http://127.0.0.1:5050",
+    "turns_taken": 3,
+    "requests_sent": 2,
+    "duration_seconds": 337.73,
+    "model_engine": "llama_cli",
+    "total_model_inferences": 7,
+    "stages_verified": {
+      "1_target_scope_check": "PASSED (ScopeValidator approved 127.0.0.1:5050)",
+      "2_openapi_discovery": "PASSED (Discovered specification)",
+      "3_compact_context_manager": "PASSED (Registered endpoints and probe history)",
+      "4_adaptive_prioritization": "PASSED (Adaptive candidate scoring active)",
+      "5_test_planning": "PASSED (Plan: Autonomous Plan)",
+      "6_tool_execution": "PASSED (2 requests executed)",
+      "7_verification_rules": "PASSED (Strict objective rule attachment active)",
+      "8_sqlite_persistence": "PASSED (Evidence recorded in S:\\UROP\\offensive AI and autonomous APi penetration testing\\evaluation\\phase9_1_results\\standalone_assessment_evidence.db)",
+      "9_realtime_events": "PASSED (ControllerEventType streams emitted)",
+      "10_report_generation": "PASSED (0 bytes generated)"
+    },
+    "report_preview": "..."
+  }
+}

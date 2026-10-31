@@ -1,0 +1,31 @@
+{
+  "trials": 3,
+  "ground_truth_vulnerabilities": [
+    "BOLA / IDOR",
+    "SQL Injection",
+    "Insecure Authentication",
+    "Mass Assignment"
+  ],
+  "fixed_strategy": {
+    "mean_requests": 19.0,
+    "mean_model_calls": 20.0,
+    "mean_turns": 10.0,
+    "mean_duration_sec": 0.48,
+    "detection_rate_pct": 100.0,
+    "fp_rate_pct": 0.0,
+    "requests_per_confirmed_finding": 4.75
+  },
+  "adaptive_strategy": {
+    "mean_requests": 4.0,
+    "mean_model_calls": 9.0,
+    "mean_turns": 4.0,
+    "mean_duration_sec": 0.36,
+    "detection_rate_pct": 100.0,
+    "fp_rate_pct": 0.0,
+    "requests_per_confirmed_finding": 1.0
+  },
+  "efficiency_gains": {
+    "request_reduction_pct": 78.9,
+    "turn_reduction_pct": 60.0
+  }
+}

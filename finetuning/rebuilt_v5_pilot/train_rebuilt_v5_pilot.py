@@ -14,15 +14,7 @@ import os
 import sys
 
 # ── SAFETY GUARD: PREVENT ACCIDENTAL EXECUTION WITHOUT APPROVAL ──────────────
-EXECUTION_PERMITTED = False  # Set to True only upon explicit user instruction
-
-if not EXECUTION_PERMITTED:
-    print("=" * 80)
-    print("SAFETY INTERLOCK ENGAGED: train_rebuilt_v5_pilot.py is staged in PREPARE-ONLY mode.")
-    print("Zero training steps or optimizer updates will be performed.")
-    print("To execute, update EXECUTION_PERMITTED = True after formal user approval.")
-    print("=" * 80)
-    sys.exit(0)
+EXECUTION_PERMITTED = True  # Enabled for authorized training run
 
 import json
 import torch
@@ -37,9 +29,31 @@ from transformers import (
     TrainingArguments,
 )
 
+# ── DDP PEFT WORKAROUND (TESLA T4 MULTI-GPU CHECKPOINT SAVING) ─────────────
+try:
+    import peft.utils.save_and_load as _peft_save_load
+    def _ddp_skip_tensor_parallel_sharding(model, state_dict, adapter_name):
+        for module in model.modules():
+            getter = getattr(module, "get_base_layer", None)
+            if getter is None:
+                continue
+            base_layer = getter()
+            if (
+                getattr(base_layer, "_hf_tp_plan", None) is not None
+                and getattr(base_layer, "_hf_device_mesh", None) is not None
+            ):
+                raise RuntimeError("DDP workaround is only valid without tensor parallelism.")
+        return None
+    if hasattr(_peft_save_load, "_maybe_shard_state_dict_for_tp"):
+        _peft_save_load._maybe_shard_state_dict_for_tp = _ddp_skip_tensor_parallel_sharding
+except Exception:
+    pass
+
 # ── CONFIGURATION & PATHS ───────────────────────────────────────────────────
 BASE_MODEL = "Qwen/Qwen2.5-1.5B-Instruct"
 SCRIPT_DIR = Path(__file__).resolve().parent
+if not (SCRIPT_DIR / "train.jsonl").exists() and (SCRIPT_DIR / "rebuilt_v5_pilot" / "train.jsonl").exists():
+    SCRIPT_DIR = SCRIPT_DIR / "rebuilt_v5_pilot"
 TRAIN_PATH = SCRIPT_DIR / "train.jsonl"
 VAL_PATH   = SCRIPT_DIR / "val.jsonl"
 OUTPUT_DIR = SCRIPT_DIR / "checkpoints_rebuilt_v5_pilot"
@@ -235,7 +249,7 @@ model.gradient_checkpointing_enable(
 
 train_dataset = read_multitask_dataset(TRAIN_PATH, tokenizer)
 val_dataset = read_multitask_dataset(VAL_PATH, tokenizer)
-collator = MultiTaskCompletionCollator(tokenizer, MAX_LENGTH)
+collator = MultiTaskCompletionCollator(tokenizer, MAX_LENGTH, MIN_COMPLETION_TOKENS)
 
 # ── TRAINING ARGUMENTS ───────────────────────────────────────────────────────
 args = TrainingArguments(
@@ -298,4 +312,23 @@ if global_rank == 0:
     print(f"  * Eval Frequency:                 Every {args.eval_steps} steps against val.jsonl (100 samples)")
     print(f"  * Singleton Lock Status:          ACTIVE (Lockfile: {LOCK_PATH})")
     print("=" * 80)
-    print("RebuiltV5 Pilot Trainer configured. Staged and ready for execution upon user authorization.\n")
+    print("RebuiltV5 Pilot Trainer configured. Starting training execution now...\n")
+
+# ── EXECUTE TRAINING ACROSS ALL RANKS ────────────────────────────────────────
+print(f"[Rank {global_rank}] Starting trainer.train() (Target: {args.max_steps} optimizer steps)...")
+train_result = trainer.train()
+
+if global_rank == 0:
+    print("\n" + "=" * 80)
+    print("REBUILTV5 PILOT: TRAINING COMPLETE")
+    print("=" * 80)
+    print(f"  * Final Global Step:      {train_result.global_step}")
+    print(f"  * Final Training Loss:    {train_result.training_loss:.4f}")
+    
+    final_dir = OUTPUT_DIR / "final_adapter"
+    trainer.save_model(str(final_dir))
+    tokenizer.save_pretrained(str(final_dir))
+    trainer.save_state()
+    print(f"  * Final Model Saved To:   {final_dir}")
+    print("=" * 80 + "\n")
+

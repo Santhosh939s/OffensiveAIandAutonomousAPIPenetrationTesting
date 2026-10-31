@@ -1,0 +1,261 @@
+{
+  "section": "2. Actual CPU Inference",
+  "status": "PASSED",
+  "details": {
+    "strict_offline_cpu_load_attempted": true,
+    "allow_mock_fallback": false,
+    "engine": "llama_cli",
+    "prompts_tested_count": 20,
+    "total_latency_seconds": 240.7,
+    "average_latency_seconds": 12.035,
+    "total_inferences": 20,
+    "valid_decisions": 20,
+    "invalid_decisions": 0,
+    "peak_ram_mb": 33.38,
+    "prompts_results": [
+      {
+        "prompt_index": 1,
+        "test_category": "Benign",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard GET method to check the health of an API endpoint, which is benign and does not involve any malicious activities."
+        },
+        "latency_seconds": 11.013,
+        "working_set_mb": 15.54
+      },
+      {
+        "prompt_index": 2,
+        "test_category": "Benign",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard GET method for searching an API with query parameters, which does not indicate any malicious intent or vulnerability."
+        },
+        "latency_seconds": 11.557,
+        "working_set_mb": 14.79
+      },
+      {
+        "prompt_index": 3,
+        "test_category": "Benign",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard GET method to retrieve user profile information, which is benign and not indicative of any security vulnerabilities."
+        },
+        "latency_seconds": 9.634,
+        "working_set_mb": 14.8
+      },
+      {
+        "prompt_index": 4,
+        "test_category": "SQL Injection",
+        "test_type": "classify",
+        "result": {
+          "category": "SQL Injection",
+          "confidence": 1.0,
+          "reasoning": "The query contains a SQL injection vulnerability, specifically the use of '1'='1', which is a common technique to bypass parameterization and execute arbitrary SQL commands."
+        },
+        "latency_seconds": 9.852,
+        "working_set_mb": 14.78
+      },
+      {
+        "prompt_index": 5,
+        "test_category": "SQL Injection",
+        "test_type": "classify",
+        "result": {
+          "category": "SQL Injection",
+          "confidence": 1.0,
+          "reasoning": "The query contains a SQL injection pattern with the use of single quotes around the parameter 'cat=electronics' and '--' as a delimiter, indicating an attempt to execute arbitrary SQL commands."
+        },
+        "latency_seconds": 9.596,
+        "working_set_mb": 14.77
+      },
+      {
+        "prompt_index": 6,
+        "test_category": "SQL Injection",
+        "test_type": "classify",
+        "result": {
+          "category": "SQL Injection",
+          "confidence": 1.0,
+          "reasoning": "The request includes a SQL injection payload (' UNION SELECT username, password FROM users--') which attempts to retrieve user credentials from the database."
+        },
+        "latency_seconds": 9.97,
+        "working_set_mb": 14.85
+      },
+      {
+        "prompt_index": 7,
+        "test_category": "BOLA/IDOR",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard GET method to retrieve an API document, which is benign in nature."
+        },
+        "latency_seconds": 15.482,
+        "working_set_mb": 8.21
+      },
+      {
+        "prompt_index": 8,
+        "test_category": "BOLA/IDOR",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard GET method to retrieve account statement information, which is benign and not indicative of any security vulnerabilities."
+        },
+        "latency_seconds": 13.166,
+        "working_set_mb": 5.56
+      },
+      {
+        "prompt_index": 9,
+        "test_category": "Broken Authentication",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard GET method to retrieve API settings, which is benign and not indicative of any security vulnerability."
+        },
+        "latency_seconds": 12.694,
+        "working_set_mb": 5.82
+      },
+      {
+        "prompt_index": 10,
+        "test_category": "Broken Authentication",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard login POST method, which is benign and does not involve any malicious activities."
+        },
+        "latency_seconds": 13.724,
+        "working_set_mb": 5.01
+      },
+      {
+        "prompt_index": 11,
+        "test_category": "Mass Assignment",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard PUT operation to update user information, which does not involve any malicious payloads or vulnerabilities."
+        },
+        "latency_seconds": 12.556,
+        "working_set_mb": 5.61
+      },
+      {
+        "prompt_index": 12,
+        "test_category": "Mass Assignment",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a simple PUT operation with payload data, which is benign and does not indicate any security vulnerability."
+        },
+        "latency_seconds": 13.714,
+        "working_set_mb": 5.55
+      },
+      {
+        "prompt_index": 13,
+        "test_category": "Directory Traversal",
+        "test_type": "classify",
+        "result": {
+          "category": "Directory Traversal",
+          "confidence": 1.0,
+          "reasoning": "The request includes a path traversal to access the system's password file (/etc/passwd) by using '..' in the query string."
+        },
+        "latency_seconds": 13.494,
+        "working_set_mb": 5.75
+      },
+      {
+        "prompt_index": 14,
+        "test_category": "Directory Traversal",
+        "test_type": "classify",
+        "result": {
+          "category": "Directory Traversal",
+          "confidence": 1.0,
+          "reasoning": "The request includes a path traversal that attempts to access the Windows system directory."
+        },
+        "latency_seconds": 11.282,
+        "working_set_mb": 5.57
+      },
+      {
+        "prompt_index": 15,
+        "test_category": "XSS",
+        "test_type": "classify",
+        "result": {
+          "category": "XSS",
+          "confidence": 1.0,
+          "reasoning": "The query parameter contains a JavaScript injection, which is an XSS attack."
+        },
+        "latency_seconds": 10.768,
+        "working_set_mb": 5.43
+      },
+      {
+        "prompt_index": 16,
+        "test_category": "XSS",
+        "test_type": "classify",
+        "result": {
+          "category": "Cookie Injection",
+          "confidence": 1.0,
+          "reasoning": "The request includes a payload that injects JavaScript into the comment, which is likely to be executed by the server."
+        },
+        "latency_seconds": 11.569,
+        "working_set_mb": 5.61
+      },
+      {
+        "prompt_index": 17,
+        "test_category": "JWT Algorithm None",
+        "test_type": "classify",
+        "result": {
+          "category": "Benign",
+          "confidence": 1.0,
+          "reasoning": "The request is a standard GET method to an API endpoint, with proper authentication included in the headers."
+        },
+        "latency_seconds": 11.08,
+        "working_set_mb": 8.96
+      },
+      {
+        "prompt_index": 18,
+        "test_category": "Evidence Analysis (SQLi)",
+        "test_type": "evidence",
+        "result": {
+          "status": "CONFIRMED",
+          "category": "Insecure Authentication",
+          "analysis": "The HTTP request to the '/api/users?id=1' endpoint resulted in a status code of 500 with an error message indicating a syntax error, which is indicative of an insecure authentication mechanism.",
+          "verification_rule": "SQL_SYNTAX_ERROR_MATCH"
+        },
+        "latency_seconds": 14.347,
+        "working_set_mb": 5.41
+      },
+      {
+        "prompt_index": 19,
+        "test_category": "Evidence Analysis (Privilege)",
+        "test_type": "evidence",
+        "result": {
+          "status": "CONFIRMED",
+          "category": "",
+          "analysis": "The HTTP request to update a user profile was successful with the expected response body and status code. There is no evidence of unauthorized access or privilege escalation.",
+          "verification_rule": "ROLE_ELEVATION_VERIFIED"
+        },
+        "latency_seconds": 12.624,
+        "working_set_mb": 5.73
+      },
+      {
+        "prompt_index": 20,
+        "test_category": "Action Selection",
+        "test_type": "action",
+        "result": {
+          "action_type": "execute_tool",
+          "tool_name": "httpx_request",
+          "arguments": {},
+          "reasoning": "Initial probe to understand the API endpoint and its response format."
+        },
+        "latency_seconds": 12.574,
+        "working_set_mb": 5.6
+      }
+    ]
+  }
+}

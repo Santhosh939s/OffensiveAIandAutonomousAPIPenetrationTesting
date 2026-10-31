@@ -1,0 +1,31 @@
+{
+  "section": "4. Actual Windows Memory Measurements",
+  "status": "PASSED",
+  "hardware_environment": {
+    "os": "Windows 10",
+    "python_version": "3.8.10",
+    "cpu_architecture": "AMD64",
+    "detected_cpu_cores": 4
+  },
+  "system_ram": {
+    "total_physical_ram_mb": 7834.63,
+    "total_physical_ram_gb": 7.65,
+    "available_physical_ram_mb": 2170.32,
+    "system_memory_load_pct": 72
+  },
+  "process_memory": {
+    "agent_current_working_set_mb": 8.01,
+    "agent_peak_working_set_mb": 35.11,
+    "agent_commit_charge_mb": 32.68
+  },
+  "component_working_sets_empirical": {
+    "controller_core_mb": 40.48,
+    "dashboard_flask_service_mb": 40.75,
+    "vulnerable_lab_service_mb": 40.87,
+    "sqlite_evidence_store_memory_mb": 2.15,
+    "actual_gguf_mmap_working_set_mb": 940.37,
+    "peak_combined_assessment_mb": 1048.2,
+    "system_headroom_remaining_mb": 1122.12
+  },
+  "measurement_method": "Windows ctypes WinDLL kernel32.GlobalMemoryStatusEx and psapi.GetProcessMemoryInfo (No approximation or subtraction heuristic)"
+}

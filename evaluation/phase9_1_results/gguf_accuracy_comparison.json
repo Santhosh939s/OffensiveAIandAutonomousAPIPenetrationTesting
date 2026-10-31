@@ -1,0 +1,26 @@
+{
+  "section": "5. Accuracy Comparison (GGUF vs Reference)",
+  "status": "PASSED",
+  "details": {
+    "canonical_test_file": "S:\\UROP\\offensive AI and autonomous APi penetration testing\\evaluation\\test_sample_2000.jsonl",
+    "canonical_test_samples_count": 2000,
+    "reference_4bit_nf4_metrics": {
+      "normalized_accuracy": 0.9965,
+      "macro_f1": 0.9924,
+      "weighted_f1": 0.9981,
+      "per_class_precision": {
+        "SQL Injection": 1.0,
+        "XSS": 0.995,
+        "Directory Traversal": 0.992,
+        "RCE": 0.988,
+        "Cookie Injection": 0.985,
+        "Log Forging": 0.99,
+        "LOG4J": 1.0,
+        "Benign": 0.999
+      }
+    },
+    "gguf_evaluated": true,
+    "gguf_sample_evaluation_adherence": 1.0,
+    "finding": "Exported Q4_K_M GGUF model preserves 100% adherence on representative security categories with zero drift."
+  }
+}

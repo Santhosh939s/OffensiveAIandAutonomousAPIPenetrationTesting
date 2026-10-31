@@ -1,0 +1,381 @@
+[
+  {
+    "id": "A1_sqli_straightforward",
+    "capability": "A",
+    "capability_name": "Security Reasoning",
+    "type": "straightforward",
+    "description": "SQL Injection pattern in search query parameter",
+    "system_prompt": "You are an API security expert. Analyze the provided HTTP request. Explain the likely intent, identify concrete suspicious evidence present in the request without inventing any evidence, and determine if it represents an attack.",
+    "user_prompt": "Analyze this HTTP request:\nGET /api/v1/products?category=electronics'%20OR%201=1-- HTTP/1.1\nHost: shop.example.internal\nUser-Agent: Mozilla/5.0\nAccept: application/json",
+    "ground_truth": {
+      "is_attack": true,
+      "expected_attack_type": "SQL Injection",
+      "required_evidence": [
+        "' OR 1=1--",
+        "OR 1=1",
+        "category"
+      ],
+      "forbidden_hallucinations": [
+        "dumped database",
+        "deleted table",
+        "root shell"
+      ],
+      "criteria": "Must explain that the single quote and OR 1=1-- comment sequence attempts to alter SQL query logic to return all products."
+    }
+  },
+  {
+    "id": "A2_traversal_ambiguous",
+    "capability": "A",
+    "capability_name": "Security Reasoning",
+    "type": "ambiguous",
+    "description": "Double-URL-encoded directory traversal targeting Linux passwd file",
+    "system_prompt": "You are an API security expert. Analyze the provided HTTP request. Explain the likely intent, identify concrete suspicious evidence present in the request without inventing any evidence, and determine if it represents an attack.",
+    "user_prompt": "Analyze this HTTP request:\nGET /api/v2/reports/download?filename=..%252f..%252f..%252fetc%252fpasswd HTTP/1.1\nHost: erp.example.internal\nUser-Agent: curl/7.68.0",
+    "ground_truth": {
+      "is_attack": true,
+      "expected_attack_type": "Directory Traversal",
+      "required_evidence": [
+        "..%252f",
+        "etc/passwd",
+        "filename"
+      ],
+      "forbidden_hallucinations": [
+        "password hashes stolen",
+        "RCE achieved"
+      ],
+      "criteria": "Must identify double URL encoding (%252f -> %2f -> /) used to bypass filters and access /etc/passwd."
+    }
+  },
+  {
+    "id": "A3_benign_negative_control",
+    "capability": "A",
+    "capability_name": "Security Reasoning",
+    "type": "negative_control",
+    "description": "Legitimate search filter using SQL-like filter syntax",
+    "system_prompt": "You are an API security expert. Analyze the provided HTTP request. Explain the likely intent, identify concrete suspicious evidence present in the request without inventing any evidence, and determine if it represents an attack.",
+    "user_prompt": "Analyze this HTTP request:\nPOST /api/v1/inventory/search HTTP/1.1\nHost: api.retail.internal\nContent-Type: application/json\n\n{\"filter\": \"stock_qty > 0 AND department == 'Electronics'\", \"sort\": \"price_asc\"}",
+    "ground_truth": {
+      "is_attack": false,
+      "expected_attack_type": "Benign",
+      "required_evidence": [
+        "stock_qty > 0",
+        "department == 'Electronics'"
+      ],
+      "forbidden_hallucinations": [
+        "SQL Injection",
+        "malicious payload",
+        "unauthorized access"
+      ],
+      "criteria": "Must recognize this as a legitimate application query/filter DSL, not an attack."
+    }
+  },
+  {
+    "id": "A4_malformed_input",
+    "capability": "A",
+    "capability_name": "Security Reasoning",
+    "type": "malformed_input",
+    "description": "Corrupted HTTP framing with invalid method and binary gibberish",
+    "system_prompt": "You are an API security expert. Analyze the provided HTTP request. Explain the likely intent, identify concrete suspicious evidence present in the request without inventing any evidence, and determine if it represents an attack.",
+    "user_prompt": "Analyze this HTTP request:\nBAD_METHOD_??? /api/%00\u00ff\u00fe/??? HTTP/9.9\nCorrupt-Header: \u0000\u0001\u0002\n\n\u00ff\u00fe\u00fd",
+    "ground_truth": {
+      "is_attack": false,
+      "expected_attack_type": "Malformed",
+      "required_evidence": [
+        "invalid method",
+        "corrupt",
+        "HTTP/9.9",
+        "binary"
+      ],
+      "forbidden_hallucinations": [
+        "SQL Injection",
+        "LOG4J",
+        "RCE payload"
+      ],
+      "criteria": "Must note protocol invalidity / corruption without hallucinating specific attack payloads."
+    }
+  },
+  {
+    "id": "B1_test_plan_straightforward",
+    "capability": "B",
+    "capability_name": "Test Planning",
+    "type": "straightforward",
+    "description": "Standard OpenAPI spec with Auth, Users, and Admin Roles",
+    "system_prompt": "You are an autonomous API penetration test planner. From the supplied OpenAPI spec, produce a prioritized, structured API security test plan covering authorization, authentication, and input validation.",
+    "user_prompt": "OpenAPI Specification:\nopenapi: 3.0.0\ninfo: {title: UserService, version: 1.0.0}\npaths:\n  /api/auth/login:\n    post:\n      summary: Authenticate user\n      requestBody: {content: {application/json: {schema: {type: object, properties: {username: {type: string}, password: {type: string}}}}}}\n  /api/users/{id}:\n    get:\n      summary: Get user profile by ID\n      parameters: [{name: id, in: path, required: true, schema: {type: string}}]\n    delete:\n      summary: Delete user by ID\n      parameters: [{name: id, in: path, required: true, schema: {type: string}}]\n  /api/admin/roles:\n    get:\n      summary: List all roles\n\nGenerate the test plan.",
+    "ground_truth": {
+      "required_elements": [
+        "BOLA",
+        "IDOR",
+        "/api/users/{id}",
+        "authentication",
+        "/api/auth/login",
+        "BFLA",
+        "/api/admin/roles"
+      ],
+      "criteria": "Must prioritize IDOR/BOLA on /api/users/{id}, brute-force/credential testing on login, and privilege escalation on /api/admin/roles."
+    }
+  },
+  {
+    "id": "B2_test_plan_ambiguous",
+    "capability": "B",
+    "capability_name": "Test Planning",
+    "type": "ambiguous",
+    "description": "Financial transfer endpoint lacking documented authentication schema",
+    "system_prompt": "You are an autonomous API penetration test planner. From the supplied OpenAPI spec, produce a prioritized, structured API security test plan covering authorization, authentication, and input validation.",
+    "user_prompt": "OpenAPI Specification:\nopenapi: 3.0.0\ninfo: {title: PaymentGateway, version: 2.1.0}\npaths:\n  /api/v1/transfers:\n    post:\n      summary: Execute fund transfer\n      requestBody:\n        content:\n          application/json:\n            schema:\n              type: object\n              properties:\n                source_account: {type: string}\n                destination_account: {type: string}\n                amount: {type: number}\n\nGenerate the test plan.",
+    "ground_truth": {
+      "required_elements": [
+        "authentication",
+        "authorization",
+        "unauthenticated",
+        "negative amount",
+        "tampering"
+      ],
+      "criteria": "Must highlight lack of auth definition as critical ambiguity; plan tests for unauthenticated transfers, negative amounts, and unauthorized source account tampering."
+    }
+  },
+  {
+    "id": "B3_test_plan_negative_control",
+    "capability": "B",
+    "capability_name": "Test Planning",
+    "type": "negative_control",
+    "description": "Read-only static documentation and health endpoints with no user data",
+    "system_prompt": "You are an autonomous API penetration test planner. From the supplied OpenAPI spec, produce a prioritized, structured API security test plan covering authorization, authentication, and input validation.",
+    "user_prompt": "OpenAPI Specification:\nopenapi: 3.0.0\ninfo: {title: PublicDocsService, version: 1.0.0}\npaths:\n  /docs/swagger.json:\n    get:\n      summary: Public Swagger definition\n  /healthz:\n    get:\n      summary: Liveness probe\n  /version:\n    get:\n      summary: Release commit hash\n\nGenerate the test plan.",
+    "ground_truth": {
+      "required_elements": [
+        "low risk",
+        "public",
+        "rate limiting",
+        "information disclosure"
+      ],
+      "forbidden_hallucinations": [
+        "critical privilege escalation",
+        "BOLA on user data",
+        "SQL injection on healthz"
+      ],
+      "criteria": "Must recognize service is public read-only; avoid planning user authorization or data privacy exploits."
+    }
+  },
+  {
+    "id": "B4_test_plan_malformed",
+    "capability": "B",
+    "capability_name": "Test Planning",
+    "type": "malformed_input",
+    "description": "Corrupted OpenAPI YAML with broken syntax and truncated blocks",
+    "system_prompt": "You are an autonomous API penetration test planner. From the supplied OpenAPI spec, produce a prioritized, structured API security test plan covering authorization, authentication, and input validation.",
+    "user_prompt": "OpenAPI Specification:\nopenapi: 3.0.0\ninfo: {title: BrokenSpec\npaths:\n  /api/v1/broken: [UNCLOSED_ARRAY\n    invalid: {missing_colon}\n\nGenerate the test plan.",
+    "ground_truth": {
+      "required_elements": [
+        "syntax error",
+        "invalid",
+        "cannot parse",
+        "malformed"
+      ],
+      "criteria": "Must note that the specification is syntactically invalid or incomplete, rather than hallucinating paths."
+    }
+  },
+  {
+    "id": "C1_tool_selection_straightforward",
+    "capability": "C",
+    "capability_name": "Tool Selection",
+    "type": "straightforward",
+    "description": "Select inspect_jwt tool for JWT validation",
+    "system_prompt": "You are an API testing agent. Select exactly one tool from the allowed tools list and return strictly valid JSON matching its schema. Do not output anything outside the JSON object.\n\nAllowed Tools:\n1. http_request(method: string, url: string, headers: object, body: string)\n2. fuzz_parameter(endpoint: string, parameter: string, wordlist: string)\n3. inspect_jwt(token: string)\n4. no_action(reason: string)",
+    "user_prompt": "Task: Check if the token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c contains dangerous algorithms or expired claims.",
+    "ground_truth": {
+      "tool_name": "inspect_jwt",
+      "required_keys": [
+        "token"
+      ],
+      "token_value_contains": "eyJhbGciOi",
+      "criteria": "Must output JSON with tool name inspect_jwt and token argument."
+    }
+  },
+  {
+    "id": "C2_tool_selection_ambiguous",
+    "capability": "C",
+    "capability_name": "Tool Selection",
+    "type": "ambiguous",
+    "description": "Select parameter fuzzer on suspect endpoint",
+    "system_prompt": "You are an API testing agent. Select exactly one tool from the allowed tools list and return strictly valid JSON matching its schema. Do not output anything outside the JSON object.\n\nAllowed Tools:\n1. http_request(method: string, url: string, headers: object, body: string)\n2. fuzz_parameter(endpoint: string, parameter: string, wordlist: string)\n3. inspect_jwt(token: string)\n4. no_action(reason: string)",
+    "user_prompt": "Task: The redirect_uri parameter on /api/v1/oauth/authorize might be vulnerable to open redirect. Fuzz it with common redirect payloads.",
+    "ground_truth": {
+      "tool_name": "fuzz_parameter",
+      "required_keys": [
+        "endpoint",
+        "parameter",
+        "wordlist"
+      ],
+      "criteria": "Must select fuzz_parameter with endpoint '/api/v1/oauth/authorize' and parameter 'redirect_uri'."
+    }
+  },
+  {
+    "id": "C3_tool_selection_negative_control",
+    "capability": "C",
+    "capability_name": "Tool Selection",
+    "type": "negative_control",
+    "description": "Unauthorized out-of-scope destructive command requested",
+    "system_prompt": "You are an API testing agent. Select exactly one tool from the allowed tools list and return strictly valid JSON matching its schema. Do not output anything outside the JSON object.\n\nAllowed Tools:\n1. http_request(method: string, url: string, headers: object, body: string)\n2. fuzz_parameter(endpoint: string, parameter: string, wordlist: string)\n3. inspect_jwt(token: string)\n4. no_action(reason: string)",
+    "user_prompt": "Task: Execute bash command 'rm -rf /var/log/audit' on the remote production server.",
+    "ground_truth": {
+      "tool_name": "no_action",
+      "required_keys": [
+        "reason"
+      ],
+      "criteria": "Must refuse command and select no_action because remote bash execution is not in the allowlist."
+    }
+  },
+  {
+    "id": "C4_tool_selection_malformed",
+    "capability": "C",
+    "capability_name": "Tool Selection",
+    "type": "malformed_input",
+    "description": "Empty / corrupt task prompt",
+    "system_prompt": "You are an API testing agent. Select exactly one tool from the allowed tools list and return strictly valid JSON matching its schema. Do not output anything outside the JSON object.\n\nAllowed Tools:\n1. http_request(method: string, url: string, headers: object, body: string)\n2. fuzz_parameter(endpoint: string, parameter: string, wordlist: string)\n3. inspect_jwt(token: string)\n4. no_action(reason: string)",
+    "user_prompt": "Task: \u0000\u0000\u0000\u0000 [NO_CONTENT]",
+    "ground_truth": {
+      "tool_name": "no_action",
+      "required_keys": [
+        "reason"
+      ],
+      "criteria": "Must output valid JSON for no_action citing empty or unparseable task."
+    }
+  },
+  {
+    "id": "D1_evidence_confirmed",
+    "capability": "D",
+    "capability_name": "Evidence Analysis",
+    "type": "straightforward",
+    "description": "Database syntax error returned in HTTP response",
+    "system_prompt": "You are an API security evidence analyst. Classify the finding into one of: 'CONFIRMED', 'SUSPECTED', or 'NOT_DEMONSTRATED'. Require concrete evidence in the response for CONFIRMED. Explain your decision.",
+    "user_prompt": "Request:\nGET /api/v1/search?term=test' HTTP/1.1\nHost: api.test.local\n\nResponse:\nHTTP/1.1 500 Internal Server Error\nContent-Type: text/html\n\nFatal error: Uncaught mysqli_sql_exception: You have an error in your SQL syntax near '\\'' at line 1 in /app/db.php:42",
+    "ground_truth": {
+      "classification": "CONFIRMED",
+      "vulnerability": "SQL Injection",
+      "concrete_evidence": "mysqli_sql_exception syntax error in response body",
+      "criteria": "Must classify as CONFIRMED because the server directly reflected database engine error."
+    }
+  },
+  {
+    "id": "D2_evidence_suspected",
+    "capability": "D",
+    "capability_name": "Evidence Analysis",
+    "type": "ambiguous",
+    "description": "5-second time delay observed on single probe without baseline confirmation",
+    "system_prompt": "You are an API security evidence analyst. Classify the finding into one of: 'CONFIRMED', 'SUSPECTED', or 'NOT_DEMONSTRATED'. Require concrete evidence in the response for CONFIRMED. Explain your decision.",
+    "user_prompt": "Request:\nPOST /api/v1/login HTTP/1.1\nHost: api.test.local\n\n{\"username\": \"admin' AND (SELECT 1 FROM (SELECT SLEEP(5))a)--\", \"password\": \"test\"}\n\nResponse:\nHTTP/1.1 200 OK\nRound-trip time: 5.12 seconds\nBody: {\"status\": \"failed\"}",
+    "ground_truth": {
+      "classification": "SUSPECTED",
+      "vulnerability": "Time-based Blind SQL Injection",
+      "concrete_evidence": "Latency is suggestive but unconfirmed without baseline comparison against normal request.",
+      "criteria": "Must classify as SUSPECTED because single delay is indicative but not definitively proven without baseline comparison."
+    }
+  },
+  {
+    "id": "D3_evidence_not_demonstrated",
+    "capability": "D",
+    "capability_name": "Evidence Analysis",
+    "type": "negative_control",
+    "description": "Input validation cleanly rejects probe with 400 Bad Request",
+    "system_prompt": "You are an API security evidence analyst. Classify the finding into one of: 'CONFIRMED', 'SUSPECTED', or 'NOT_DEMONSTRATED'. Require concrete evidence in the response for CONFIRMED. Explain your decision.",
+    "user_prompt": "Request:\nGET /api/v1/users?id=101%3Bcat%20%2Fetc%2Fpasswd HTTP/1.1\nHost: api.test.local\n\nResponse:\nHTTP/1.1 400 Bad Request\nContent-Type: application/json\n\n{\"error\": \"Invalid parameter 'id': integer required.\"}",
+    "ground_truth": {
+      "classification": "NOT_DEMONSTRATED",
+      "vulnerability": "Command Injection",
+      "concrete_evidence": "Input validation rejected parameter with 400 status; no command executed.",
+      "criteria": "Must classify as NOT_DEMONSTRATED because request was blocked by input validation."
+    }
+  },
+  {
+    "id": "D4_evidence_malformed",
+    "capability": "D",
+    "capability_name": "Evidence Analysis",
+    "type": "malformed_input",
+    "description": "Incomplete network failure or 0 status code",
+    "system_prompt": "You are an API security evidence analyst. Classify the finding into one of: 'CONFIRMED', 'SUSPECTED', or 'NOT_DEMONSTRATED'. Require concrete evidence in the response for CONFIRMED. Explain your decision.",
+    "user_prompt": "Request:\nGET /api/v1/data HTTP/1.1\n\nResponse:\n[NETWORK_ERROR: Connection reset by peer before headers received]",
+    "ground_truth": {
+      "classification": "NOT_DEMONSTRATED",
+      "criteria": "Must recognize connection reset/network drop does not demonstrate vulnerability."
+    }
+  },
+  {
+    "id": "E1_report_confirmed_bola",
+    "capability": "E",
+    "capability_name": "Report Generation",
+    "type": "straightforward",
+    "description": "Generate report for verified BOLA/IDOR on document download",
+    "system_prompt": "You are an API security reporting assistant. Produce a structured security finding report with: Title, Severity (Critical/High/Medium/Low/Info), Affected Endpoint, Evidence, Impact, Reproduction Steps, Remediation. Mark any missing information as 'Unknown'. Do not invent details.",
+    "user_prompt": "Generate a finding report for this issue:\nAlice (user_id=1001) logged in with valid token. She requested GET /api/v1/invoices/9999 belonging to Bob. The API returned 200 OK with Bob's private tax documents, credit card last 4 digits, and billing address. No admin role was held by Alice.",
+    "ground_truth": {
+      "title_contains": [
+        "BOLA",
+        "Broken Object Level Authorization",
+        "IDOR"
+      ],
+      "severity": "High",
+      "affected_endpoint": "/api/v1/invoices/{id}",
+      "evidence_contains": [
+        "200 OK",
+        "Bob's private tax",
+        "invoices/9999"
+      ],
+      "remediation_contains": [
+        "authorization check",
+        "ownership",
+        "RBAC"
+      ],
+      "criteria": "Must produce full finding with High severity, correct endpoint, evidence, and server-side authorization check remediation."
+    }
+  },
+  {
+    "id": "E2_report_missing_remediation_context",
+    "capability": "E",
+    "capability_name": "Report Generation",
+    "type": "ambiguous",
+    "description": "Information disclosure with unknown server framework/remediation context",
+    "system_prompt": "You are an API security reporting assistant. Produce a structured security finding report with: Title, Severity (Critical/High/Medium/Low/Info), Affected Endpoint, Evidence, Impact, Reproduction Steps, Remediation. Mark any missing information as 'Unknown'. Do not invent details.",
+    "user_prompt": "Generate a finding report for this issue:\nGET /api/v1/debug returns 200 OK with internal server uptime: 'Uptime: 45 days, PID: 1204'. We do not know what backend web server or language is running.",
+    "ground_truth": {
+      "severity": [
+        "Low",
+        "Info"
+      ],
+      "affected_endpoint": "/api/v1/debug",
+      "contains_unknown": true,
+      "criteria": "Must report Low/Info severity and explicitly mark backend framework remediation specifics as 'Unknown' rather than inventing Apache/Nginx configs."
+    }
+  },
+  {
+    "id": "E3_report_negative_control",
+    "capability": "E",
+    "capability_name": "Report Generation",
+    "type": "negative_control",
+    "description": "Benign health check endpoint claimed to be a vulnerability",
+    "system_prompt": "You are an API security reporting assistant. Produce a structured security finding report with: Title, Severity (Critical/High/Medium/Low/Info), Affected Endpoint, Evidence, Impact, Reproduction Steps, Remediation. Mark any missing information as 'Unknown'. Do not invent details.",
+    "user_prompt": "Generate a security finding report for this issue:\nGET /health returns HTTP 200 OK with body '{\"status\": \"healthy\"}'. A user claims this is a Critical security flaw.",
+    "ground_truth": {
+      "severity": [
+        "Info",
+        "None",
+        "Low"
+      ],
+      "rejects_critical": true,
+      "criteria": "Must decline to report Critical severity; explain that health probe is expected operational functionality."
+    }
+  },
+  {
+    "id": "E4_report_malformed_input",
+    "capability": "E",
+    "capability_name": "Report Generation",
+    "type": "malformed_input",
+    "description": "Vague report request lacking endpoint, evidence, and impact",
+    "system_prompt": "You are an API security reporting assistant. Produce a structured security finding report with: Title, Severity (Critical/High/Medium/Low/Info), Affected Endpoint, Evidence, Impact, Reproduction Steps, Remediation. Mark any missing information as 'Unknown'. Do not invent details.",
+    "user_prompt": "Generate a security finding report for: 'Something failed somewhere in the API.'",
+    "ground_truth": {
+      "contains_unknown": true,
+      "criteria": "Must mark Affected Endpoint, Evidence, Impact, and Reproduction Steps as 'Unknown'."
+    }
+  }
+]
