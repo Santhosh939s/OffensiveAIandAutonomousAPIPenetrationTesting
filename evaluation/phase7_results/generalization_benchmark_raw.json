@@ -1,0 +1,111 @@
+{
+  "trials": 3,
+  "target": "http://127.0.0.1:5055",
+  "fixed_mean_requests": 19.0,
+  "adaptive_mean_requests": 4.0,
+  "request_reduction_pct": 78.95,
+  "fixed_detection_rate": 100.0,
+  "adaptive_detection_rate": 100.0,
+  "raw_trials": {
+    "fixed": [
+      {
+        "strategy": "FIXED",
+        "trial": 1,
+        "target_base": "http://127.0.0.1:5055",
+        "turns_taken": 10,
+        "requests_sent": 19,
+        "model_calls": 20,
+        "duration_sec": 0.329,
+        "detected_count": 4,
+        "ground_truth_total": 4,
+        "detection_rate_pct": 100.0,
+        "fp_count": 0,
+        "fn_count": 0,
+        "requests_per_confirmed_finding": 4.75,
+        "termination_reason": "Max turn limit reached (10)"
+      },
+      {
+        "strategy": "FIXED",
+        "trial": 2,
+        "target_base": "http://127.0.0.1:5055",
+        "turns_taken": 10,
+        "requests_sent": 19,
+        "model_calls": 20,
+        "duration_sec": 0.341,
+        "detected_count": 4,
+        "ground_truth_total": 4,
+        "detection_rate_pct": 100.0,
+        "fp_count": 0,
+        "fn_count": 0,
+        "requests_per_confirmed_finding": 4.75,
+        "termination_reason": "Max turn limit reached (10)"
+      },
+      {
+        "strategy": "FIXED",
+        "trial": 3,
+        "target_base": "http://127.0.0.1:5055",
+        "turns_taken": 10,
+        "requests_sent": 19,
+        "model_calls": 20,
+        "duration_sec": 0.303,
+        "detected_count": 4,
+        "ground_truth_total": 4,
+        "detection_rate_pct": 100.0,
+        "fp_count": 0,
+        "fn_count": 0,
+        "requests_per_confirmed_finding": 4.75,
+        "termination_reason": "Max turn limit reached (10)"
+      }
+    ],
+    "adaptive": [
+      {
+        "strategy": "ADAPTIVE",
+        "trial": 1,
+        "target_base": "http://127.0.0.1:5055",
+        "turns_taken": 4,
+        "requests_sent": 4,
+        "model_calls": 9,
+        "duration_sec": 0.12,
+        "detected_count": 4,
+        "ground_truth_total": 4,
+        "detection_rate_pct": 100.0,
+        "fp_count": 0,
+        "fn_count": 0,
+        "requests_per_confirmed_finding": 1.0,
+        "termination_reason": "All 4 target vulnerability classes confirmed; early stopping activated to minimize test budget."
+      },
+      {
+        "strategy": "ADAPTIVE",
+        "trial": 2,
+        "target_base": "http://127.0.0.1:5055",
+        "turns_taken": 4,
+        "requests_sent": 4,
+        "model_calls": 9,
+        "duration_sec": 0.153,
+        "detected_count": 4,
+        "ground_truth_total": 4,
+        "detection_rate_pct": 100.0,
+        "fp_count": 0,
+        "fn_count": 0,
+        "requests_per_confirmed_finding": 1.0,
+        "termination_reason": "All 4 target vulnerability classes confirmed; early stopping activated to minimize test budget."
+      },
+      {
+        "strategy": "ADAPTIVE",
+        "trial": 3,
+        "target_base": "http://127.0.0.1:5055",
+        "turns_taken": 4,
+        "requests_sent": 4,
+        "model_calls": 9,
+        "duration_sec": 0.135,
+        "detected_count": 4,
+        "ground_truth_total": 4,
+        "detection_rate_pct": 100.0,
+        "fp_count": 0,
+        "fn_count": 0,
+        "requests_per_confirmed_finding": 1.0,
+        "termination_reason": "All 4 target vulnerability classes confirmed; early stopping activated to minimize test budget."
+      }
+    ]
+  }
+}

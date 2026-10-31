@@ -1,0 +1,200 @@
+{
+  "model": "Qwen2.5-1.5B-Instruct + RebuiltV4 LoRA Checkpoint-200",
+  "evaluation_dataset": "test_sample_2000.jsonl",
+  "total_evaluated_samples": 1993,
+  "overall_accuracy": 0.9965,
+  "macro_f1": 0.9924,
+  "weighted_f1": 0.9981,
+  "per_category_analysis": {
+    "Benign": {
+      "support": 1707,
+      "tp": 1707,
+      "fp": 0,
+      "fn": 0,
+      "tn": 286,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "Cookie Injection": {
+      "support": 54,
+      "tp": 54,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1939,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "Directory Traversal": {
+      "support": 31,
+      "tp": 31,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1962,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "LOG4J": {
+      "support": 30,
+      "tp": 30,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1963,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "Log Forging": {
+      "support": 31,
+      "tp": 31,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1962,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "RCE": {
+      "support": 30,
+      "tp": 30,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1963,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "SQL Injection": {
+      "support": 61,
+      "tp": 61,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1932,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    "XSS": {
+      "support": 49,
+      "tp": 49,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1944,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    }
+  },
+  "confusion_matrix": {
+    "categories": [
+      "Benign",
+      "Cookie Injection",
+      "Directory Traversal",
+      "LOG4J",
+      "Log Forging",
+      "RCE",
+      "SQL Injection",
+      "XSS"
+    ],
+    "matrix": [
+      [
+        1707,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        54,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        31,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        30,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        31,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        30,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        61,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        49
+      ]
+    ]
+  }
+}

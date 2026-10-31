@@ -1,0 +1,36 @@
+{
+  "evaluation_phase": "Phase 7 Final Research Evaluation",
+  "timestamp_utc": "2026-10-31T09:40:31Z",
+  "total_evaluation_runtime_seconds": 6.46,
+  "experiment_1_multi_trial_benchmark": {
+    "fixed_strategy_mean_requests": 19.0,
+    "adaptive_strategy_mean_requests": 4.0,
+    "request_reduction_pct": 78.95,
+    "turn_reduction_pct": 60.0,
+    "vulnerability_detection_rate": "100.0%",
+    "false_positive_rate": "0.0%"
+  },
+  "experiment_2_generalization_benchmark": {
+    "target": "http://127.0.0.1:5055",
+    "request_reduction_pct": 78.95,
+    "detection_rate": "100.0%"
+  },
+  "experiment_3_model_classification": {
+    "evaluated_samples": 1993,
+    "accuracy": 0.9965,
+    "macro_f1": 0.9924
+  },
+  "experiment_4_hardware_profile": {
+    "gpu": "Nvidia Tesla T4",
+    "peak_vram_mb": 1692.4,
+    "mean_latency_ms": 368.31
+  },
+  "experiment_5_dashboard_verification": {
+    "session_created": true,
+    "traffic_logged": true,
+    "finding_recorded": true,
+    "sensitive_data_masked": true,
+    "report_generated_bytes": 2076,
+    "report_contains_finding": true
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "hardware_environment": {
+    "platform": "Kaggle GPU Environment",
+    "gpu_model": "Nvidia Tesla T4",
+    "vram_capacity_mb": 16160.0,
+    "cuda_driver_version": "12.8",
+    "pytorch_version": "2.1.1+cu128",
+    "transformers_version": "4.46.0"
+  },
+  "model_architecture": {
+    "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "parameter_count": 1540000000.0,
+    "lora_adapter": "RebuiltV4 Checkpoint-200",
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ]
+  },
+  "quantization_configuration": {
+    "method": "4-bit NormalFloat (NF4 via BitsAndBytes)",
+    "load_in_4bit": true,
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_use_double_quant": true,
+    "bnb_4bit_compute_dtype": "torch.bfloat16"
+  },
+  "inference_benchmarks": {
+    "batch_size": 8,
+    "evaluation_samples": 2000,
+    "total_runtime_seconds": 736.63,
+    "mean_latency_ms_per_sample": 368.31,
+    "throughput_samples_per_sec": 2.72,
+    "peak_vram_allocated_mb": 1692.4,
+    "vram_utilization_pct": 10.47
+  }
+}
