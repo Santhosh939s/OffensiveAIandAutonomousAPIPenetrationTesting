@@ -1,0 +1,12 @@
+# Lightweight Dependencies for 8 GB RAM Windows Environments
+# Fully compatible with Python 3.8.10 (No heavy PyTorch/CUDA binaries required locally)
+
+Flask>=3.0.0,<3.2.0
+Werkzeug>=3.0.0,<3.2.0
+httpx>=0.25.0,<0.29.0
+requests>=2.31.0
+pytest>=8.0.0
+pydantic>=2.0.0
+PyYAML>=6.0.0
+cryptography>=41.0.0
+
