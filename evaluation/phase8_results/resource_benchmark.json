@@ -1,0 +1,62 @@
+{
+  "hardware_environment": {
+    "os": "Windows",
+    "os_release": "10",
+    "python_version": "3.8.10",
+    "total_physical_ram_mb": 7834.63,
+    "available_physical_ram_mb": 1107.38,
+    "baseline_memory_load_pct": 85
+  },
+  "empirical_measurements": {
+    "controller_idle": {
+      "action": "Controller Idle State",
+      "elapsed_seconds": 0.023,
+      "working_set_before_mb": 39.76,
+      "working_set_peak_mb": 40.48,
+      "working_set_after_mb": 40.48,
+      "working_set_released_mb": 40.48,
+      "commit_charge_mb": 30.34,
+      "net_ram_delta_mb": 0.72
+    },
+    "dashboard_idle": {
+      "action": "Dashboard Idle State",
+      "elapsed_seconds": 0.027,
+      "working_set_before_mb": 40.55,
+      "working_set_peak_mb": 40.75,
+      "working_set_after_mb": 40.75,
+      "working_set_released_mb": 40.75,
+      "commit_charge_mb": 30.68,
+      "net_ram_delta_mb": 0.2
+    },
+    "local_lab_idle": {
+      "action": "Local API Lab Idle State",
+      "elapsed_seconds": 0.005,
+      "working_set_before_mb": 40.75,
+      "working_set_peak_mb": 40.87,
+      "working_set_after_mb": 40.87,
+      "working_set_released_mb": 40.87,
+      "commit_charge_mb": 30.68,
+      "net_ram_delta_mb": 0.12
+    },
+    "mock_assessment_run": {
+      "action": "Autonomous Assessment Run (Mock)",
+      "elapsed_seconds": 0.458,
+      "working_set_before_mb": 43.15,
+      "working_set_peak_mb": 58.89,
+      "working_set_after_mb": 49.36,
+      "working_set_released_mb": 48.74,
+      "commit_charge_mb": 37.84,
+      "net_ram_delta_mb": 6.21
+    },
+    "remote_qwen_client": {
+      "action": "Remote Qwen Client State",
+      "elapsed_seconds": 0.0,
+      "working_set_before_mb": 48.68,
+      "working_set_peak_mb": 58.89,
+      "working_set_after_mb": 48.68,
+      "working_set_released_mb": 48.68,
+      "commit_charge_mb": 37.45,
+      "net_ram_delta_mb": 0.0
+    }
+  }
+}

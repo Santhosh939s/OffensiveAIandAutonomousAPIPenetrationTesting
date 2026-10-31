@@ -1,0 +1,17 @@
+{
+  "assessment_success": true,
+  "turns_taken": 4,
+  "requests_sent": 4,
+  "duration_seconds": 0.141,
+  "confirmed_findings_count": 4,
+  "detected_ground_truth": [
+    "Mass Assignment",
+    "SQL Injection",
+    "Insecure Authentication",
+    "BOLA / IDOR"
+  ],
+  "detection_rate_pct": 100.0,
+  "false_positive_count": 0,
+  "false_negative_count": 0,
+  "regression_status": "ZERO_REGRESSION_PASSED"
+}
