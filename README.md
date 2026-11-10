@@ -47,24 +47,60 @@ cd OffensiveAIandAutonomousAPIPenetrationTesting
 
 ---
 
-### 3. Obtain the 4-bit Qwen GGUF Model
-Because the quantized model is **~940 MB**, it is hosted as a release artifact rather than a raw Git commit:
+### 3. Check, Download, and Verify the 4-bit Qwen GGUF Model
 
-1. **Download the GGUF model artifact:**
-   * **Direct Download:** Download [`qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf`](https://github.com/Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting/releases/download/v1.0.0/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf)
-   * *(Alternative: If transferred via USB drive, simply copy the file).*
-2. **Place the file into the `models/` folder:**
-   ```text
-   OffensiveAIandAutonomousAPIPenetrationTesting/
-   └── models/
-       └── qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf
-   ```
-3. **Verify cryptographic integrity:**
-   Run the verification utility to confirm the model is authentic and uncorrupted:
-   ```cmd
-   python scripts\verify_or_download_model.py
-   ```
-   * **Expected SHA-256 Digest:** `cd7dc83335b02d90f44a7fe4bd0f06eea4d64deb429710f238fe8c5de3da4dc5`
+Because the quantized model is **~940 MB**, it is distributed as a verified release artifact rather than a raw Git commit (Git has a 100 MB file limit).
+
+#### A. Check if the Model is Already Present
+Before downloading, you can check whether the model is already in place by running the verification utility:
+```cmd
+python scripts\verify_or_download_model.py
+```
+* **If Already Present and Verified:** You will see `[+] SUCCESS: Model cryptographic integrity verified bit-for-bit!` and you can proceed straight to Step 4.
+* **If Missing:** The script will alert you that the model is missing and instruct you to download it as explained below.
+
+#### B. Where to Download the Model
+Download the official verified model artifact from **GitHub Releases**:
+* 🔗 **Release Page:** [GitHub Release v1.0.0](https://github.com/Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting/releases/tag/v1.0.0)
+* 📥 **Direct Download Link:** [`qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf` (940.37 MB)](https://github.com/Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting/releases/download/v1.0.0/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf)
+
+*(Alternative Sources:)*
+* **Automated Kaggle Download:** If you have Kaggle API configured, run `python scripts/download_final_gguf.py` to fetch from dataset `santhosh939s/rebuiltv4-training-checkpoints`.
+* **Offline USB Drive Transfer:** If transferring locally between computers, simply copy `qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf` from a USB drive directly.
+
+#### C. Where to Place the Downloaded File
+Move or save the downloaded `.gguf` file directly into the `models/` directory of your cloned project:
+```text
+OffensiveAIandAutonomousAPIPenetrationTesting/
+├── controller/
+├── dashboard/
+├── lab/
+├── models/
+│   ├── bin/
+│   │   ├── llama-cli.exe
+│   │   └── *.dll
+│   └── qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf   <--- Place the 940 MB file here!
+├── scripts/
+├── launch.bat
+├── setup_windows.bat
+└── README.md
+```
+
+#### D. Verify Cryptographic Integrity
+After placing the model, run the verification script in PowerShell or Command Prompt:
+```cmd
+python scripts\verify_or_download_model.py
+```
+The script hashes the file and checks its authenticity:
+* **Expected File Size:** ~940.37 MB (986,048,288 bytes)
+* **Expected SHA-256 Digest:** `cd7dc83335b02d90f44a7fe4bd0f06eea4d64deb429710f238fe8c5de3da4dc5`
+
+When you see:
+```text
+[+] SUCCESS: Model cryptographic integrity verified bit-for-bit!
+[+] Model is authentic, unmodified, and ready for offline CPU inference.
+```
+Your model is authentic and ready for launch!
 
 ---
 
