@@ -22,9 +22,9 @@ stop.bat
 
 ---
 
-## 💻 Friend's Laptop Installation Guide (Windows x64 Step-by-Step)
+## 💻 Installation and Setup Guide (Windows x64 Step-by-Step)
 
-Follow these exact steps to run the complete platform on any Windows 10 or 11 laptop with 8 GB RAM and no dedicated GPU:
+Follow these complete end-to-end steps to clone, configure dependencies, set up the 4-bit model, and launch the platform on any Windows 10 or 11 system with 8 GB RAM (no dedicated GPU required):
 
 ### 1. System Requirements & Prerequisites
 * **Operating System:** Windows 10 or 11 (64-bit strictly required).
