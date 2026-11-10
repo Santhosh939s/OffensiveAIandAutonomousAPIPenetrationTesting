@@ -1,0 +1,68 @@
+{
+  "timestamp": 1794030491.6041613,
+  "total_boundaries_evaluated": 10,
+  "passed_boundaries_count": 10,
+  "all_boundaries_passed": true,
+  "results": [
+    {
+      "boundary_id": "SEC-01",
+      "name": "Target Scope Rejection",
+      "passed": true,
+      "details": "Deterministically blocked: Scope violation: External target domain 'unauthorized-internal.corp' is out of scope. Localhost testing only without active target authorization."
+    },
+    {
+      "boundary_id": "SEC-02",
+      "name": "Layer 1 Socket SSRF Interception",
+      "passed": true,
+      "details": "Direct socket connect to 169.254.169.254 and DNS-rebound answers blocked before socket connection"
+    },
+    {
+      "boundary_id": "SEC-03",
+      "name": "Private IP Range Interception",
+      "passed": true,
+      "details": "All tested private/link-local/cloud-metadata IPs blocked (10.254.1.1, 172.16.5.4, 192.168.1.1, 169.254.169.254)"
+    },
+    {
+      "boundary_id": "SEC-04",
+      "name": "Request Budget Enforcement",
+      "passed": true,
+      "details": "3rd request blocked at limit 2: Cumulative request limit reached (2 requests). Session budget exhausted."
+    },
+    {
+      "boundary_id": "SEC-05",
+      "name": "Turn Limit Enforcement",
+      "passed": true,
+      "details": "Turn 2 blocked under max_turns=1: Turn limit reached (2 > 1). Assessment turn budget exhausted."
+    },
+    {
+      "boundary_id": "SEC-06",
+      "name": "Live Target Revocation",
+      "passed": true,
+      "details": "Action blocked immediately upon target revocation: Live target authorization revoked: Policy 2 has zero active target authorizations"
+    },
+    {
+      "boundary_id": "SEC-07",
+      "name": "Registry Sentinel Protection",
+      "passed": true,
+      "details": "Direct tool invocation importing _REGISTRY_GATE_SENTINEL returned policy_denied=True"
+    },
+    {
+      "boundary_id": "SEC-08",
+      "name": "First-run Credential & Password Change Gating",
+      "passed": true,
+      "details": "must_change_password=True enforced, system_settings setup lock prevents silent recreation"
+    },
+    {
+      "boundary_id": "SEC-09",
+      "name": "Cryptographic Evidence Tamper Detection",
+      "passed": true,
+      "details": "SHA-256 evidence integrity check flagged modified traffic_log ID 1 as tampered"
+    },
+    {
+      "boundary_id": "SEC-10",
+      "name": "Unregistered Tool Rejection",
+      "passed": true,
+      "details": "Blocked unregistered tool: Tool 'system_command_exec' is not in the authorized tool registry"
+    }
+  ]
+}

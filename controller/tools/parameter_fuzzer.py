@@ -240,4 +240,12 @@ class ParameterFuzzerTool(BaseTool):
         )
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        return probe_api_parameters(config=self.config, **kwargs)
+        policy_ok, pol_err, clean_kwargs = self._check_execution_policy(kwargs)
+        if not policy_ok:
+            return {
+                "success": False,
+                "error": pol_err,
+                "tool_name": self.name,
+                "policy_denied": True,
+            }
+        return probe_api_parameters(config=self.config, **clean_kwargs)

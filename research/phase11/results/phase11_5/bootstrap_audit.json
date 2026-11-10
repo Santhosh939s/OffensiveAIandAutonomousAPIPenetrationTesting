@@ -1,0 +1,258 @@
+{
+  "audit_phase": "Phase 11.5",
+  "objective": "Bootstrap Implementation and Methodological Independence Audit",
+  "methodological_checks": {
+    "resampling_strategy": "Stratified sampling with replacement within true-class strata (np.random.RandomState.choice)",
+    "iterations_verified": 2000,
+    "random_seed": 42,
+    "confidence_level": 0.95,
+    "percentile_formula": "Empirical percentiles: lower=2.5%, upper=97.5% (numpy.percentile)",
+    "zero_division_handling": "zero_division=0 strictly adhered to; classes with 0 support contribute 0.0 to numerator and length to denominator",
+    "class_label_stability": "Fixed evaluation label arrays passed identically across all 2000 iterations",
+    "confusion_matrix_preservation": "All samples accounted for when using all_classes in tensor accumulator"
+  },
+  "independence_evaluation": {
+    "shared_dependencies": [
+      "numpy (pseudorandom generation and empirical percentile calculations)",
+      "scikit-learn (used in Implementation A for metric_fn; used in Implementation B for baseline verification)"
+    ],
+    "implementation_distinctions": {
+      "Implementation_A": "Functional wrapper around sklearn.metrics (accuracy_score, f1_score)",
+      "Implementation_B": "First-principles confusion matrix tensor accumulator directly tallying TP, FP, FN, TN per stratum"
+    },
+    "mathematical_equivalence": "Both algorithms implement the exact same underlying estimator; differences in point outputs are zero across all test splits",
+    "audit_verdict": "100% IDENTICAL CONVERGENCE ACROSS ALL BENCHMARKS"
+  },
+  "per_dataset_comparison": {
+    "Dataset_D_SecLists": {
+      "samples": 85,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "SQL Injection",
+        "XSS"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "accuracy_ci_impl_a": [
+        0.8,
+        0.9294
+      ],
+      "accuracy_ci_impl_b": [
+        0.8,
+        0.9294
+      ],
+      "accuracy_match": true,
+      "macro_f1_ci_impl_a": [
+        0.8523,
+        0.9626
+      ],
+      "macro_f1_ci_impl_b": [
+        0.8523,
+        0.9626
+      ],
+      "macro_f1_match": true,
+      "weighted_f1_ci_impl_a": [
+        0.8506,
+        0.9569
+      ],
+      "weighted_f1_ci_impl_b": [
+        0.8506,
+        0.9569
+      ],
+      "weighted_f1_match": true
+    },
+    "Dataset_A_Mendeley_Supp": {
+      "samples": 150,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "Unknown",
+        "XSS"
+      ],
+      "accuracy_ci_impl_a": [
+        0.6667,
+        0.8
+      ],
+      "accuracy_ci_impl_b": [
+        0.6667,
+        0.8
+      ],
+      "accuracy_match": true,
+      "macro_f1_ci_impl_a": [
+        0.6828,
+        0.812
+      ],
+      "macro_f1_ci_impl_b": [
+        0.6828,
+        0.812
+      ],
+      "macro_f1_match": true,
+      "weighted_f1_ci_impl_a": [
+        0.6828,
+        0.812
+      ],
+      "weighted_f1_ci_impl_b": [
+        0.6828,
+        0.812
+      ],
+      "weighted_f1_match": true
+    },
+    "Dataset_A_Mendeley_All": {
+      "samples": 180,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "XSS"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "LOG4J",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "Unknown",
+        "XSS"
+      ],
+      "accuracy_ci_impl_a": [
+        0.5556,
+        0.6667
+      ],
+      "accuracy_ci_impl_b": [
+        0.5556,
+        0.6667
+      ],
+      "accuracy_match": true,
+      "macro_f1_ci_impl_a": [
+        0.5301,
+        0.6311
+      ],
+      "macro_f1_ci_impl_b": [
+        0.5301,
+        0.6311
+      ],
+      "macro_f1_match": true,
+      "weighted_f1_ci_impl_a": [
+        0.5301,
+        0.6311
+      ],
+      "weighted_f1_ci_impl_b": [
+        0.5301,
+        0.6311
+      ],
+      "weighted_f1_match": true
+    },
+    "Dataset_B_WAMM_Supp": {
+      "samples": 60,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "accuracy_ci_impl_a": [
+        0.4,
+        0.5
+      ],
+      "accuracy_ci_impl_b": [
+        0.4,
+        0.5
+      ],
+      "accuracy_match": true,
+      "macro_f1_ci_impl_a": [
+        0.3109,
+        0.3833
+      ],
+      "macro_f1_ci_impl_b": [
+        0.3109,
+        0.3833
+      ],
+      "macro_f1_match": true,
+      "weighted_f1_ci_impl_a": [
+        0.3109,
+        0.3833
+      ],
+      "weighted_f1_ci_impl_b": [
+        0.3109,
+        0.3833
+      ],
+      "weighted_f1_match": true
+    },
+    "Dataset_B_WAMM_All": {
+      "samples": 90,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "Unknown"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Cookie Injection",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "Unknown",
+        "XSS"
+      ],
+      "accuracy_ci_impl_a": [
+        0.2667,
+        0.3333
+      ],
+      "accuracy_ci_impl_b": [
+        0.2667,
+        0.3333
+      ],
+      "accuracy_match": true,
+      "macro_f1_ci_impl_a": [
+        0.1624,
+        0.2054
+      ],
+      "macro_f1_ci_impl_b": [
+        0.1624,
+        0.2054
+      ],
+      "macro_f1_match": true,
+      "weighted_f1_ci_impl_a": [
+        0.1624,
+        0.2054
+      ],
+      "weighted_f1_ci_impl_b": [
+        0.1624,
+        0.2054
+      ],
+      "weighted_f1_match": true
+    }
+  }
+}

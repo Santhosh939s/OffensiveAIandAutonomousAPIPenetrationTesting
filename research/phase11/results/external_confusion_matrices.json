@@ -1,0 +1,408 @@
+{
+  "Dataset_A": {
+    "Benign": {
+      "Benign": 5,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 1
+    },
+    "Cookie Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 0
+    },
+    "Directory Traversal": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 6,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 0
+    },
+    "LOG4J": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 0
+    },
+    "Log Forging": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 0
+    },
+    "RCE": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 6,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 0
+    },
+    "SQL Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 2,
+      "SQL Injection": 4,
+      "SSRF": 0,
+      "XSS": 0
+    },
+    "SSRF": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 4,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 2,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 0
+    },
+    "XSS": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 1,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "XSS": 5
+    }
+  },
+  "Dataset_B": {
+    "Benign": {
+      "Benign": 5,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 1
+    },
+    "Cookie Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "Directory Traversal": {
+      "Benign": 1,
+      "Cookie Injection": 0,
+      "Directory Traversal": 5,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "LOG4J": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "Log Forging": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "RCE": {
+      "Benign": 1,
+      "Cookie Injection": 1,
+      "Directory Traversal": 4,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "SQL Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 4,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 2,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "SSRF": {
+      "Benign": 6,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "Unknown": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 3,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 3,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "XSS": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "SSRF": 0,
+      "Unknown": 0,
+      "XSS": 0
+    }
+  },
+  "Dataset_D": {
+    "Benign": {
+      "Benign": 7,
+      "Cookie Injection": 0,
+      "Directory Traversal": 1,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0
+    },
+    "Cookie Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0
+    },
+    "Directory Traversal": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 8,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0
+    },
+    "LOG4J": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0
+    },
+    "Log Forging": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0
+    },
+    "RCE": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0
+    },
+    "SQL Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 1,
+      "SQL Injection": 7,
+      "XSS": 0
+    },
+    "XSS": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 1,
+      "SQL Injection": 0,
+      "XSS": 7
+    }
+  },
+  "Dataset_E": {
+    "Benign": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "Cookie Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "Directory Traversal": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "LOG4J": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "Log Forging": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "RCE": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "SQL Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    },
+    "Unknown": {
+      "Benign": 32,
+      "Cookie Injection": 3,
+      "Directory Traversal": 2,
+      "LOG4J": 0,
+      "Log Forging": 2,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 1
+    },
+    "XSS": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "Unknown": 0,
+      "XSS": 0
+    }
+  }
+}

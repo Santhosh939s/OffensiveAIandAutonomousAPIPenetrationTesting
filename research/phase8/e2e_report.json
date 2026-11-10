@@ -1,0 +1,75 @@
+{
+  "report_version": "2.0.0",
+  "generated_at_utc": "2026-11-07T06:42:33Z",
+  "session": {
+    "session_id": "session_8e90e00446ff",
+    "target_url": "http://127.0.0.1:46267",
+    "created_at": 1794033664.964345,
+    "status": "COMPLETED",
+    "turns_taken": 3,
+    "requests_sent": 1,
+    "notes": "Unrecognized action_type 'None' returned by model"
+  },
+  "risk_summary": {
+    "total_findings": 0,
+    "confirmed_count": 0,
+    "suspected_count": 0,
+    "severity_counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    },
+    "overall_risk_score": 0.0,
+    "overall_risk_rating": "INFORMATIONAL",
+    "top_vulnerabilities": []
+  },
+  "findings": [],
+  "specifications": [],
+  "test_plans": [
+    {
+      "plan_title": "End-to-End Validation Run",
+      "steps": [
+        {
+          "step_number": 1,
+          "tool": "http_request",
+          "purpose": "Perform a bounded, safe HTTP request to verify the target's response and ensure it is accessible.",
+          "parameters": {}
+        },
+        {
+          "step_number": 2,
+          "tool": "httpx_request",
+          "purpose": "Execute a high-performance HTTP request using HTTPX against the authorized localhost to further validate connectivity and performance.",
+          "parameters": {}
+        }
+      ],
+      "rationale": "This plan aims to ensure that the target is accessible and performs as expected. The use of bounded, safe tools minimizes risk while still providing comprehensive validation."
+    }
+  ],
+  "tool_executions": [
+    {
+      "id": 1,
+      "tool_name": "httpx_request",
+      "approved": true,
+      "policy_reason": "HTTP request (httpx_request) is authorized within scope",
+      "duration_ms": 352.68
+    },
+    {
+      "id": 2,
+      "tool_name": "httpx_request",
+      "approved": false,
+      "policy_reason": "httpx_request requires a 'url' argument",
+      "duration_ms": 0.0
+    }
+  ],
+  "traffic_sample": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:46267",
+      "response_status": 404,
+      "elapsed_ms": 351.07
+    }
+  ],
+  "total_traffic_count": 1
+}

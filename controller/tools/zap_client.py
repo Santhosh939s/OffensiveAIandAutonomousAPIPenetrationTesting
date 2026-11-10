@@ -145,10 +145,10 @@ class ZapSecurityScanTool(BaseTool):
             with httpx.Client(
                 timeout=httpx.Timeout(
                     timeout=effective_timeout,
-                    connect=self.config.http_connect_timeout,
-                    read=self.config.http_read_timeout,
-                    write=self.config.http_connect_timeout,
-                    pool=self.config.http_connect_timeout,
+                    connect=min(effective_timeout, self.config.http_connect_timeout),
+                    read=min(effective_timeout, self.config.http_read_timeout),
+                    write=effective_timeout,
+                    pool=effective_timeout,
                 ),
                 follow_redirects=False,
             ) as client:
@@ -172,7 +172,8 @@ class ZapSecurityScanTool(BaseTool):
 
     def check_health(self, key_override: Optional[str] = None) -> Dict[str, Any]:
         """Check if ZAP daemon is running, responding, and healthy."""
-        ok, data, err = self._request_zap("/JSON/core/view/version/", key_override=key_override)
+        connect_t = min(1.0, self.config.http_connect_timeout)
+        ok, data, err = self._request_zap("/JSON/core/view/version/", key_override=key_override, timeout=connect_t)
         if ok:
             version = data.get("version", "unknown")
             return {
@@ -436,24 +437,33 @@ class ZapSecurityScanTool(BaseTool):
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         """Standard tool execution dispatcher."""
-        valid, err = self.validate_arguments(kwargs)
+        policy_ok, pol_err, clean_kwargs = self._check_execution_policy(kwargs)
+        if not policy_ok:
+            return {
+                "success": False,
+                "error": pol_err,
+                "tool_name": self.name,
+                "policy_denied": True,
+            }
+
+        valid, err = self.validate_arguments(clean_kwargs)
         if not valid:
             return {"success": False, "error": err}
 
-        action = str(kwargs.get("action", "")).strip().lower()
+        action = str(clean_kwargs.get("action", "")).strip().lower()
         if action not in VALID_ZAP_ACTIONS:
             return {
                 "success": False,
                 "error": f"Invalid action '{action}'. Permitted: {sorted(VALID_ZAP_ACTIONS)}",
             }
 
-        target_url = kwargs.get("url") or kwargs.get("target_url")
-        scan_id = kwargs.get("scan_id")
-        scan_type = kwargs.get("scan_type", "spider")
-        max_children = kwargs.get("max_children")
-        poll_until_complete = bool(kwargs.get("poll_until_complete", False))
-        poll_timeout = kwargs.get("poll_timeout")
-        key_override = kwargs.get("api_key")
+        target_url = clean_kwargs.get("url") or clean_kwargs.get("target_url")
+        scan_id = clean_kwargs.get("scan_id")
+        scan_type = clean_kwargs.get("scan_type", "spider")
+        max_children = clean_kwargs.get("max_children")
+        poll_until_complete = bool(clean_kwargs.get("poll_until_complete", False))
+        poll_timeout = clean_kwargs.get("poll_timeout")
+        key_override = clean_kwargs.get("api_key")
 
         # Mask API key in all internal receipt generation
         receipt_meta = {

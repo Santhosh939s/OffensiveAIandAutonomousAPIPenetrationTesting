@@ -1,40 +1,54 @@
 {
-  "manifest_version": "1.0",
-  "created_at": "2026-10-31T11:20:00Z",
-  "model_id": "qwen2.5-1.5b-rebuiltv4",
-  "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
-  "adapter_source": "staging_rebuiltv4_training_checkpoints/checkpoint-200",
-  "adapter_checkpoint": "checkpoint-200",
-  "deployment_target": "Windows 10/11 x64, 8 GB RAM, Intel i3-class CPU (Offline)",
-  "quantization": "Q4_K_M",
-  "file_name": "qwen2.5-1.5b-rebuiltv4.Q4_K_M.gguf",
-  "file_size_bytes": 986048320,
-  "file_size_mb": 940.37,
-  "sha256": "2a77e5cc85faa3210db9267c3c7a5076d3aee2c1001a7adb5b569ff9a567d1bb",
-  "runtime_engine": "llama-cpp-python / llama.cpp",
+  "project_name": "Offensive AI and Autonomous API Penetration Testing",
+  "version": "1.0.0",
+  "build_type": "standalone_offline_distribution",
+  "target_platform": "Windows 10/11 x64 (8 GB RAM)",
+  "python_version_minimum": "3.8.10",
   "architecture": {
-    "family": "qwen2",
-    "block_count": 28,
-    "context_length": 32768,
-    "embedding_length": 1536,
-    "feed_forward_length": 8960,
-    "head_count": 12,
-    "head_count_kv": 2,
-    "tensor_count": 338,
-    "gguf_version": 3
+    "backend_framework": "Flask 3.0+ / Werkzeug 3.0+",
+    "inference_engine": "llama-cli (Local CPU GGUF)",
+    "database": "SQLite 3 (WAL mode)",
+    "policy_enforcement": "ScopeValidator & PolicyEngine (Layer 1 socket hooks)"
   },
-  "recommended_config": {
-    "n_ctx": 1536,
-    "n_threads": 4,
-    "n_batch": 128,
-    "use_mmap": true,
-    "estimated_ram_mb": 920.0
+  "artifacts": {
+    "gguf_model": {
+      "path": "models/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf",
+      "format": "GGUF Q4_K_M",
+      "size_bytes": 986047872,
+      "sha256": "cd7dc83335b02d90f44a7fe4bd0f06eea4d64deb429710f238fe8c5de3da4dc5"
+    },
+    "lora_adapter": {
+      "path": "models/training_artifacts/final_adapter/adapter_model.safetensors",
+      "format": "safetensors",
+      "size_bytes": 19472304,
+      "sha256": "39fd053a1725e15c9f8071578965d9b7d2b58b8aff2d0d722fc36d8796879327"
+    }
   },
-  "provenance": {
-    "training_environment": "Kaggle Tesla T4 GPU (RebuiltV4 LoRA)",
-    "export_environment": "Kaggle GPU Kernel Version 26 (urop-offensive-ai)",
-    "conversion_tool": "llama.cpp convert_hf_to_gguf.py",
-    "quantization_tool": "llama.cpp llama-quantize Q4_K_M"
+  "launchers": [
+    {
+      "file": "launch.bat",
+      "type": "Windows Command Script",
+      "purpose": "Primary user-facing one-click launcher (pre-flight checks, lab startup, dashboard startup, browser launch)"
+    },
+    {
+      "file": "stop.bat",
+      "type": "Windows Command Script",
+      "purpose": "Graceful standalone shutdown utility terminating processes on ports 8088 and 5050"
+    },
+    {
+      "file": "launcher.py",
+      "type": "Python Orchestrator",
+      "purpose": "Underlying system diagnostic and multi-service lifecycle controller"
+    }
+  ],
+  "ports": {
+    "dashboard_web_ui": 8088,
+    "vulnerable_api_lab": 5050
+  },
+  "offline_capabilities": {
+    "network_disconnected_operation": true,
+    "external_cdn_dependencies": false,
+    "cloud_ai_api_required": false,
+    "localhost_boundary_enforced": true
   }
 }
-

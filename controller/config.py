@@ -26,10 +26,11 @@ class AgentConfig:
     http_read_timeout: float = 10.0  # seconds
     max_response_body_bytes: int = 50 * 1024  # 50 KB ceiling
 
-    # Target scope boundaries (Localhost only)
+    # Target scope boundaries (Localhost only by default, external permissible via policy authorization)
     allowed_hosts: Set[str] = field(
         default_factory=lambda: {"127.0.0.1", "localhost", "::1"}
     )
+    allow_external_domains: bool = False
     allowed_schemes: Set[str] = field(default_factory=lambda: {"http", "https"})
     allowed_http_methods: Set[str] = field(
         default_factory=lambda: {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}

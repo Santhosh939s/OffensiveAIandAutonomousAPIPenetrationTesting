@@ -1,0 +1,50 @@
+{
+  "combined_external_independent": {
+    "total_records": 64130,
+    "exact_collisions": 0,
+    "normalized_collisions": 0,
+    "independent_records": 64130,
+    "leakage_rate": 0.0,
+    "classification": "Independent"
+  },
+  "dataset_a_external": {
+    "total_records": 27805,
+    "exact_collisions": 0,
+    "normalized_collisions": 0,
+    "independent_records": 27805,
+    "leakage_rate": 0.0,
+    "classification": "Independent"
+  },
+  "dataset_b_external": {
+    "total_records": 6000,
+    "exact_collisions": 0,
+    "normalized_collisions": 0,
+    "independent_records": 6000,
+    "leakage_rate": 0.0,
+    "classification": "Independent"
+  },
+  "dataset_c_sqli": {
+    "total_records": 47463,
+    "exact_collisions": 0,
+    "normalized_collisions": 0,
+    "independent_records": 47463,
+    "leakage_rate": 0.0,
+    "classification": "Independent"
+  },
+  "dataset_d_seclists_challenge": {
+    "total_records": 1317,
+    "exact_collisions": 0,
+    "normalized_collisions": 0,
+    "independent_records": 1317,
+    "leakage_rate": 0.0,
+    "classification": "Independent"
+  },
+  "dataset_e_atrdf": {
+    "total_records": 33008,
+    "exact_collisions": 0,
+    "normalized_collisions": 0,
+    "independent_records": 33008,
+    "leakage_rate": 0.0,
+    "classification": "Independent"
+  }
+}

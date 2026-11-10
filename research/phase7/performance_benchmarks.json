@@ -1,0 +1,47 @@
+{
+  "timestamp": 1794030676.8377078,
+  "environment": {
+    "os": "Windows 10",
+    "arch": "AMD64",
+    "python_version": "3.8.10",
+    "cpu_cores": 4
+  },
+  "memory_footprint": {
+    "initial_python_rss_mb": 40.72,
+    "final_python_rss_mb": 42.58,
+    "peak_llama_cli_rss_mb": 1278.67
+  },
+  "startup_latency": {
+    "evidence_store_init_ms": 11.59,
+    "auth_bootstrap_ms": 191.32,
+    "policy_service_setup_ms": 2.69,
+    "tool_registry_build_ms": 0.09,
+    "dashboard_app_factory_ms": 13.25,
+    "total_backend_cold_start_ms": 218.94,
+    "total_backend_cold_start_seconds": 0.219
+  },
+  "model_inference": {
+    "model_path": "S:\\UROP\\offensive AI and autonomous APi penetration testing\\models\\qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf",
+    "model_file_size_mb": 940.37,
+    "engine": "llama_cli",
+    "is_mock": false,
+    "n_threads": 4,
+    "sample_count": 3,
+    "avg_latency_seconds": 4.033,
+    "p50_latency_seconds": 4.101,
+    "min_latency_seconds": 3.649,
+    "max_latency_seconds": 4.35,
+    "approx_tokens_per_second": 4.05
+  },
+  "reporting_latency": {
+    "seeded_traffic_records": 10,
+    "seeded_findings": 5,
+    "json_report_latency_ms": 1.45,
+    "json_report_size_bytes": 10,
+    "html_report_latency_ms": 1.2,
+    "html_report_size_bytes": 11369,
+    "markdown_report_latency_ms": 0.98,
+    "markdown_report_size_bytes": 7024,
+    "total_reporting_latency_ms": 3.63
+  }
+}

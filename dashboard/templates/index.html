@@ -38,11 +38,21 @@
                     <span class="nav-icon">🚨</span> Security Findings
                     <span id="findings-count-badge" class="badge-pill">0</span>
                 </button>
+                <button class="nav-tab" data-tab="discovered-endpoints">
+                    <span class="nav-icon">🌐</span> Endpoints
+                    <span id="endpoints-count-badge" class="badge-pill">0</span>
+                </button>
                 <button class="nav-tab" data-tab="reports">
                     <span class="nav-icon">📑</span> Reports
                 </button>
+                <button class="nav-tab" data-tab="session-compare">
+                    <span class="nav-icon">⚖️</span> Compare Runs
+                </button>
                 <button class="nav-tab" data-tab="settings">
                     <span class="nav-icon">⚙️</span> Diagnostics & Scope
+                </button>
+                <button class="nav-tab" data-tab="policies" id="nav-tab-policies">
+                    <span class="nav-icon">🛡️</span> Policies & Auth
                 </button>
             </nav>
 
@@ -69,8 +79,14 @@
                     <span id="current-session-display" class="code-val">None</span>
                 </div>
                 <div class="top-actions">
+                    <button id="theme-toggle-btn" class="btn btn-secondary btn-sm" title="Toggle Light/Dark Theme">🌓 Theme</button>
                     <span id="assessment-badge" class="badge badge-idle">IDLE</span>
                     <button id="cancel-btn" class="btn btn-danger btn-sm" disabled>Cancel Scan</button>
+                    <div id="auth-status-container" class="auth-bar-status">
+                        <span id="auth-user-badge" class="badge badge-auth hidden">User</span>
+                        <a href="/login" id="auth-login-link" class="btn btn-outline btn-sm">Admin Sign In</a>
+                        <button id="auth-logout-btn" class="btn btn-secondary btn-sm hidden">Sign Out</button>
+                    </div>
                 </div>
             </header>
 
@@ -146,84 +162,190 @@
                 <!-- 2. NEW ASSESSMENT TAB -->
                 <section id="tab-new-assessment" class="tab-pane">
                     <div class="section-title">
-                        <h2>Configure & Launch Assessment</h2>
-                        <p class="subtitle">Specify target constraints, testing budgets, and decision engine configuration</p>
+                        <h2>Autonomous AI Penetration Testing</h2>
+                        <p class="subtitle">Enter target URL and launch. The AI autonomously discovers endpoints, reasons about attack surfaces, and executes security tests.</p>
                     </div>
 
                     <form id="assessment-form" class="form-container">
-                        <div class="form-grid">
-                            <div class="form-group col-2">
-                                <label for="target_url">Target Base API URL <span class="required">*</span></label>
-                                <input type="url" id="target_url" name="target_url" placeholder="http://127.0.0.1:5050" value="http://127.0.0.1:5050" required>
-                                <small class="form-hint">Must resolve to an authorized localhost endpoint or host explicitly defined in scope.</small>
+                        <!-- Primary 1-Click Launch Card -->
+                        <div class="panel-box" style="margin-bottom: 1.5rem; padding: 1.5rem; background: linear-gradient(180deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
+                            <label for="target_url" style="font-size: 1.05rem; font-weight: 600; color: #f1f5f9; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.65rem;">
+                                <span>🎯</span> Target Web Application or API URL <span class="required">*</span>
+                            </label>
+                            
+                            <div style="display: flex; gap: 0.75rem; align-items: stretch; flex-wrap: wrap;">
+                                <input type="url" id="target_url" name="target_url" placeholder="https://chesswithai-seven.vercel.app or http://127.0.0.1:5050" value="http://127.0.0.1:5050" required style="flex: 1; min-width: 320px; font-size: 1.05rem; padding: 0.85rem 1.1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(15, 23, 42, 0.95); color: #fff;">
+                                
+                                <button type="submit" id="start-btn" class="btn btn-primary" style="font-size: 1.05rem; padding: 0.85rem 1.8rem; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45); cursor: pointer;">
+                                    <span class="btn-icon">⚡</span> Start Autonomous Assessment
+                                </button>
                             </div>
 
-                            <div class="form-group col-2">
-                                <label for="allowed_hosts">Permitted Scope Hosts (comma-separated)</label>
-                                <input type="text" id="allowed_hosts" name="allowed_hosts" value="127.0.0.1, localhost, 127.0.0.1:5050" required>
-                                <small class="form-hint">PolicyEngine strictly rejects any outbound traffic to hosts not in this list.</small>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="assessment_name">Assessment Label / Campaign</label>
-                                <input type="text" id="assessment_name" name="assessment_name" value="Local Lab Audit (Phase 6 Live)">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="brain_mode">Decision Engine (AI Brain)</label>
-                                <select id="brain_mode" name="brain_mode">
-                                    <option value="local_cpu" selected>Local CPU GGUF Brain (Standalone Offline, 8 GB RAM)</option>
-                                    <option value="mock">Deterministic Mock Brain (Offline Verification)</option>
-                                    <option value="remote">Remote Qwen2.5-1.5B Brain (Kaggle / Colab GPU Tunnel)</option>
-                                    <option value="local_qwen">Local Qwen2.5-1.5B LoRA Brain (Requires Local GPU)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group col-2" id="remote-endpoint-group" style="display: none;">
-                                <label for="remote_endpoint">Remote Brain Endpoint URL</label>
-                                <input type="url" id="remote_endpoint" name="remote_endpoint" placeholder="https://xxxx-your-tunnel.ngrok-free.app/generate">
-                                <small class="form-hint">POST endpoint running our FastAPI inference worker with RebuiltV4 Checkpoint-200.</small>
-                            </div>
-
-                            <div class="form-group col-2">
-                                <label for="spec_source">OpenAPI Specification Source (Optional)</label>
-                                <input type="text" id="spec_source" name="spec_source" value="lab/openapi_spec.json" placeholder="e.g. lab/openapi_spec.json or http://127.0.0.1:5050/openapi.json">
-                                <small class="form-hint">Local file path or URL for schema parsing and endpoint seed generation.</small>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="max_turns">Max ReAct Turns</label>
-                                <input type="number" id="max_turns" name="max_turns" min="1" max="50" value="8">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="max_requests">Max HTTP Requests</label>
-                                <input type="number" id="max_requests" name="max_requests" min="1" max="100" value="25">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="max_model_calls">Max Model Reasoning Calls</label>
-                                <input type="number" id="max_model_calls" name="max_model_calls" min="1" max="100" value="20">
-                            </div>
-
-                            <div class="form-group checkbox-group">
-                                <label>
-                                    <input type="checkbox" id="zap_active_scan" name="zap_active_scan">
-                                    Enable OWASP ZAP Active Scan (Strict Scope Only)
-                                </label>
-                                <small class="form-hint text-warning">Passive scanning and spidering are always enabled when ZAP is reachable.</small>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                                <div id="target-scope-validation-pill" class="scope-pill scope-unknown">Target Scope: Not Validated</div>
+                                <span id="start-status-msg" class="status-msg" style="font-size: 0.88rem; font-weight: 600;"></span>
                             </div>
                         </div>
 
-                        <div class="form-actions mt-4">
-                            <button type="submit" id="start-btn" class="btn btn-primary">
-                                <span class="btn-icon">🚀</span> Start Autonomous Assessment
-                            </button>
-                            <span id="start-status-msg" class="status-msg"></span>
-                        </div>
+                        <!-- Collapsible Advanced Tuning Settings -->
+                        <details class="advanced-settings-accordion" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.75rem 1.25rem;">
+                            <summary style="cursor: pointer; font-size: 0.92rem; font-weight: 600; color: #94a3b8; user-select: none; display: flex; align-items: center; justify-content: space-between;">
+                                <span>⚙️ Advanced Settings & Custom Tuning (Optional)</span>
+                                <span style="font-size: 0.78rem; color: #64748b;">Click to view / customize parameters ▾</span>
+                            </summary>
+
+                            <div class="form-grid" style="margin-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.25rem;">
+                                <div class="form-group col-2">
+                                    <label for="assessment_policy_id">Authorized Testing Policy</label>
+                                    <select id="assessment_policy_id" name="policy_id">
+                                        <option value="">Auto-Select Active Policy</option>
+                                    </select>
+                                    <small class="form-hint">Governs authorized tools, categories, HTTP methods, and budget ceilings.</small>
+                                </div>
+
+                                <div class="form-group col-2">
+                                    <label for="allowed_hosts">Permitted Scope Hosts (comma-separated)</label>
+                                    <input type="text" id="allowed_hosts" name="allowed_hosts" value="127.0.0.1, localhost, 127.0.0.1:5050" required>
+                                    <small class="form-hint">Auto-synced with target URL. Outbound traffic is restricted to these hosts.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="assessment_name">Assessment Label / Campaign</label>
+                                    <input type="text" id="assessment_name" name="assessment_name" value="Autonomous Web Pentest">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="brain_mode">Decision Engine (AI Brain)</label>
+                                    <select id="brain_mode" name="brain_mode">
+                                        <option value="local_cpu" selected>Local CPU GGUF Brain (Standalone Offline, 8 GB RAM)</option>
+                                        <option value="mock">Deterministic Mock Brain (Offline Verification)</option>
+                                        <option value="remote">Remote Qwen2.5-1.5B Brain (Kaggle / Colab GPU Tunnel)</option>
+                                        <option value="local_qwen">Local Qwen2.5-1.5B LoRA Brain (Requires Local GPU)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-2" id="remote-endpoint-group" style="display: none;">
+                                    <label for="remote_endpoint">Remote Brain Endpoint URL</label>
+                                    <input type="url" id="remote_endpoint" name="remote_endpoint" placeholder="https://xxxx-your-tunnel.ngrok-free.app/generate">
+                                    <small class="form-hint">POST endpoint running our FastAPI inference worker with RebuiltV4 Checkpoint-200.</small>
+                                </div>
+
+                                <div class="form-group col-2">
+                                    <label for="spec_source">OpenAPI Specification Source (Optional)</label>
+                                    <input type="text" id="spec_source" name="spec_source" value="" placeholder="e.g. lab/openapi_spec.json or https://my-site.com/openapi.json">
+                                    <small class="form-hint">Optional schema URL/path. If omitted, the AI discovers endpoints autonomously.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="assessment_type">API Paradigm / Discovery Mode</label>
+                                    <select id="assessment_type" name="assessment_type">
+                                        <option value="auto" selected>Auto-Detect (REST OpenAPI + GraphQL Probe)</option>
+                                        <option value="rest">REST API Exclusive (OpenAPI Schemas & Route Probing)</option>
+                                        <option value="graphql">GraphQL Exclusive (Introspection, Fields & Deep Queries)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="assessment_depth">Assessment Depth & Strategy</label>
+                                    <select id="assessment_depth" name="assessment_depth">
+                                        <option value="quick">Quick Probe (Top critical attack surfaces, 5-8 turns)</option>
+                                        <option value="standard" selected>Standard Assessment (Balanced ReAct loop & boundary testing)</option>
+                                        <option value="exhaustive">Exhaustive Audit (Deep fuzzing, shadow route brute, rate limits)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="auth_type">Authentication Method</label>
+                                    <select id="auth_type" name="auth_type">
+                                        <option value="none" selected>None / Unauthenticated Testing</option>
+                                        <option value="bearer">Bearer Token (JWT / OAuth)</option>
+                                        <option value="api_key">API Key Header</option>
+                                        <option value="basic">HTTP Basic Authentication</option>
+                                        <option value="custom">Raw Auth Header / Context</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="auth-bearer-group" style="display: none;">
+                                    <label for="auth_bearer_token">Bearer Token Value</label>
+                                    <input type="password" id="auth_bearer_token" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                                </div>
+
+                                <div class="form-group" id="auth-apikey-group" style="display: none;">
+                                    <label for="auth_api_key_name">Header Name & Key Value</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" id="auth_api_key_name" placeholder="X-API-Key" value="X-API-Key" style="width: 40%;">
+                                        <input type="password" id="auth_api_key_val" placeholder="Secret Key Value" style="width: 60%;">
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="auth-basic-group" style="display: none;">
+                                    <label for="auth_basic_user">Basic Auth Credentials</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" id="auth_basic_user" placeholder="Username" style="width: 50%;">
+                                        <input type="password" id="auth_basic_pass" placeholder="Password" style="width: 50%;">
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-2" id="auth-custom-group" style="display: none;">
+                                    <label for="auth_context">Custom Authentication Header(s)</label>
+                                    <input type="text" id="auth_context" name="auth_context" placeholder="Bearer eyJhbGciOi... or API token / custom header">
+                                    <small class="form-hint">Supplied to the agent for authenticated API testing; secrets are masked before prompt/log rendering.</small>
+                                </div>
+
+                                <div class="form-group col-2">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <label>Targeted OWASP API Top 10 (2023) Categories</label>
+                                        <div>
+                                            <button type="button" id="btn-select-all-owasp" class="btn btn-ghost btn-xs">Select All</button>
+                                            <button type="button" id="btn-clear-all-owasp" class="btn btn-ghost btn-xs">Clear All</button>
+                                        </div>
+                                    </div>
+                                    <div class="owasp-categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; font-size: 0.85rem;">
+                                        <label><input type="checkbox" name="owasp_cat" value="API1" checked> <strong>API1</strong>: BOLA (IDOR)</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API2" checked> <strong>API2</strong>: Broken Auth</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API3" checked> <strong>API3</strong>: BOPLA (Mass Assign)</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API4" checked> <strong>API4</strong>: Resource Limits</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API5" checked> <strong>API5</strong>: BFLA / Admin Auth</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API6" checked> <strong>API6</strong>: Business Flows</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API7" checked> <strong>API7</strong>: SSRF</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API8" checked> <strong>API8</strong>: Misconfig / SQLi</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API9" checked> <strong>API9</strong>: Improper Inventory</label>
+                                        <label><input type="checkbox" name="owasp_cat" value="API10" checked> <strong>API10</strong>: Unsafe API Consump</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="timeout_seconds">Session Timeout Ceiling (seconds)</label>
+                                    <input type="number" id="timeout_seconds" name="timeout_seconds" min="10" max="1800" value="600">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="max_turns">Max ReAct Turns</label>
+                                    <input type="number" id="max_turns" name="max_turns" min="1" max="50" value="8">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="max_requests">Max HTTP Requests</label>
+                                    <input type="number" id="max_requests" name="max_requests" min="1" max="100" value="25">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="max_model_calls">Max Model Reasoning Calls</label>
+                                    <input type="number" id="max_model_calls" name="max_model_calls" min="1" max="100" value="20">
+                                </div>
+
+                                <div class="form-group checkbox-group">
+                                    <label>
+                                        <input type="checkbox" id="zap_active_scan" name="zap_active_scan">
+                                        Enable OWASP ZAP Active Scan (Strict Scope Only)
+                                    </label>
+                                    <small class="form-hint text-warning">Passive scanning and spidering are always enabled when ZAP is reachable.</small>
+                                </div>
+                            </div>
+                        </details>
                     </form>
                 </section>
-
+                
                 <!-- 3. LIVE ACTIVITY TAB -->
                 <section id="tab-live-activity" class="tab-pane">
                     <div class="section-title">
@@ -278,6 +400,14 @@
                                 <h3>Logged Requests</h3>
                                 <button id="refresh-traffic-btn" class="btn btn-secondary btn-xs">Refresh</button>
                             </div>
+                            <div class="traffic-controls-bar">
+                                <input type="text" id="traffic-search-input" class="form-input-sm" placeholder="Filter endpoint, method, status...">
+                                <div class="traffic-pagination-controls">
+                                    <button id="traffic-prev-btn" class="btn btn-secondary btn-xs" disabled>&laquo; Prev</button>
+                                    <span id="traffic-page-info" class="pagination-info">Page 1 / 1</span>
+                                    <button id="traffic-next-btn" class="btn btn-secondary btn-xs" disabled>Next &raquo;</button>
+                                </div>
+                            </div>
                             <div class="traffic-list-table-container">
                                 <table class="data-table" id="traffic-table">
                                     <thead>
@@ -324,6 +454,10 @@
                                 <option value="NOT_DEMONSTRATED">NOT DEMONSTRATED (Abstained / Safe)</option>
                             </select>
                         </div>
+                        <div class="filter-group ml-2">
+                            <input type="text" id="findings-search-input" class="form-input-sm" placeholder="Search category, endpoint, rule...">
+                        </div>
+                        <span id="findings-match-count" class="badge-pill ml-2">0 matches</span>
                         <button id="refresh-findings-btn" class="btn btn-secondary btn-sm">Refresh Findings</button>
                     </div>
 
@@ -332,22 +466,147 @@
                     </div>
                 </section>
 
-                <!-- 6. REPORTS TAB -->
+                <!-- 6. DISCOVERED ENDPOINTS TAB -->
+                <section id="tab-discovered-endpoints" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Discovered API Endpoint Inventory</h2>
+                        <p class="subtitle">Complete catalog of routes discovered via OpenAPI schemas, reconnaissance, and model test planning</p>
+                    </div>
+
+                    <div class="panel-box mt-3">
+                        <div class="panel-header">
+                            <h3>Cataloged Endpoints</h3>
+                            <button id="refresh-endpoints-btn" class="btn btn-secondary btn-sm">Refresh Endpoints</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="endpoints-table">
+                                <thead>
+                                    <tr>
+                                        <th>Method</th>
+                                        <th>Path</th>
+                                        <th>Discovery Source</th>
+                                        <th>Description / Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="endpoints-table-body">
+                                    <tr><td colspan="4" class="text-center">Select an assessment session to view discovered endpoints.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. REPORTS TAB -->
                 <section id="tab-reports" class="tab-pane">
                     <div class="section-title">
                         <h2>Autonomous Security Report</h2>
-                        <p class="subtitle">Markdown report generated by ReportGenerator including methodology and evidence</p>
+                        <p class="subtitle">Multi-format security reports generated by ReportGenerator with CVSS v3.1, CWE mappings, and remediation</p>
                     </div>
 
                     <div class="report-actions-bar">
                         <button id="download-report-btn" class="btn btn-primary btn-sm">
-                            <span class="btn-icon">📥</span> Download Report (.md)
+                            <span class="btn-icon">📥</span> Download Markdown (.md)
                         </button>
-                        <button id="refresh-report-btn" class="btn btn-secondary btn-sm">Refresh Preview</button>
+                        <button id="download-report-json-btn" class="btn btn-secondary btn-sm">
+                            <span class="btn-icon">📦</span> Download JSON (.json)
+                        </button>
+                        <button id="view-report-html-btn" class="btn btn-secondary btn-sm">
+                            <span class="btn-icon">🌐</span> Open HTML Report
+                        </button>
+                        <button id="refresh-report-btn" class="btn btn-ghost btn-sm">Refresh Preview</button>
                     </div>
 
                     <div class="report-viewer-card mt-3">
                         <pre class="markdown-preview" id="report-content-preview">No report generated yet. Reports are finalized upon assessment completion or cancellation.</pre>
+                    </div>
+                </section>
+
+                <!-- 8. COMPARE SESSIONS TAB -->
+                <section id="tab-session-compare" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Assessment Comparison & Regression Analysis</h2>
+                        <p class="subtitle">Diff findings, track vulnerability remediation progress, and detect security regressions across runs</p>
+                    </div>
+
+                    <div class="panel-box">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="compare-session-a">Baseline Assessment (Session A)</label>
+                                <select id="compare-session-a">
+                                    <option value="">Select Baseline Session...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="compare-session-b">Target Assessment (Session B)</label>
+                                <select id="compare-session-b">
+                                    <option value="">Select Target Session...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions mt-3">
+                            <button id="run-compare-btn" class="btn btn-primary btn-sm">
+                                <span class="btn-icon">⚖️</span> Compare Sessions
+                            </button>
+                            <span id="compare-status-msg" class="status-msg"></span>
+                        </div>
+                    </div>
+
+                    <div id="compare-results-container" class="mt-4" style="display: none;">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon icon-blue">📉</div>
+                                <div class="stat-body">
+                                    <h3>Risk Score Delta</h3>
+                                    <p class="stat-number" id="diff-risk-delta">0.0</p>
+                                    <span class="stat-sub" id="diff-risk-status">Unchanged</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon icon-red">➕</div>
+                                <div class="stat-body">
+                                    <h3>New Findings</h3>
+                                    <p class="stat-number" id="diff-new-count">0</p>
+                                    <span class="stat-sub">Regressions in Session B</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon icon-green">✅</div>
+                                <div class="stat-body">
+                                    <h3>Resolved Findings</h3>
+                                    <p class="stat-number" id="diff-resolved-count">0</p>
+                                    <span class="stat-sub">Remediated in Session B</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon icon-amber">🔁</div>
+                                <div class="stat-body">
+                                    <h3>Persistent Findings</h3>
+                                    <p class="stat-number" id="diff-persistent-count">0</p>
+                                    <span class="stat-sub">Unresolved across both runs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-box mt-4">
+                            <div class="panel-header">
+                                <h3>Detailed Finding Differences</h3>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table" id="compare-details-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Diff Status</th>
+                                            <th>Endpoint</th>
+                                            <th>Vulnerability Category</th>
+                                            <th>Severity</th>
+                                            <th>Analysis / Impact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="compare-details-tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -444,9 +703,434 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- 10. POLICY & AUTHORIZATION TAB -->
+                <section id="tab-policies" class="tab-pane">
+                    <div class="section-title">
+                        <h2>Policy & Authorization Administration</h2>
+                        <p class="subtitle">Database-backed guardrail policies, immutable versioning, and authorized target whitelists</p>
+                    </div>
+
+                    <div class="panel-header-actions" style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="action-buttons">
+                            <button id="btn-open-create-policy" class="btn btn-primary btn-sm">
+                                <span>➕</span> New Policy
+                            </button>
+                            <button id="btn-refresh-policies" class="btn btn-secondary btn-sm">
+                                <span>🔄</span> Refresh Policies
+                            </button>
+                        </div>
+                        <div id="policy-admin-status-badge" class="badge-pill">Admin Mode</div>
+                    </div>
+
+                    <!-- Quick Scope & Personal Domain Authorization Panel -->
+                    <div class="panel-box quick-scope-box" style="margin-bottom: 1.5rem; border: 1px solid rgba(59, 130, 246, 0.4); background: linear-gradient(180deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.85) 100%); border-radius: 10px; padding: 1.25rem;">
+                        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;">
+                            <div>
+                                <h3 style="display: flex; align-items: center; gap: 0.5rem; margin: 0; font-size: 1.15rem; color: #60a5fa;">
+                                    <span>🌐</span> Scope & Personal Hosted Domains Controller
+                                </h3>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.83rem; color: #94a3b8;">
+                                    Instant ON/OFF toggle controls to grant all permissions for testing your personal hosted domains, and turn them off for safe local testing.
+                                </p>
+                            </div>
+                            <span id="scope-status-pill" class="badge badge-success" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Active Policy: Loading...</span>
+                        </div>
+
+                        <!-- Toggle Switches Row -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <!-- Toggle 1: External / Hosted Domains -->
+                            <div class="toggle-control-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.9rem 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="padding-right: 1rem;">
+                                    <div style="font-weight: 600; font-size: 0.95rem; color: #f1f5f9; display: flex; align-items: center; gap: 0.4rem;">
+                                        <span>🌍</span> Allow External / Hosted Domains
+                                    </div>
+                                    <small style="color: #94a3b8; font-size: 0.78rem; display: block; margin-top: 0.25rem;">
+                                        Permit testing your own hosted APIs and external domains (bypasses localhost-only restrictions).
+                                    </small>
+                                </div>
+                                <label class="ui-switch" title="Toggle External Domain Scanning">
+                                    <input type="checkbox" id="toggle-allow-external">
+                                    <span class="ui-slider"></span>
+                                </label>
+                            </div>
+
+                            <!-- Toggle 2: Full Autonomous Permissions -->
+                            <div class="toggle-control-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.9rem 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="padding-right: 1rem;">
+                                    <div style="font-weight: 600; font-size: 0.95rem; color: #f1f5f9; display: flex; align-items: center; gap: 0.4rem;">
+                                        <span>⚡</span> Full Control & All Permissions
+                                    </div>
+                                    <small style="color: #94a3b8; font-size: 0.78rem; display: block; margin-top: 0.25rem;">
+                                        Enable all 9 tools, all 13 OWASP categories, all HTTP methods, ZAP active scan, and max turns/requests.
+                                    </small>
+                                </div>
+                                <label class="ui-switch" title="Toggle Full Penetration Testing Permissions">
+                                    <input type="checkbox" id="toggle-full-control">
+                                    <span class="ui-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Quick Domain Add Bar -->
+                        <div style="padding-top: 1rem;">
+                            <label style="font-size: 0.83rem; font-weight: 600; color: #cbd5e1; display: block; margin-bottom: 0.4rem;">
+                                🎯 Quick Authorize Personal Domain or API Endpoint:
+                            </label>
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                <input type="text" id="quick-domain-input" class="form-input-sm" style="flex: 1; min-width: 250px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.55rem 0.85rem; border-radius: 6px;" placeholder="e.g. myapi.com, https://test.mydomain.org, or *.mycompany.com">
+                                <button type="button" id="btn-quick-add-domain" class="btn btn-primary btn-sm" style="display: flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.1rem;">
+                                    <span>➕</span> Authorize Domain
+                                </button>
+                            </div>
+                            <div id="quick-domain-msg" style="margin-top: 0.5rem; font-size: 0.8rem; display: none;"></div>
+
+                            <!-- Active Authorized Domains List -->
+                            <div style="margin-top: 0.85rem;">
+                                <div style="font-size: 0.78rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">
+                                    Authorized Targets for Active Policy:
+                                </div>
+                                <div id="quick-authorized-domains-container" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                    <span class="loading-cell" style="font-size: 0.78rem;">Loading targets...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Overview Grid -->
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1.5rem;">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-blue">🛡️</div>
+                            <div class="stat-body">
+                                <h3>Total Policies</h3>
+                                <p class="stat-number" id="metric-total-policies">0</p>
+                                <span class="stat-sub">Defined profiles</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-green">✅</div>
+                            <div class="stat-body">
+                                <h3>Active Policies</h3>
+                                <p class="stat-number" id="metric-active-policies">0</p>
+                                <span class="stat-sub">Available for launch</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-gray">⏸️</div>
+                            <div class="stat-body">
+                                <h3>Inactive Policies</h3>
+                                <p class="stat-number" id="metric-inactive-policies">0</p>
+                                <span class="stat-sub">Disabled profiles</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-cyan">🎯</div>
+                            <div class="stat-body">
+                                <h3>Active Targets</h3>
+                                <p class="stat-number" id="metric-active-targets">0</p>
+                                <span class="stat-sub">Authorized endpoints</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-amber">⏳</div>
+                            <div class="stat-body">
+                                <h3>Expired Targets</h3>
+                                <p class="stat-number" id="metric-expired-targets">0</p>
+                                <span class="stat-sub">Past authorization window</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-purple">🕒</div>
+                            <div class="stat-body">
+                                <h3>Recently Modified</h3>
+                                <p class="stat-number" id="metric-recently-modified">0</p>
+                                <span class="stat-sub">Last 24 hours</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Policy Table Panel -->
+                    <div class="panel-box" style="margin-bottom: 1.5rem;">
+                        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                            <h3>Configured System Policies</h3>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <input type="text" id="policy-search-input" class="form-input-sm" placeholder="Search policies..." style="width: 200px;">
+                                <select id="policy-status-filter" class="form-input-sm">
+                                    <option value="all">All Statuses</option>
+                                    <option value="active">Active Only</option>
+                                    <option value="inactive">Inactive Only</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table id="policies-table" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID & UUID</th>
+                                        <th>Policy Name</th>
+                                        <th>Version</th>
+                                        <th>Targets</th>
+                                        <th>Limits</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="policies-table-body">
+                                    <tr><td colspan="7" class="loading-cell">Loading policy database...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Administrative Audit Trail Panel -->
+                    <div class="panel-box">
+                        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Administrative Audit Trail (Sanitized Zero-Leakage)</h3>
+                            <button id="btn-refresh-audit" class="btn btn-outline btn-sm">Refresh Audit</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="audit-log-table" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Actor</th>
+                                        <th>Action</th>
+                                        <th>Resource</th>
+                                        <th>Details</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="audit-log-table-body">
+                                    <tr><td colspan="6" class="loading-cell">Loading audit trail...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
+
+    <!-- Policy Create / Edit Modal -->
+    <div id="policy-modal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h3 id="policy-modal-title">Create Testing Policy</h3>
+                <button type="button" class="modal-close-btn" id="btn-close-policy-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="policy-form">
+                    <input type="hidden" id="policy-modal-id">
+                    <div class="form-grid">
+                        <div class="form-group col-2">
+                            <label for="policy-modal-name">Policy Name <span class="required">*</span></label>
+                            <input type="text" id="policy-modal-name" required placeholder="e.g. Standard REST Production Safety Policy">
+                        </div>
+                        <div class="form-group col-2">
+                            <label for="policy-modal-desc">Description</label>
+                            <input type="text" id="policy-modal-desc" placeholder="Scope and purpose of this security policy">
+                        </div>
+                        <div class="form-group col-2" id="policy-summary-group" style="display: none;">
+                            <label for="policy-modal-summary">Change Summary (Reason for Version Bump)</label>
+                            <input type="text" id="policy-modal-summary" placeholder="e.g. Broadened port ranges for staging environment">
+                        </div>
+
+                        <!-- Allowed Tools -->
+                        <div class="form-group col-2">
+                            <label>Allowed Assessment Tools</label>
+                            <div class="checkbox-grid" id="modal-allowed-tools-grid"></div>
+                        </div>
+
+                        <!-- Allowed HTTP Methods -->
+                        <div class="form-group">
+                            <label>Allowed HTTP Methods</label>
+                            <div class="checkbox-grid" id="modal-allowed-methods-grid"></div>
+                        </div>
+
+                        <!-- Allowed Auth Modes -->
+                        <div class="form-group">
+                            <label>Allowed Auth Modes</label>
+                            <div class="checkbox-grid" id="modal-allowed-auth-grid"></div>
+                        </div>
+
+                        <!-- Allowed Categories -->
+                        <div class="form-group col-2">
+                            <label>Permitted OWASP API Categories</label>
+                            <div class="checkbox-grid" id="modal-allowed-cats-grid" style="max-height: 110px;"></div>
+                        </div>
+
+                        <!-- Limits -->
+                        <div class="form-group">
+                            <label for="policy-modal-max-turns">Max Turns (1-50)</label>
+                            <input type="number" id="policy-modal-max-turns" min="1" max="50" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="policy-modal-max-requests">Max Requests (1-100)</label>
+                            <input type="number" id="policy-modal-max-requests" min="1" max="100" value="25">
+                        </div>
+                        <div class="form-group">
+                            <label for="policy-modal-max-rps">Max Requests/Sec (0.1-50.0)</label>
+                            <input type="number" id="policy-modal-max-rps" min="0.1" max="50" step="0.5" value="5.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="policy-modal-max-duration">Max Duration Seconds (10-3600)</label>
+                            <input type="number" id="policy-modal-max-duration" min="10" max="3600" value="300">
+                        </div>
+                        <div class="form-group">
+                            <label for="policy-modal-max-concurrency">Max Concurrent Scans (1-4)</label>
+                            <input type="number" id="policy-modal-max-concurrency" min="1" max="4" value="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="policy-modal-max-body">Max Body Bytes (1024-65536)</label>
+                            <input type="number" id="policy-modal-max-body" min="1024" max="65536" value="65536">
+                        </div>
+
+                        <div class="form-group col-2">
+                            <label class="checkbox-item" style="margin-top: 0.5rem;">
+                                <input type="checkbox" id="policy-modal-zap-scan">
+                                <span>Enable OWASP ZAP Active Scanning (Layer 2)</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                <div id="policy-modal-error" style="color: var(--status-red); font-size: 0.8rem; margin-top: 0.75rem; display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-policy-modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-save-policy">Save Policy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Target Authorization Manager Modal -->
+    <div id="target-modal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h3 id="target-modal-title">Authorized Target Whitelist</h3>
+                <button type="button" class="modal-close-btn" id="btn-close-target-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="target-modal-policy-id">
+                
+                <!-- Add Target Form -->
+                <div class="panel-box" style="margin-bottom: 1.25rem;">
+                    <div class="panel-header">
+                        <h4>Add Target Endpoint Authorization Rule</h4>
+                    </div>
+                    <form id="add-target-form" style="padding: 1rem;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="target-host-pattern">Host Pattern <span class="required">*</span></label>
+                                <input type="text" id="target-host-pattern" placeholder="e.g. 127.0.0.1 or *.corp.local" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="target-port-range">Port Range</label>
+                                <input type="text" id="target-port-range" placeholder="e.g. 5000-5050 or 80 or *" value="*">
+                            </div>
+                            <div class="form-group">
+                                <label for="target-allowed-schemes">Allowed Schemes</label>
+                                <input type="text" id="target-allowed-schemes" placeholder="http,https" value="http,https">
+                            </div>
+                            <div class="form-group">
+                                <label for="target-path-prefix">Path Prefix</label>
+                                <input type="text" id="target-path-prefix" placeholder="/" value="/">
+                            </div>
+                            <div class="form-group">
+                                <label for="target-expires-hours">Expiration (Hours from now, 0 = no expiry)</label>
+                                <input type="number" id="target-expires-hours" min="0" max="8760" value="0">
+                            </div>
+                            <div class="form-group" style="display: flex; align-items: flex-end;">
+                                <button type="button" class="btn btn-primary" id="btn-add-target" style="width: 100%;">
+                                    <span>➕</span> Add Authorization
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="target-modal-error" style="color: var(--status-red); font-size: 0.8rem; padding: 0 1rem 0.5rem; display: none;"></div>
+                </div>
+
+                <!-- Targets Table -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Host Pattern</th>
+                                <th>Port Range</th>
+                                <th>Schemes</th>
+                                <th>Path Prefix</th>
+                                <th>Expiration</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="policy-targets-table-body">
+                            <tr><td colspan="7" class="loading-cell">Loading target authorizations...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-done-target-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Version History & Rollback Modal -->
+    <div id="versions-modal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h3 id="versions-modal-title">Policy Version History & Rollback</h3>
+                <button type="button" class="modal-close-btn" id="btn-close-versions-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="versions-modal-policy-id">
+                <div class="table-container" style="margin-bottom: 1.25rem;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Version</th>
+                                <th>Created At</th>
+                                <th>Created By</th>
+                                <th>Change Summary</th>
+                                <th>State</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="policy-versions-table-body">
+                            <tr><td colspan="6" class="loading-cell">Loading version history...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Configuration JSON Inspector</h4>
+                <div id="version-config-inspector" class="config-inspector">Select a version above to inspect configuration.</div>
+                <div id="versions-modal-error" style="color: var(--status-red); font-size: 0.8rem; margin-top: 0.5rem; display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-done-versions-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Confirmation Dialog Modal -->
+    <div id="confirm-modal-backdrop" class="modal-backdrop hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h4 id="confirm-modal-title">Confirm Action</h4>
+                <button type="button" class="modal-close-btn" id="confirm-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-modal-message">Are you sure you want to proceed with this operation?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" id="confirm-modal-cancel">Cancel</button>
+                <button type="button" class="btn btn-danger btn-sm" id="confirm-modal-proceed">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- Application Script -->
     <script src="/static/js/dashboard.js"></script>

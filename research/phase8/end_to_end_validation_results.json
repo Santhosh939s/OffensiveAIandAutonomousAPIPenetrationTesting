@@ -1,0 +1,46 @@
+{
+  "Workflow_A": {
+    "status": "PASSED",
+    "duration_sec": 1.345,
+    "admin_username": "admin",
+    "must_change_cleared": true,
+    "session_token_hash": "27e78cbf5ac76bc7...",
+    "csrf_valid": true
+  },
+  "Workflow_B": {
+    "status": "PASSED",
+    "duration_sec": 0.002,
+    "policy_id": 1,
+    "target_authorization_id": 1,
+    "target_url": "http://127.0.0.1:46267",
+    "policy_authorized": true
+  },
+  "Workflow_C": {
+    "status": "PASSED",
+    "duration_sec": 88.921,
+    "session_id": "session_8e90e00446ff",
+    "turns_completed": 3,
+    "requests_executed": 1,
+    "findings_count": 0
+  },
+  "Workflow_D": {
+    "status": "PASSED",
+    "duration_sec": 0.008,
+    "total_findings": 0,
+    "confirmed_findings": 0,
+    "suspected_findings": 0,
+    "sha256_digests_intact": true,
+    "exported_reports": {
+      "markdown": "S:\\UROP\\offensive AI and autonomous APi penetration testing\\research\\phase8\\e2e_report.md",
+      "json": "S:\\UROP\\offensive AI and autonomous APi penetration testing\\research\\phase8\\e2e_report.json",
+      "html": "S:\\UROP\\offensive AI and autonomous APi penetration testing\\research\\phase8\\e2e_report.html"
+    }
+  },
+  "Workflow_E": {
+    "status": "PASSED",
+    "duration_sec": 0.415,
+    "revocation_enforced": true,
+    "lab_shutdown_clean": true,
+    "brain_shutdown_clean": true
+  }
+}

@@ -75,7 +75,7 @@ def get_system_memory_info() -> Dict[str, Any]:
 
 
 def get_process_memory_info(pid: Optional[int] = None) -> Dict[str, Any]:
-    """Retrieve current process Working Set (RAM in use) and Commit charge in MB."""
+    """Retrieve process Working Set (RAM in use) and Commit charge in MB for current or given PID."""
     ws_mb = 0.0
     peak_ws_mb = 0.0
     commit_mb = 0.0
@@ -102,6 +102,11 @@ def get_process_memory_info(pid: Optional[int] = None) -> Dict[str, Any]:
             psapi = ctypes.WinDLL("psapi", use_last_error=True)
 
             k32.GetCurrentProcess.restype = wintypes.HANDLE
+            k32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+            k32.OpenProcess.restype = wintypes.HANDLE
+            k32.CloseHandle.argtypes = [wintypes.HANDLE]
+            k32.CloseHandle.restype = wintypes.BOOL
+
             psapi.GetProcessMemoryInfo.argtypes = [
                 wintypes.HANDLE,
                 ctypes.POINTER(PROCESS_MEMORY_COUNTERS),
@@ -109,19 +114,115 @@ def get_process_memory_info(pid: Optional[int] = None) -> Dict[str, Any]:
             ]
             psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
 
-            pmc = PROCESS_MEMORY_COUNTERS()
-            pmc.cb = ctypes.sizeof(PROCESS_MEMORY_COUNTERS)
-            if psapi.GetProcessMemoryInfo(k32.GetCurrentProcess(), ctypes.byref(pmc), pmc.cb):
-                ws_mb = round(pmc.WorkingSetSize / (1024 * 1024), 2)
-                peak_ws_mb = round(pmc.PeakWorkingSetSize / (1024 * 1024), 2)
-                commit_mb = round(pmc.PagefileUsage / (1024 * 1024), 2)
+            target_pid = pid or os.getpid()
+            h_proc = None
+            should_close = False
+            if target_pid == os.getpid():
+                h_proc = k32.GetCurrentProcess()
+            else:
+                # PROCESS_QUERY_INFORMATION (0x0400) | PROCESS_VM_READ (0x0010)
+                h_proc = k32.OpenProcess(0x0410, False, target_pid)
+                should_close = True
+
+            if h_proc:
+                try:
+                    pmc = PROCESS_MEMORY_COUNTERS()
+                    pmc.cb = ctypes.sizeof(PROCESS_MEMORY_COUNTERS)
+                    if psapi.GetProcessMemoryInfo(h_proc, ctypes.byref(pmc), pmc.cb):
+                        ws_mb = round(pmc.WorkingSetSize / (1024 * 1024), 2)
+                        peak_ws_mb = round(pmc.PeakWorkingSetSize / (1024 * 1024), 2)
+                        commit_mb = round(pmc.PagefileUsage / (1024 * 1024), 2)
+                finally:
+                    if should_close and h_proc:
+                        k32.CloseHandle(h_proc)
         except Exception as exc:
             logger.debug("Windows GetProcessMemoryInfo failed: %s", exc)
 
     return {
+        "pid": pid or os.getpid(),
         "working_set_mb": ws_mb,
         "peak_working_set_mb": peak_ws_mb,
         "commit_charge_mb": commit_mb,
+    }
+
+
+def get_process_tree_memory_info(parent_pid: Optional[int] = None) -> Dict[str, Any]:
+    """Retrieve aggregate process tree memory info (parent + all child processes such as llama-cli/llama-server)."""
+    root_pid = parent_pid or os.getpid()
+    all_pids = [root_pid]
+    proc_details = []
+
+    if platform.system() == "Windows":
+        try:
+            import ctypes.wintypes
+            TH32CS_SNAPPROCESS = 0x00000002
+
+            class PROCESSENTRY32(ctypes.Structure):
+                _fields_ = [
+                    ("dwSize", ctypes.wintypes.DWORD),
+                    ("cntUsage", ctypes.wintypes.DWORD),
+                    ("th32ProcessID", ctypes.wintypes.DWORD),
+                    ("th32DefaultHeapID", ctypes.c_size_t),
+                    ("th32ModuleID", ctypes.wintypes.DWORD),
+                    ("cntThreads", ctypes.wintypes.DWORD),
+                    ("th32ParentProcessID", ctypes.wintypes.DWORD),
+                    ("pcPriClassBase", ctypes.c_long),
+                    ("dwFlags", ctypes.wintypes.DWORD),
+                    ("szExeFile", ctypes.c_char * 260),
+                ]
+
+            k32 = ctypes.WinDLL("kernel32")
+            snap = k32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+            entry = PROCESSENTRY32()
+            entry.dwSize = ctypes.sizeof(PROCESSENTRY32)
+            children_map = {}
+
+            if k32.Process32First(snap, ctypes.byref(entry)):
+                while True:
+                    ppid = entry.th32ParentProcessID
+                    cpid = entry.th32ProcessID
+                    exe_name = entry.szExeFile.decode("latin-1", errors="ignore").rstrip("\x00")
+                    if ppid not in children_map:
+                        children_map[ppid] = []
+                    children_map[ppid].append((cpid, exe_name))
+                    if not k32.Process32Next(snap, ctypes.byref(entry)):
+                        break
+            k32.CloseHandle(snap)
+
+            # Traverse tree from root_pid
+            to_visit = [root_pid]
+            visited = set()
+            while to_visit:
+                curr = to_visit.pop(0)
+                if curr in visited:
+                    continue
+                visited.add(curr)
+                for child_pid, child_name in children_map.get(curr, []):
+                    if child_pid not in all_pids:
+                        all_pids.append(child_pid)
+                        to_visit.append(child_pid)
+        except Exception as exc:
+            logger.debug("Failed to inspect child processes via Toolhelp32: %s", exc)
+
+    total_ws = 0.0
+    total_peak_ws = 0.0
+    total_commit = 0.0
+
+    for p in all_pids:
+        info = get_process_memory_info(p)
+        total_ws += info["working_set_mb"]
+        total_peak_ws += info["peak_working_set_mb"]
+        total_commit += info["commit_charge_mb"]
+        proc_details.append(info)
+
+    return {
+        "root_pid": root_pid,
+        "process_count": len(all_pids),
+        "all_pids": all_pids,
+        "aggregate_working_set_mb": round(total_ws, 2),
+        "aggregate_peak_working_set_mb": round(total_peak_ws, 2),
+        "aggregate_commit_charge_mb": round(total_commit, 2),
+        "processes": proc_details,
     }
 
 

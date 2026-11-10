@@ -1,0 +1,20 @@
+{
+  "Dataset_A": {
+    "Directory Traversal Targets": "3/180 (1.7%)",
+    "SQL Injection Keywords": "1/180 (0.6%)",
+    "XSS Execution Vectors": "7/180 (3.9%)",
+    "Command Injection Delimiters": "2/180 (1.1%)"
+  },
+  "Dataset_D": {
+    "Directory Traversal Targets": "4/85 (4.7%)",
+    "SQL Injection Keywords": "2/85 (2.4%)",
+    "XSS Execution Vectors": "18/85 (21.2%)",
+    "Command Injection Delimiters": "2/85 (2.4%)"
+  },
+  "Dataset_B": {
+    "Directory Traversal Targets": "16/90 (17.8%)",
+    "SQL Injection Keywords": "0/90 (0.0%)",
+    "XSS Execution Vectors": "0/90 (0.0%)",
+    "Command Injection Delimiters": "0/90 (0.0%)"
+  }
+}

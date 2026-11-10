@@ -47,8 +47,19 @@ class OpenApiParserTool(BaseTool):
 
     def execute(self, **kwargs) -> Dict[str, Any]:
         """Execute OpenAPI specification discovery and parsing."""
-        spec_source = kwargs.get("spec_source")
-        spec_content = kwargs.get("spec_content")
+        policy_ok, pol_err, clean_kwargs = self._check_execution_policy(kwargs)
+        if not policy_ok:
+            return {
+                "success": False,
+                "error": pol_err,
+                "tool_name": self.name,
+                "endpoints_count": 0,
+                "endpoints": [],
+                "policy_denied": True,
+            }
+
+        spec_source = clean_kwargs.get("spec_source")
+        spec_content = clean_kwargs.get("spec_content")
 
         if not spec_source and not spec_content:
             return {

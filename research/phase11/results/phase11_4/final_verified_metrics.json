@@ -1,0 +1,487 @@
+{
+  "Dataset_D": {
+    "dataset_name": "SecLists Fuzzing Challenge Set",
+    "total_samples": 85,
+    "correct_predictions": 74,
+    "incorrect_predictions": 11,
+    "accuracy": 0.8706,
+    "accuracy_wilson_ci_95": [
+      0.783,
+      0.9262
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.8,
+      0.9294
+    ],
+    "macro_precision_true_classes": 0.9732,
+    "macro_recall_true_classes": 0.875,
+    "macro_f1_true_classes": 0.9147,
+    "macro_f1_bootstrap_ci_95": [
+      0.8523,
+      0.9626
+    ],
+    "macro_f1_all_generated_classes": 0.6098,
+    "weighted_f1": 0.9089,
+    "weighted_f1_bootstrap_ci_95": [
+      0.8506,
+      0.9569
+    ],
+    "micro_f1": 0.8706,
+    "matthews_corrcoef": 0.8368,
+    "label_metadata": {
+      "ground_truth_labels": [
+        "Benign",
+        "Directory Traversal",
+        "SQL Injection",
+        "XSS"
+      ],
+      "predicted_labels": [
+        "Benign",
+        "Directory Traversal",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "supported_model_labels_in_gt": [
+        "Benign",
+        "Directory Traversal",
+        "SQL Injection",
+        "XSS"
+      ],
+      "unsupported_labels_in_gt": [],
+      "unsupported_predictions_not_in_gt": [
+        "Log Forging",
+        "RCE"
+      ]
+    },
+    "confusion_matrix": {
+      "Benign": {
+        "Benign": 9,
+        "Directory Traversal": 1,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "Directory Traversal": {
+        "Benign": 0,
+        "Directory Traversal": 25,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "Log Forging": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "RCE": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "SQL Injection": {
+        "Benign": 0,
+        "Directory Traversal": 2,
+        "Log Forging": 3,
+        "RCE": 3,
+        "SQL Injection": 17,
+        "XSS": 0
+      },
+      "XSS": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "Log Forging": 0,
+        "RCE": 2,
+        "SQL Injection": 0,
+        "XSS": 23
+      }
+    }
+  },
+  "Dataset_A": {
+    "dataset_name": "Mendeley Multi-Class Web Attack Benchmark",
+    "total_samples": 180,
+    "correct_predictions": 110,
+    "incorrect_predictions": 70,
+    "accuracy": 0.6111,
+    "accuracy_wilson_ci_95": [
+      0.5383,
+      0.6793
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.5556,
+      0.6667
+    ],
+    "macro_precision_true_classes": 0.6219,
+    "macro_recall_true_classes": 0.6111,
+    "macro_f1_true_classes": 0.5847,
+    "macro_f1_bootstrap_ci_95": [
+      0.5301,
+      0.6311
+    ],
+    "macro_f1_all_generated_classes": 0.3898,
+    "weighted_f1": 0.5847,
+    "weighted_f1_bootstrap_ci_95": [
+      0.5301,
+      0.6311
+    ],
+    "micro_f1": 0.6111,
+    "matthews_corrcoef": 0.5664,
+    "label_metadata": {
+      "ground_truth_labels": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "XSS"
+      ],
+      "predicted_labels": [
+        "Benign",
+        "Directory Traversal",
+        "LOG4J",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "Unknown",
+        "XSS"
+      ],
+      "supported_model_labels_in_gt": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "unsupported_labels_in_gt": [
+        "SSRF"
+      ],
+      "unsupported_predictions_not_in_gt": [
+        "LOG4J",
+        "Log Forging",
+        "Unknown"
+      ]
+    },
+    "confusion_matrix": {
+      "Benign": {
+        "Benign": 20,
+        "Directory Traversal": 8,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 1,
+        "XSS": 1
+      },
+      "Directory Traversal": {
+        "Benign": 0,
+        "Directory Traversal": 30,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "LOG4J": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Log Forging": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "RCE": {
+        "Benign": 0,
+        "Directory Traversal": 7,
+        "LOG4J": 0,
+        "Log Forging": 2,
+        "RCE": 19,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 2
+      },
+      "SQL Injection": {
+        "Benign": 0,
+        "Directory Traversal": 2,
+        "LOG4J": 0,
+        "Log Forging": 2,
+        "RCE": 3,
+        "SQL Injection": 23,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "SSRF": {
+        "Benign": 0,
+        "Directory Traversal": 20,
+        "LOG4J": 1,
+        "Log Forging": 0,
+        "RCE": 8,
+        "SQL Injection": 1,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Unknown": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "XSS": {
+        "Benign": 0,
+        "Directory Traversal": 3,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 9,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 18
+      }
+    },
+    "supported_classes_only": {
+      "total_samples": 150,
+      "correct_predictions": 110,
+      "incorrect_predictions": 40,
+      "accuracy": 0.7333,
+      "accuracy_wilson_ci_95": [
+        0.6574,
+        0.7976
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.6667,
+        0.8
+      ],
+      "macro_f1": 0.5353,
+      "macro_f1_bootstrap_ci_95": [
+        0.6828,
+        0.812
+      ],
+      "weighted_f1": 0.7494,
+      "weighted_f1_bootstrap_ci_95": [
+        0.6828,
+        0.812
+      ],
+      "matthews_corrcoef": 0.6816
+    }
+  },
+  "Dataset_B": {
+    "dataset_name": "WAMM Dataset Repository",
+    "total_samples": 90,
+    "correct_predictions": 27,
+    "incorrect_predictions": 63,
+    "accuracy": 0.3,
+    "accuracy_wilson_ci_95": [
+      0.2151,
+      0.4013
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.2667,
+      0.3333
+    ],
+    "macro_precision_true_classes": 0.1364,
+    "macro_recall_true_classes": 0.3,
+    "macro_f1_true_classes": 0.1853,
+    "macro_f1_bootstrap_ci_95": [
+      0.1624,
+      0.2054
+    ],
+    "macro_f1_all_generated_classes": 0.139,
+    "weighted_f1": 0.1853,
+    "weighted_f1_bootstrap_ci_95": [
+      0.1624,
+      0.2054
+    ],
+    "micro_f1": 0.3,
+    "matthews_corrcoef": 0.1935,
+    "label_metadata": {
+      "ground_truth_labels": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "Unknown"
+      ],
+      "predicted_labels": [
+        "Benign",
+        "Cookie Injection",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "supported_model_labels_in_gt": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection"
+      ],
+      "unsupported_labels_in_gt": [
+        "SSRF",
+        "Unknown"
+      ],
+      "unsupported_predictions_not_in_gt": [
+        "Cookie Injection",
+        "XSS"
+      ]
+    },
+    "confusion_matrix": {
+      "Benign": {
+        "Benign": 12,
+        "Cookie Injection": 0,
+        "Directory Traversal": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 3
+      },
+      "Cookie Injection": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Directory Traversal": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 15,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "RCE": {
+        "Benign": 1,
+        "Cookie Injection": 0,
+        "Directory Traversal": 14,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "SQL Injection": {
+        "Benign": 2,
+        "Cookie Injection": 0,
+        "Directory Traversal": 6,
+        "RCE": 7,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "SSRF": {
+        "Benign": 11,
+        "Cookie Injection": 3,
+        "Directory Traversal": 1,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Unknown": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 6,
+        "RCE": 8,
+        "SQL Injection": 1,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "XSS": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      }
+    },
+    "supported_classes_only": {
+      "total_samples": 60,
+      "correct_predictions": 27,
+      "incorrect_predictions": 33,
+      "accuracy": 0.45,
+      "accuracy_wilson_ci_95": [
+        0.3309,
+        0.5751
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.4,
+        0.5
+      ],
+      "macro_f1": 0.28,
+      "macro_f1_bootstrap_ci_95": [
+        0.3109,
+        0.3833
+      ],
+      "weighted_f1": 0.35,
+      "weighted_f1_bootstrap_ci_95": [
+        0.3109,
+        0.3833
+      ],
+      "matthews_corrcoef": 0.3219
+    }
+  },
+  "Dataset_E": {
+    "dataset_name": "ATRDF Unlabelled Validation Pool",
+    "nature": "Unlabelled Raw Traffic (Output Token Validity Only)",
+    "total_samples": 50,
+    "valid_supported_tokens": 50,
+    "valid_token_rate": 1.0,
+    "hallucination_rate": 0.0,
+    "token_distribution": {
+      "Benign": 39,
+      "Cookie Injection": 3,
+      "Directory Traversal": 2,
+      "Log Forging": 4,
+      "RCE": 1,
+      "XSS": 1
+    },
+    "supervised_metrics_excluded": true,
+    "exclusion_reason": "Ground truth unlabelled (Attack_Tag omitted by dataset authors)"
+  }
+}

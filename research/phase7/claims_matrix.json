@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "claim": "Offline Standalone CPU Inference",
+    "implementation_evidence": "controller/brain/local_cpu_client.py (llama-cli.exe, -ngl 0 -t 4 -c 1024)",
+    "experimental_evidence": "tests/test_phase6_1_launcher_packaging.py::test_03_real_gguf_cpu_inference; test_isolated_clean_launcher.py",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 2,
+    "claim": "High-Precision Vulnerability Classification",
+    "implementation_evidence": "finetuning/train_rebuilt_v4.py; models/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf",
+    "experimental_evidence": "evaluation/rebuiltv4_sample2000.json (2,000 held-out samples: 99.65% accuracy, 0.9981 weighted F1)",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 3,
+    "claim": "Autonomous Multi-Turn Vulnerability Testing",
+    "implementation_evidence": "controller/agent/autonomous_controller.py; controller/tools/; lab/app.py",
+    "experimental_evidence": "tests/test_phase5_7_e2e_simulation.py; tests/test_lab_e2e_assessment.py; scratch/verify_real_workflow_audit.py",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 4,
+    "claim": "Deterministic 16-Point Policy Guardrail",
+    "implementation_evidence": "controller/guardrails/policy_engine.py; controller/tools/registry.py",
+    "experimental_evidence": "tests/test_complete_policy_enforcement.py; tests/test_workflow_hardening.py",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 5,
+    "claim": "Layer 1 Socket-Level SSRF Interception",
+    "implementation_evidence": "controller/guardrails/scope_validator.py (_secure_create_connection, SecureSyncHTTPTransport)",
+    "experimental_evidence": "tests/test_complete_policy_enforcement.py::test_ssrf_and_dns_rebinding_defense; tests/test_httpx_client.py",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 6,
+    "claim": "Thread-Safe Atomic Budget Cutoff",
+    "implementation_evidence": "PolicyEngine._budget_manager (SharedBudgetManager under RLock); PolicyEngine._check_live_revocation()",
+    "experimental_evidence": "tests/test_phase5_7_e2e_simulation.py::test_scenario_b_request_budget_cutoff; test_scenario_c_live_target_revocation",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 7,
+    "claim": "Tamper-Evident Evidence Chaining",
+    "implementation_evidence": "EvidenceStore.log_traffic(); EvidenceStore.record_finding(); EvidenceStore.verify_evidence_integrity()",
+    "experimental_evidence": "tests/test_evidence_store.py; tests/test_isolated_clean_launcher.py; scratch/verify_real_workflow_audit.py",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 8,
+    "claim": "Zero Default Administrator Credentials",
+    "implementation_evidence": "controller/auth/authentication_service.py; launcher.py; dashboard/middleware.py",
+    "experimental_evidence": "tests/test_auth_service.py; tests/test_dashboard_auth.py; tests/test_phase6_1_launcher_packaging.py::test_06",
+    "status": "VERIFIED"
+  },
+  {
+    "id": 9,
+    "claim": "Universal Out-of-the-Box Windows Portability",
+    "implementation_evidence": "models/bin/llama-cli.exe with companion DLLs in repository root",
+    "experimental_evidence": "Subprocess isolation verified on host workstation; host OS must supply Microsoft Visual C++ 2015-2022 x64 Redistributable (vcruntime140.dll)",
+    "status": "QUALIFIED"
+  }
+]
+

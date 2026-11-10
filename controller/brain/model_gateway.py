@@ -113,6 +113,32 @@ def extract_and_validate_json(raw_text: str, schema_type: str = "generic") -> Di
                 except Exception:
                     pass
 
+    # Attempt 7: Schema-based regex field extraction for analysis outputs (e.g. unescaped internal quotes)
+    if parsed is None and schema_type == "analysis":
+        st_match = re.search(r'"status"\s*:\s*"([^"]+)"', raw_text)
+        cat_match = re.search(r'"category"\s*:\s*"([^"]+)"', raw_text)
+        vr_match = re.search(r'"verification_rule"\s*:\s*("([^"]+)"|null)', raw_text)
+        an_match = re.search(r'"analysis"\s*:\s*"(.*?)"\s*,\s*"verification_rule"', raw_text, re.DOTALL)
+        if st_match or cat_match:
+            vr_val = vr_match.group(2) if (vr_match and vr_match.group(2)) else None
+            parsed = {
+                "status": st_match.group(1) if st_match else "NOT_DEMONSTRATED",
+                "category": cat_match.group(1) if cat_match else "Uncertain",
+                "analysis": an_match.group(1).replace('"', "'") if an_match else "Extracted from model output via regex recovery",
+                "verification_rule": vr_val,
+            }
+
+    # Attempt 8: Schema-based regex field extraction for classification outputs
+    if parsed is None and schema_type == "classification":
+        cat_match = re.search(r'"category"\s*:\s*"([^"]+)"', raw_text)
+        if cat_match:
+            rs_match = re.search(r'"reasoning"\s*:\s*"([^"]+)"', raw_text)
+            parsed = {
+                "category": cat_match.group(1),
+                "confidence": 1.0,
+                "reasoning": rs_match.group(1) if rs_match else "Extracted from model output via regex recovery",
+            }
+
     # If parsing completely failed, return safe schema-specific fallback
     if parsed is None:
         logger.warning("Failed to extract valid JSON from model response: %s", raw_text[:200])
@@ -152,8 +178,25 @@ def extract_and_validate_json(raw_text: str, schema_type: str = "generic") -> Di
     if schema_type == "action":
         action_type = parsed.get("action_type")
         if action_type not in {"execute_tool", "complete", "no_action"}:
-            # Normalize or return safe no_action
-            if "tool_name" in parsed and parsed["tool_name"]:
+            # Normalize action_type if the model passed tool name as action_type or in alias/action keys
+            candidate_tool = str(action_type or "").strip()
+            from controller.brain.local_cpu_client import TOOL_ALIASES
+            normalized_tool = TOOL_ALIASES.get(candidate_tool, candidate_tool)
+            valid_tool_names = {
+                "httpx_request", "http_request", "parameter_fuzzer", "jwt_inspector",
+                "graphql_probe", "inventory_scanner", "business_flow_probe", "zap_scanner", "openapi_parser"
+            }
+            if normalized_tool in valid_tool_names or candidate_tool in TOOL_ALIASES:
+                parsed["tool_name"] = normalized_tool
+                parsed["action_type"] = "execute_tool"
+            elif "tool_name" in parsed and parsed["tool_name"]:
+                parsed["action_type"] = "execute_tool"
+            elif "tool" in parsed and parsed["tool"]:
+                parsed["tool_name"] = TOOL_ALIASES.get(str(parsed["tool"]).strip(), str(parsed["tool"]).strip())
+                parsed["action_type"] = "execute_tool"
+            elif "action" in parsed and parsed["action"]:
+                act = str(parsed["action"]).strip()
+                parsed["tool_name"] = TOOL_ALIASES.get(act, act)
                 parsed["action_type"] = "execute_tool"
             else:
                 return {
@@ -200,6 +243,7 @@ class ModelBrainClient(abc.ABC):
         target_url: str,
         endpoints: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Formulate an initial sequential security testing plan."""
         pass
@@ -212,6 +256,7 @@ class ModelBrainClient(abc.ABC):
         plan_steps: List[Dict[str, Any]],
         recent_observations: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Propose the next tool to execute or signal completion."""
         pass
@@ -242,6 +287,8 @@ class DeterministicMockBrainClient(ModelBrainClient):
     def __init__(self, simulated_scenario: str = "standard_scan"):
         self.simulated_scenario = simulated_scenario
         self.call_history: List[Dict[str, Any]] = []
+        self.engine: str = "mock"
+        self.is_mock: bool = True
 
     def classify_request(self, request_data: Dict[str, Any]) -> Dict[str, Any]:
         self.call_history.append({"method": "classify_request", "data": request_data})
@@ -292,25 +339,76 @@ class DeterministicMockBrainClient(ModelBrainClient):
         target_url: str,
         endpoints: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         self.call_history.append({"method": "create_test_plan", "target": target_url})
         steps = []
         step_num = 1
 
         # Default structured plan
+        has_inventory_tool = any(t.get("name") == "inventory_scanner" for t in available_tools)
+        if has_inventory_tool:
+            steps.append({
+                "step_number": step_num,
+                "tool": "inventory_scanner",
+                "purpose": "Discover undocumented, shadow, and legacy (v1) API endpoints not present in current specification",
+                "parameters": {
+                    "target_url": target_url,
+                    "known_endpoints": [ep.get("path") for ep in endpoints if ep.get("path")],
+                },
+            })
+            step_num += 1
+
         for ep in endpoints:
             path = ep.get("path", "")
             method = ep.get("method", "GET").upper()
 
-            # Substitute path parameters (e.g. {id} -> 2)
+            # Substitute path parameters (e.g. {id} -> 2, or order {id} -> 102)
             test_path = path
             if "{id}" in test_path:
-                test_path = test_path.replace("{id}", "2")
+                if "order" in test_path:
+                    test_path = test_path.replace("{id}", "102")
+                elif "admin" in test_path:
+                    test_path = test_path.replace("{id}", "1")
+                else:
+                    test_path = test_path.replace("{id}", "2")
             elif "{" in test_path and "}" in test_path:
                 test_path = re.sub(r"\{[a-zA-Z0-9_]+\}", "1", test_path)
 
             full_url = f"{target_url.rstrip('/')}/{test_path.lstrip('/')}"
             
+            # Use graphql_probe for GraphQL endpoints if available
+            has_graphql_tool = any(t.get("name") == "graphql_probe" for t in available_tools)
+            if "graphql" in path.lower() and has_graphql_tool:
+                steps.append({
+                    "step_number": step_num,
+                    "tool": "graphql_probe",
+                    "purpose": f"Evaluate GraphQL endpoint {path} for introspection and schema exposure",
+                    "parameters": {
+                        "target_url": full_url,
+                        "check_introspection": True,
+                    },
+                })
+                step_num += 1
+                continue
+
+            # Use business_flow_probe for sensitive business flows (e.g. coupons)
+            has_flow_tool = any(t.get("name") == "business_flow_probe" for t in available_tools)
+            if "coupon" in path.lower() and has_flow_tool:
+                steps.append({
+                    "step_number": step_num,
+                    "tool": "business_flow_probe",
+                    "purpose": f"Evaluate business flow {path} for lack of rate limiting and anti-automation controls",
+                    "parameters": {
+                        "url": full_url,
+                        "method": method,
+                        "payload": {"coupon_code": "SAVE50", "order_id": 101},
+                        "iterations": 3,
+                    },
+                })
+                step_num += 1
+                continue
+
             step_params = {
                 "url": full_url,
                 "method": method,
@@ -323,6 +421,17 @@ class DeterministicMockBrainClient(ModelBrainClient):
                 step_params["headers"] = {"Content-Type": "application/json"}
             elif "/api/users" in path and method == "PUT":
                 step_params["body"] = json.dumps({"role": "admin", "is_admin": 1})
+                step_params["headers"] = {"Content-Type": "application/json"}
+            elif "admin" in path.lower() and "/role" in path and method in ("POST", "PUT"):
+                step_params["body"] = json.dumps({"role": "admin"})
+                step_params["headers"] = {"Content-Type": "application/json"}
+            elif ("webhook" in path.lower() or "integration" in path.lower()) and method == "POST":
+                step_params["body"] = json.dumps({
+                    "partner_name": "third_party_gateway",
+                    "callback_url": f"{target_url.rstrip('/')}/api/items",
+                    "event": "funds_transferred",
+                    "payload": {"amount": 5000, "currency": "USD"},
+                })
                 step_params["headers"] = {"Content-Type": "application/json"}
             elif "/api/search" in path and method == "GET":
                 step_params["url"] = f"{full_url}?q='"
@@ -372,6 +481,7 @@ class DeterministicMockBrainClient(ModelBrainClient):
         plan_steps: List[Dict[str, Any]],
         recent_observations: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         self.call_history.append({
             "method": "select_next_action",
@@ -430,12 +540,94 @@ class DeterministicMockBrainClient(ModelBrainClient):
                 "analysis": "Server response explicitly contains an unhandled database SQL syntax error.",
                 "verification_rule": "SQL_SYNTAX_ERROR_MATCH",
             }
+        elif tool_name == "graphql_probe":
+            findings = tool_result.get("findings", [])
+            intro_results = tool_result.get("introspection_results", [])
+            if findings or any(r.get("enabled") for r in intro_results):
+                return {
+                    "status": "CONFIRMED",
+                    "category": "GraphQL Introspection Enabled",
+                    "analysis": "GraphQL schema introspection query is enabled (__schema), permitting arbitrary schema enumeration and exposure of custom types/queries.",
+                    "verification_rule": "GRAPHQL_INTROSPECTION_EXPOSED",
+                }
+            return {
+                "status": "NOT_DEMONSTRATED",
+                "category": "GraphQL Security",
+                "analysis": "GraphQL endpoint detected but schema introspection is disabled or restricted.",
+                "verification_rule": None,
+            }
+        elif tool_name == "inventory_scanner":
+            findings = tool_result.get("findings", [])
+            shadow_eps = tool_result.get("shadow_endpoints_found", [])
+            if findings or shadow_eps:
+                return {
+                    "status": "CONFIRMED",
+                    "category": "Improper Inventory Management (Shadow API)",
+                    "analysis": f"API inventory probe discovered {len(shadow_eps)} undocumented, shadow, or deprecated API endpoints accessible on the target.",
+                    "verification_rule": "SHADOW_OR_DEPRECATED_API_EXPOSED",
+                }
+            return {
+                "status": "NOT_DEMONSTRATED",
+                "category": "API Inventory",
+                "analysis": "No shadow or deprecated API endpoints discovered during inventory probe.",
+                "verification_rule": None,
+            }
+        elif tool_name == "business_flow_probe":
+            findings = tool_result.get("findings", [])
+            if findings or (tool_result.get("all_succeeded") and tool_result.get("iterations_executed", 0) >= 2):
+                return {
+                    "status": "CONFIRMED",
+                    "category": "Unrestricted Access to Sensitive Business Flows",
+                    "analysis": "Sensitive business flow allowed sequential repeated operations without rate limiting, CAPTCHA, or anti-automation controls.",
+                    "verification_rule": "BUSINESS_FLOW_UNRESTRICTED_ACCESS",
+                }
+            return {
+                "status": "NOT_DEMONSTRATED",
+                "category": "Business Flow Security",
+                "analysis": "Business flow exhibited velocity or rate limit protections.",
+                "verification_rule": None,
+            }
+        elif "admin" in arguments.get("url", "").lower() and ("bfla_exposed" in body.lower() or "role_modified" in body.lower() or "admin_system_dump" in body.lower()):
+            return {
+                "status": "CONFIRMED",
+                "category": "Broken Function Level Authorization (BFLA)",
+                "analysis": "Administrative function was invoked and executed without proper role-based authorization verification.",
+                "verification_rule": "BFLA_ADMIN_FUNCTION_BYPASS",
+            }
+        elif ("webhook" in arguments.get("url", "").lower() or "integration" in arguments.get("url", "").lower()) and ("unsafe_consumption" in body.lower() or "trusted_without_verification" in body.lower()):
+            return {
+                "status": "CONFIRMED",
+                "category": "Unsafe Consumption of APIs",
+                "analysis": "Integration endpoint ingested untrusted third-party payload and executed downstream consumption without cryptographic signature validation or schema checks.",
+                "verification_rule": "UNSAFE_DOWNSTREAM_API_CONSUMPTION",
+            }
+        elif "/v1/" in arguments.get("url", "").lower() and ("shadow_api" in body.lower() or "legacy_endpoint_active" in body.lower()):
+            return {
+                "status": "CONFIRMED",
+                "category": "Improper Inventory Management (Shadow API)",
+                "analysis": "Deprecated v1 shadow API endpoint returned active sensitive data without inventory control or authentication.",
+                "verification_rule": "SHADOW_OR_DEPRECATED_API_EXPOSED",
+            }
+        elif "coupon" in arguments.get("url", "").lower() and ("business_flow_abuse" in body.lower() or "times_applied" in body.lower()):
+            return {
+                "status": "CONFIRMED",
+                "category": "Unrestricted Access to Sensitive Business Flows",
+                "analysis": "Sensitive promo discount coupon flow was processed repeatedly without velocity limits or quota constraints.",
+                "verification_rule": "BUSINESS_FLOW_UNRESTRICTED_ACCESS",
+            }
+        elif "/api/orders" in arguments.get("url", "") and ("shipping_address" in body or "total_amount" in body or "bola_exposed" in body):
+            return {
+                "status": "CONFIRMED",
+                "category": "BOLA / IDOR",
+                "analysis": "Endpoint returned private customer order data (shipping_address, total_amount) across accounts without authorization.",
+                "verification_rule": "BOLA_CROSS_ACCOUNT_LEAK",
+            }
         elif "password_hash" in body and "api_token" in body and "/api/users/" in arguments.get("url", ""):
             return {
                 "status": "CONFIRMED",
                 "category": "BOLA / IDOR",
                 "analysis": "Endpoint returned private user attributes (password_hash and api_token) across accounts without authorization.",
-                "verification_rule": "UNAUTHENTICATED_DATA_ACCESS",
+                "verification_rule": "BOLA_CROSS_ACCOUNT_LEAK",
             }
         elif "is_admin" in body and "role" in body and arguments.get("method") == "PUT":
             return {
@@ -675,6 +867,7 @@ class LocalQwenBrainClient(ModelBrainClient):
         target_url: str,
         endpoints: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         prompt = prompts.format_test_planning_prompt(target_url, endpoints, available_tools)
         raw_output = self._generate(prompt, max_new_tokens=1024)
@@ -692,6 +885,7 @@ class LocalQwenBrainClient(ModelBrainClient):
         plan_steps: List[Dict[str, Any]],
         recent_observations: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         prompt = prompts.format_action_selection_prompt(
             current_turn, max_turns, plan_steps, recent_observations, available_tools
@@ -805,6 +999,7 @@ class RemoteHttpQwenBrainClient(ModelBrainClient):
         target_url: str,
         endpoints: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         res = self._post(
             "/api/plan",
@@ -822,6 +1017,7 @@ class RemoteHttpQwenBrainClient(ModelBrainClient):
         plan_steps: List[Dict[str, Any]],
         recent_observations: List[Dict[str, Any]],
         available_tools: List[Dict[str, Any]],
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         res = self._post(
             "/api/action",

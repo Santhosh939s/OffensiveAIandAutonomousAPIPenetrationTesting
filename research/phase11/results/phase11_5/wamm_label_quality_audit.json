@@ -1,0 +1,64 @@
+{
+  "audit_phase": "Phase 11.5",
+  "dataset_name": "WAMM Repository (Dataset B)",
+  "source_prediction_file": "research\\phase11\\results\\phase11_2\\dataset_b_phase11_2_predictions.csv",
+  "total_samples_audited": 90,
+  "heuristic_review_summary": {
+    "total_heuristic_reviews": 90,
+    "heuristic_agreements": 39,
+    "heuristic_mismatches": 51,
+    "heuristic_mismatch_rate": 0.5666666666666667,
+    "mismatches_by_original_label": {
+      "RCE": 15,
+      "SQL Injection": 15,
+      "Unknown": 15,
+      "Benign": 3,
+      "SSRF": 3
+    },
+    "agreements_by_original_label": {
+      "Benign": 12,
+      "SSRF": 12,
+      "Directory Traversal": 15
+    }
+  },
+  "evidentiary_assessment": {
+    "claimed_metric": "51 / 90 samples (56.7%) label noise",
+    "underlying_methodology": "Automated keyword matching heuristic (scripts/phase11_3_wamm_review.py)",
+    "methodological_deficiencies": [
+      "Lack of formal multi-annotator blind review protocol",
+      "No calculation of inter-annotator agreement statistics (e.g., Cohen's Kappa or Fleiss' Kappa)",
+      "Heuristic rules rely on static string matching (e.g. searching for '/etc/passwd' or 'union select') which may miss subtle attack variants or context-dependent exploits",
+      "Single-reviewer subjective adjudication without independent blinded cross-verification",
+      "Original WAMM repository labeling intent and attack generation schema (CyShield R&D) not formally documented in peer-reviewed source literature"
+    ],
+    "academic_qualification_required": true,
+    "mandated_academic_statement": "Potential label inconsistencies were identified during manual inspection; the exact dataset-wide label-noise rate has not been independently established.",
+    "dataset_preservation_policy": "STRICT PRESERVATION \u2014 Original WAMM ground-truth labels remain untouched and unmodified in all benchmark artifacts."
+  },
+  "sample_case_studies": [
+    {
+      "sample_id": "WAMM_0001",
+      "original_label": "Directory Traversal",
+      "model_prediction": "Directory Traversal",
+      "payload_snippet": "/cgi-bin/test-cgi?file=../../../../../../../../../../../../etc/passwd",
+      "heuristic_ruling": "Directory Traversal / LFI",
+      "finding": "Both model and heuristic agree with WAMM ground truth."
+    },
+    {
+      "sample_id": "WAMM_0046",
+      "original_label": "RCE",
+      "model_prediction": "Directory Traversal",
+      "payload_snippet": "/index.php?page=../../../../etc/passwd",
+      "heuristic_ruling": "Directory Traversal / LFI",
+      "finding": "Payload exhibits classic directory traversal syntax against /etc/passwd, but was cataloged under RCE in WAMM. Model classified as Directory Traversal. Illustrates taxonomy ambiguity between LFI and code execution."
+    },
+    {
+      "sample_id": "WAMM_0076",
+      "original_label": "SSRF",
+      "model_prediction": "Directory Traversal",
+      "payload_snippet": "/proxy?url=../../../../etc/shadow",
+      "heuristic_ruling": "Directory Traversal / LFI",
+      "finding": "Parameter name 'url' suggests SSRF vector, but argument is local file path traversal. Demonstrates multi-vector attack ambiguity."
+    }
+  ]
+}

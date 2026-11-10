@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Login - Autonomous API Security Platform</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <style>
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #0f172a;
+        }
+        .login-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 36px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .login-header .shield {
+            font-size: 42px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .login-header h1 {
+            color: #f8fafc;
+            font-size: 20px;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .login-header p {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #f8fafc;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        .btn-login:hover {
+            background: #1d4ed8;
+        }
+        .alert-box {
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            display: none;
+        }
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: #64748b;
+        }
+        .back-link {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <span class="shield">🛡️</span>
+                <h1>OFFENSIVE AI CONSOLE</h1>
+                <p>Administrator & Operator Authentication</p>
+            </div>
+
+            <div id="login-alert" class="alert-box alert-error"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" autocomplete="username" required autofocus placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" autocomplete="current-password" required placeholder="••••••••••••">
+                </div>
+                <button type="submit" id="submit-btn" class="btn-login">Sign In</button>
+            </form>
+
+            <div class="login-footer">
+                <p>Offline Operation Mode &bull; Zero Cloud Dependency</p>
+                <p><a href="/" class="back-link">&larr; Return to Dashboard</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("login-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById("login-alert");
+            const submitBtn = document.getElementById("submit-btn");
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+
+            alertBox.style.display = "none";
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Authenticating...";
+
+            try {
+                const resp = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await resp.json();
+                if (resp.ok && data.success) {
+                    // Redirect back to dashboard on successful login
+                    window.location.href = "/";
+                } else {
+                    alertBox.textContent = data.error || "Invalid credentials";
+                    alertBox.style.display = "block";
+                }
+            } catch (err) {
+                alertBox.textContent = "Network error during authentication.";
+                alertBox.style.display = "block";
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Sign In";
+            }
+        });
+    </script>
+</body>
+</html>
+

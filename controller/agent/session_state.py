@@ -7,7 +7,7 @@ and termination conditions.
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 
 @dataclass
@@ -22,6 +22,7 @@ class SessionState:
     active_plan: Optional[Dict[str, Any]] = None
     observations: List[Dict[str, Any]] = field(default_factory=list)
     findings: List[Dict[str, Any]] = field(default_factory=list)
+    probe_signatures: Set[str] = field(default_factory=set)
     is_finished: bool = False
     termination_reason: Optional[str] = None
 

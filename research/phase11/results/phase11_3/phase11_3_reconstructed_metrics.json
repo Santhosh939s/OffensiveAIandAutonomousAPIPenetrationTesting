@@ -1,0 +1,815 @@
+{
+  "Dataset_D": {
+    "dataset": "SecLists Fuzzing Challenge (Dataset D)",
+    "is_supervised": true,
+    "total_samples": 85,
+    "correct_predictions": 74,
+    "incorrect_predictions": 11,
+    "accuracy": 0.8706,
+    "accuracy_wilson_ci_95": [
+      0.783,
+      0.9262
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.8,
+      0.9294
+    ],
+    "macro_precision_all_classes": 0.6488,
+    "macro_recall_all_classes": 0.5833,
+    "macro_f1_all_classes": 0.6098,
+    "macro_precision_true_classes": 0.9732,
+    "macro_recall_true_classes": 0.875,
+    "macro_f1_true_classes": 0.9147,
+    "macro_f1_bootstrap_ci_95": [
+      0.8523,
+      0.9626
+    ],
+    "weighted_f1": 0.9089,
+    "weighted_f1_bootstrap_ci_95": [
+      0.8506,
+      0.9569
+    ],
+    "micro_f1": 0.8706,
+    "balanced_accuracy": 0.875,
+    "matthews_corrcoef": 0.8368,
+    "confusion_matrix": {
+      "Benign": {
+        "Benign": 9,
+        "Directory Traversal": 1,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "Directory Traversal": {
+        "Benign": 0,
+        "Directory Traversal": 25,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "Log Forging": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "RCE": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "XSS": 0
+      },
+      "SQL Injection": {
+        "Benign": 0,
+        "Directory Traversal": 2,
+        "Log Forging": 3,
+        "RCE": 3,
+        "SQL Injection": 17,
+        "XSS": 0
+      },
+      "XSS": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "Log Forging": 0,
+        "RCE": 2,
+        "SQL Injection": 0,
+        "XSS": 23
+      }
+    },
+    "per_class": {
+      "Benign": {
+        "support": 10,
+        "tp": 9,
+        "fp": 0,
+        "fn": 1,
+        "tn": 75,
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1_score": 0.9474,
+        "specificity": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.1
+      },
+      "Directory Traversal": {
+        "support": 25,
+        "tp": 25,
+        "fp": 3,
+        "fn": 0,
+        "tn": 57,
+        "precision": 0.8929,
+        "recall": 1.0,
+        "f1_score": 0.9434,
+        "specificity": 0.95,
+        "fpr": 0.05,
+        "fnr": 0.0
+      },
+      "Log Forging": {
+        "support": 0,
+        "tp": 0,
+        "fp": 3,
+        "fn": 0,
+        "tn": 82,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9647,
+        "fpr": 0.0353,
+        "fnr": 0.0
+      },
+      "RCE": {
+        "support": 0,
+        "tp": 0,
+        "fp": 5,
+        "fn": 0,
+        "tn": 80,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9412,
+        "fpr": 0.0588,
+        "fnr": 0.0
+      },
+      "SQL Injection": {
+        "support": 25,
+        "tp": 17,
+        "fp": 0,
+        "fn": 8,
+        "tn": 60,
+        "precision": 1.0,
+        "recall": 0.68,
+        "f1_score": 0.8095,
+        "specificity": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.32
+      },
+      "XSS": {
+        "support": 25,
+        "tp": 23,
+        "fp": 0,
+        "fn": 2,
+        "tn": 60,
+        "precision": 1.0,
+        "recall": 0.92,
+        "f1_score": 0.9583,
+        "specificity": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.08
+      }
+    }
+  },
+  "Dataset_A": {
+    "dataset": "Mendeley Multi-Class Web Attack (Dataset A)",
+    "is_supervised": true,
+    "total_samples": 180,
+    "correct_predictions": 110,
+    "incorrect_predictions": 70,
+    "accuracy": 0.6111,
+    "accuracy_wilson_ci_95": [
+      0.5383,
+      0.6793
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.5556,
+      0.6667
+    ],
+    "macro_precision_all_classes": 0.4146,
+    "macro_recall_all_classes": 0.4074,
+    "macro_f1_all_classes": 0.3898,
+    "macro_precision_true_classes": 0.6219,
+    "macro_recall_true_classes": 0.6111,
+    "macro_f1_true_classes": 0.5847,
+    "macro_f1_bootstrap_ci_95": [
+      0.5301,
+      0.6311
+    ],
+    "weighted_f1": 0.5847,
+    "weighted_f1_bootstrap_ci_95": [
+      0.5301,
+      0.6311
+    ],
+    "micro_f1": 0.6111,
+    "balanced_accuracy": 0.6111,
+    "matthews_corrcoef": 0.5664,
+    "confusion_matrix": {
+      "Benign": {
+        "Benign": 20,
+        "Directory Traversal": 8,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 1,
+        "XSS": 1
+      },
+      "Directory Traversal": {
+        "Benign": 0,
+        "Directory Traversal": 30,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "LOG4J": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Log Forging": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "RCE": {
+        "Benign": 0,
+        "Directory Traversal": 7,
+        "LOG4J": 0,
+        "Log Forging": 2,
+        "RCE": 19,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 2
+      },
+      "SQL Injection": {
+        "Benign": 0,
+        "Directory Traversal": 2,
+        "LOG4J": 0,
+        "Log Forging": 2,
+        "RCE": 3,
+        "SQL Injection": 23,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "SSRF": {
+        "Benign": 0,
+        "Directory Traversal": 20,
+        "LOG4J": 1,
+        "Log Forging": 0,
+        "RCE": 8,
+        "SQL Injection": 1,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Unknown": {
+        "Benign": 0,
+        "Directory Traversal": 0,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "XSS": {
+        "Benign": 0,
+        "Directory Traversal": 3,
+        "LOG4J": 0,
+        "Log Forging": 0,
+        "RCE": 9,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 18
+      }
+    },
+    "per_class": {
+      "Benign": {
+        "support": 30,
+        "tp": 20,
+        "fp": 0,
+        "fn": 10,
+        "tn": 150,
+        "precision": 1.0,
+        "recall": 0.6667,
+        "f1_score": 0.8,
+        "specificity": 1.0,
+        "fpr": 0.0,
+        "fnr": 0.3333
+      },
+      "Directory Traversal": {
+        "support": 30,
+        "tp": 30,
+        "fp": 40,
+        "fn": 0,
+        "tn": 110,
+        "precision": 0.4286,
+        "recall": 1.0,
+        "f1_score": 0.6,
+        "specificity": 0.7333,
+        "fpr": 0.2667,
+        "fnr": 0.0
+      },
+      "LOG4J": {
+        "support": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "tn": 179,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9944,
+        "fpr": 0.0056,
+        "fnr": 0.0
+      },
+      "Log Forging": {
+        "support": 0,
+        "tp": 0,
+        "fp": 4,
+        "fn": 0,
+        "tn": 176,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9778,
+        "fpr": 0.0222,
+        "fnr": 0.0
+      },
+      "RCE": {
+        "support": 30,
+        "tp": 19,
+        "fp": 20,
+        "fn": 11,
+        "tn": 130,
+        "precision": 0.4872,
+        "recall": 0.6333,
+        "f1_score": 0.5507,
+        "specificity": 0.8667,
+        "fpr": 0.1333,
+        "fnr": 0.3667
+      },
+      "SQL Injection": {
+        "support": 30,
+        "tp": 23,
+        "fp": 1,
+        "fn": 7,
+        "tn": 149,
+        "precision": 0.9583,
+        "recall": 0.7667,
+        "f1_score": 0.8519,
+        "specificity": 0.9933,
+        "fpr": 0.0067,
+        "fnr": 0.2333
+      },
+      "SSRF": {
+        "support": 30,
+        "tp": 0,
+        "fp": 0,
+        "fn": 30,
+        "tn": 150,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 1.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "Unknown": {
+        "support": 0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "tn": 179,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9944,
+        "fpr": 0.0056,
+        "fnr": 0.0
+      },
+      "XSS": {
+        "support": 30,
+        "tp": 18,
+        "fp": 3,
+        "fn": 12,
+        "tn": 147,
+        "precision": 0.8571,
+        "recall": 0.6,
+        "f1_score": 0.7059,
+        "specificity": 0.98,
+        "fpr": 0.02,
+        "fnr": 0.4
+      }
+    },
+    "supported_classes_only": {
+      "total_samples": 150,
+      "correct_predictions": 110,
+      "incorrect_predictions": 40,
+      "accuracy": 0.7333,
+      "accuracy_wilson_ci_95": [
+        0.6574,
+        0.7976
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.6667,
+        0.8
+      ],
+      "macro_precision": 0.5814,
+      "macro_recall": 0.5238,
+      "macro_f1": 0.5353,
+      "macro_f1_bootstrap_ci_95": [
+        0.4877,
+        0.58
+      ],
+      "weighted_f1": 0.7494,
+      "weighted_f1_bootstrap_ci_95": [
+        0.6828,
+        0.812
+      ],
+      "balanced_accuracy": 0.7333,
+      "matthews_corrcoef": 0.6816,
+      "confusion_matrix": {
+        "Benign": {
+          "Benign": 20,
+          "Directory Traversal": 8,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 1,
+          "XSS": 1
+        },
+        "Directory Traversal": {
+          "Benign": 0,
+          "Directory Traversal": 30,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Log Forging": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "RCE": {
+          "Benign": 0,
+          "Directory Traversal": 7,
+          "Log Forging": 2,
+          "RCE": 19,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 2
+        },
+        "SQL Injection": {
+          "Benign": 0,
+          "Directory Traversal": 2,
+          "Log Forging": 2,
+          "RCE": 3,
+          "SQL Injection": 23,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Unknown": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "XSS": {
+          "Benign": 0,
+          "Directory Traversal": 3,
+          "Log Forging": 0,
+          "RCE": 9,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 18
+        }
+      }
+    }
+  },
+  "Dataset_B": {
+    "dataset": "WAMM Repository (Dataset B)",
+    "is_supervised": true,
+    "total_samples": 90,
+    "correct_predictions": 27,
+    "incorrect_predictions": 63,
+    "accuracy": 0.3,
+    "accuracy_wilson_ci_95": [
+      0.2151,
+      0.4013
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.2667,
+      0.3333
+    ],
+    "macro_precision_all_classes": 0.1023,
+    "macro_recall_all_classes": 0.225,
+    "macro_f1_all_classes": 0.139,
+    "macro_precision_true_classes": 0.1364,
+    "macro_recall_true_classes": 0.3,
+    "macro_f1_true_classes": 0.1853,
+    "macro_f1_bootstrap_ci_95": [
+      0.1624,
+      0.2054
+    ],
+    "weighted_f1": 0.1853,
+    "weighted_f1_bootstrap_ci_95": [
+      0.1624,
+      0.2054
+    ],
+    "micro_f1": 0.3,
+    "balanced_accuracy": 0.3,
+    "matthews_corrcoef": 0.1935,
+    "confusion_matrix": {
+      "Benign": {
+        "Benign": 12,
+        "Cookie Injection": 0,
+        "Directory Traversal": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 3
+      },
+      "Cookie Injection": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Directory Traversal": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 15,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "RCE": {
+        "Benign": 1,
+        "Cookie Injection": 0,
+        "Directory Traversal": 14,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "SQL Injection": {
+        "Benign": 2,
+        "Cookie Injection": 0,
+        "Directory Traversal": 6,
+        "RCE": 7,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "SSRF": {
+        "Benign": 11,
+        "Cookie Injection": 3,
+        "Directory Traversal": 1,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "Unknown": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 6,
+        "RCE": 8,
+        "SQL Injection": 1,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      },
+      "XSS": {
+        "Benign": 0,
+        "Cookie Injection": 0,
+        "Directory Traversal": 0,
+        "RCE": 0,
+        "SQL Injection": 0,
+        "SSRF": 0,
+        "Unknown": 0,
+        "XSS": 0
+      }
+    },
+    "per_class": {
+      "Benign": {
+        "support": 15,
+        "tp": 12,
+        "fp": 14,
+        "fn": 3,
+        "tn": 61,
+        "precision": 0.4615,
+        "recall": 0.8,
+        "f1_score": 0.5854,
+        "specificity": 0.8133,
+        "fpr": 0.1867,
+        "fnr": 0.2
+      },
+      "Cookie Injection": {
+        "support": 0,
+        "tp": 0,
+        "fp": 3,
+        "fn": 0,
+        "tn": 87,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9667,
+        "fpr": 0.0333,
+        "fnr": 0.0
+      },
+      "Directory Traversal": {
+        "support": 15,
+        "tp": 15,
+        "fp": 27,
+        "fn": 0,
+        "tn": 48,
+        "precision": 0.3571,
+        "recall": 1.0,
+        "f1_score": 0.5263,
+        "specificity": 0.64,
+        "fpr": 0.36,
+        "fnr": 0.0
+      },
+      "RCE": {
+        "support": 15,
+        "tp": 0,
+        "fp": 15,
+        "fn": 15,
+        "tn": 60,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.8,
+        "fpr": 0.2,
+        "fnr": 1.0
+      },
+      "SQL Injection": {
+        "support": 15,
+        "tp": 0,
+        "fp": 1,
+        "fn": 15,
+        "tn": 74,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9867,
+        "fpr": 0.0133,
+        "fnr": 1.0
+      },
+      "SSRF": {
+        "support": 15,
+        "tp": 0,
+        "fp": 0,
+        "fn": 15,
+        "tn": 75,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 1.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "Unknown": {
+        "support": 15,
+        "tp": 0,
+        "fp": 0,
+        "fn": 15,
+        "tn": 75,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 1.0,
+        "fpr": 0.0,
+        "fnr": 1.0
+      },
+      "XSS": {
+        "support": 0,
+        "tp": 0,
+        "fp": 3,
+        "fn": 0,
+        "tn": 87,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "specificity": 0.9667,
+        "fpr": 0.0333,
+        "fnr": 0.0
+      }
+    },
+    "supported_classes_only": {
+      "total_samples": 60,
+      "correct_predictions": 27,
+      "incorrect_predictions": 33,
+      "accuracy": 0.45,
+      "accuracy_wilson_ci_95": [
+        0.3309,
+        0.5751
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.4,
+        0.5
+      ],
+      "macro_precision": 0.2457,
+      "macro_recall": 0.36,
+      "macro_f1": 0.28,
+      "macro_f1_bootstrap_ci_95": [
+        0.2487,
+        0.3067
+      ],
+      "weighted_f1": 0.35,
+      "weighted_f1_bootstrap_ci_95": [
+        0.3109,
+        0.3833
+      ],
+      "balanced_accuracy": 0.45,
+      "matthews_corrcoef": 0.3219,
+      "confusion_matrix": {
+        "Benign": {
+          "Benign": 12,
+          "Directory Traversal": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 3
+        },
+        "Directory Traversal": {
+          "Benign": 0,
+          "Directory Traversal": 15,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "RCE": {
+          "Benign": 1,
+          "Directory Traversal": 14,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "SQL Injection": {
+          "Benign": 2,
+          "Directory Traversal": 6,
+          "RCE": 7,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "XSS": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        }
+      }
+    }
+  },
+  "Dataset_E": {
+    "dataset": "ATRDF Unlabelled Validation Pool (Dataset E)",
+    "total_samples": 50,
+    "is_supervised": false,
+    "valid_token_rate": 1.0,
+    "hallucination_rate": 0.0,
+    "predicted_distribution": {
+      "Benign": 39,
+      "Cookie Injection": 3,
+      "Directory Traversal": 2,
+      "Log Forging": 4,
+      "RCE": 1,
+      "XSS": 1
+    }
+  }
+}

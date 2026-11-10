@@ -158,6 +158,55 @@ class TestEvidenceStore(unittest.TestCase):
         self.assertEqual(summary["by_status"]["SUSPECTED"], 1)
         self.assertEqual(summary["by_category"]["BOLA / IDOR"], 1)
 
+    def test_evidence_hashing_and_integrity_verification(self):
+        """Verify that traffic logs and findings are stored with cryptographic hashes and pass integrity checks."""
+        tid = self.store.log_traffic(
+            session_id=self.session_id,
+            method="POST",
+            url="http://127.0.0.1:8000/api/items",
+            response_status=201,
+            response_body='{"created": true}',
+        )
+        t_entry = self.store.get_traffic_by_id(tid)
+        self.assertIsNotNone(t_entry["evidence_hash"])
+        self.assertEqual(len(t_entry["evidence_hash"]), 64)
+
+        fid, status = self.store.record_finding(
+            session_id=self.session_id,
+            endpoint="http://127.0.0.1:8000/api/items",
+            category="Security Misconfiguration",
+            status="CONFIRMED",
+            evidence_notes="Missing security headers",
+            verification_rule="SECURITY_MISCONFIGURATION_HEADER",
+            traffic_log_id=tid,
+        )
+        findings = self.store.get_findings(self.session_id)
+        matching = [f for f in findings if f["id"] == fid]
+        self.assertEqual(len(matching), 1)
+        self.assertEqual(matching[0]["evidence_hash"], t_entry["evidence_hash"])
+
+        # Check integrity verification
+        audit = self.store.verify_evidence_integrity(self.session_id)
+        self.assertTrue(audit["verified"])
+        self.assertGreaterEqual(audit["valid_finding_links"], 1)
+        self.assertEqual(len(audit["unlinked_findings"]), 0)
+
+    def test_traffic_batch_logging(self):
+        """Verify bulk insertion of traffic records in a single atomic transaction."""
+        records = [
+            {
+                "method": "GET",
+                "url": f"http://127.0.0.1:8000/batch/{i}",
+                "response_status": 200,
+                "response_body": f'{{"item": {i}}}',
+            }
+            for i in range(5)
+        ]
+        ids = self.store.log_traffic_batch(self.session_id, records)
+        self.assertEqual(len(ids), 5)
+        logs = self.store.get_traffic_logs(self.session_id)
+        self.assertGreaterEqual(len(logs), 5)
+
 
 if __name__ == "__main__":
     unittest.main()

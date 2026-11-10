@@ -250,3 +250,178 @@ def test_sse_telemetry_stream(test_dashboard):
     first_chunk = next(stream)
     assert "STREAM_CONNECTED" in first_chunk
     assert session_id in first_chunk
+
+
+def test_dashboard_endpoints_and_risk_apis(test_dashboard):
+    """Verify endpoint catalog and risk summary endpoints on dashboard."""
+    client, manager, store = test_dashboard
+    session_id = "sess_endpoints_test"
+    store.create_session(session_id, "http://127.0.0.1:5050")
+
+    # Ingest specification
+    store.record_specification(
+        session_id=session_id,
+        spec_source="http://127.0.0.1:5050/openapi.json",
+        title="Test API",
+        spec_data={
+            "paths": {
+                "/api/users": {"get": {"summary": "List users"}},
+                "/api/orders": {"get": {"summary": "List orders"}},
+            }
+        },
+    )
+
+    # Ingest findings
+    store.record_finding(
+        session_id=session_id,
+        endpoint="/api/orders/102",
+        category="BOLA / IDOR",
+        status="CONFIRMED",
+        evidence_notes="Leaked order info",
+        verification_rule="BOLA_CROSS_ACCOUNT_LEAK",
+        raw_evidence={"status": 200},
+    )
+
+    # Test /endpoints API
+    ep_resp = client.get(f"/api/assessments/{session_id}/endpoints")
+    assert ep_resp.status_code == 200
+    ep_data = ep_resp.get_json()
+    assert ep_data["count"] >= 2
+    paths = [e["path"] for e in ep_data["endpoints"]]
+    assert "/api/users" in paths
+    assert "/api/orders" in paths
+
+    # Test /risk API
+    risk_resp = client.get(f"/api/assessments/{session_id}/risk")
+    assert risk_resp.status_code == 200
+    risk_data = risk_resp.get_json()
+    assert risk_data["total_findings"] == 1
+    assert risk_data["confirmed_count"] == 1
+    assert risk_data["overall_risk_rating"] == "HIGH"
+
+    # Test /report/json API
+    r_json_resp = client.get(f"/api/assessments/{session_id}/report/json")
+    assert r_json_resp.status_code == 200
+    r_json = r_json_resp.get_json()
+    assert r_json["report_version"] == "2.0.0"
+
+    # Test /report/html API
+    r_html_resp = client.get(f"/api/assessments/{session_id}/report/html")
+    assert r_html_resp.status_code == 200
+    assert "text/html" in r_html_resp.headers["Content-Type"]
+    assert "<!DOCTYPE html>" in r_html_resp.get_data(as_text=True)
+
+
+def test_system_status_caching(test_dashboard):
+    """Verify system diagnostics endpoint utilizes TTL cache to avoid socket polling spikes."""
+    client, _, _ = test_dashboard
+    resp1 = client.get("/api/system/status")
+    assert resp1.status_code == 200
+    d1 = resp1.get_json()
+
+    # Immediate second call should be served from memory cache
+    resp2 = client.get("/api/system/status")
+    assert resp2.status_code == 200
+    d2 = resp2.get_json()
+
+    assert d1["status"] == d2["status"]
+    assert d1["dashboard_version"] == d2["dashboard_version"]
+    assert d1["default_allowed_hosts"] == d2["default_allowed_hosts"]
+
+
+def test_session_status_fast_aggregations(test_dashboard):
+    """Verify session status returns direct SQL summary counts."""
+    client, manager, store = test_dashboard
+    session_id = "test-fast-agg-session"
+    store.create_session(session_id, "http://127.0.0.1:5050")
+
+    store.record_finding(
+        session_id=session_id,
+        endpoint="/api/v1/auth",
+        category="BOLA",
+        status="CONFIRMED",
+        evidence_notes="Confirmed finding with verified rule and proof",
+        verification_rule="BOLA_CROSS_ACCOUNT_LEAK",
+        raw_evidence={"status": 200, "data": "leak"},
+    )
+    store.record_finding(
+        session_id=session_id,
+        endpoint="/api/v1/profile",
+        category="AUTH_BYPASS",
+        status="SUSPECTED",
+        evidence_notes="Suspected finding",
+    )
+
+    resp = client.get(f"/api/assessments/{session_id}/status")
+    assert resp.status_code == 200
+    data = resp.get_json()
+
+    assert data["findings_count"] == 2
+    assert data["confirmed_count"] == 1
+    assert data["suspected_count"] == 1
+    assert data["safe_count"] == 0
+    assert "by_severity" in data
+
+
+def test_traffic_pagination_and_masking(test_dashboard):
+    """Verify paginated traffic retrieval and authorization token masking."""
+    client, manager, store = test_dashboard
+    session_id = "test-traffic-page-session"
+    store.create_session(session_id, "http://127.0.0.1:5050")
+
+    records = [
+        {
+            "method": "GET",
+            "url": f"http://127.0.0.1:5050/api/item/{i}",
+            "headers": {"Authorization": "Bearer super-secret-jwt-token"},
+            "status_code": 200,
+            "response_body": json.dumps({"item_id": i}),
+        }
+        for i in range(15)
+    ]
+    store.log_traffic_batch(session_id, records)
+
+    # Fetch page 1 (limit 5, offset 0)
+    resp = client.get(f"/api/assessments/{session_id}/traffic?limit=5&offset=0")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data["count"] == 5
+    assert len(data["traffic"]) == 5
+    assert "Bearer ***" in data["traffic"][0]["headers"]["Authorization"]
+
+    # Fetch page 2 (limit 5, offset 5)
+    resp2 = client.get(f"/api/assessments/{session_id}/traffic?limit=5&offset=5")
+    assert resp2.status_code == 200
+    data2 = resp2.get_json()
+    assert data2["count"] == 5
+    assert data2["traffic"][0]["url"] != data["traffic"][0]["url"]
+
+
+def test_report_memoization_on_terminal_session(test_dashboard):
+    """Verify reports are memoized in memory for completed sessions."""
+    client, manager, store = test_dashboard
+    session_id = "test-memo-session"
+    store.create_session(session_id, "http://127.0.0.1:5050")
+    store.update_session_status(session_id, "COMPLETED")
+
+    resp1 = client.get(f"/api/assessments/{session_id}/report")
+    assert resp1.status_code == 200
+    assert session_id in manager._report_cache
+    assert "markdown" in manager._report_cache[session_id]
+
+    # Verify cached return
+    resp2 = client.get(f"/api/assessments/{session_id}/report")
+    assert resp2.status_code == 200
+    assert resp1.get_json() == resp2.get_json()
+
+
+def test_dashboard_fully_offline_assets():
+    """Verify dashboard HTML and static assets do not contain external CDN dependencies."""
+    html_file = os.path.join(PROJECT_ROOT, "dashboard", "templates", "index.html")
+    with open(html_file, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    import re
+    external_tags = re.findall(r'<(?:link|script|img)[^>]*(?:href|src)=["\']https?://[^"\']*["\']', html, re.IGNORECASE)
+    assert len(external_tags) == 0, f"Found unauthorized external asset tags: {external_tags}"
+

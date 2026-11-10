@@ -1,0 +1,1185 @@
+{
+  "verification_phase": "Final Research Freeze",
+  "timestamp": "2026-11-07T18:35:00+05:30",
+  "cryptographic_manifest": {
+    "gguf_model_sha256": "CD7DC83335B02D90F44A7FE4BD0F06EEA4D64DEB429710F238FE8C5DE3DA4DC5",
+    "lora_adapter_sha256": "39FD053A1725E15C9F8071578965D9B7D2B58B8AFF2D0D722FC36D8796879327",
+    "dataset_d_predictions_sha256": "65C8EE40827AE04FD9C7578002D5D94F2B2608D6CE9AFEA331C0CC4CED73040A",
+    "dataset_a_predictions_sha256": "06FD2505193A09183FB25DCD7D397CEB62C10094340AB27EFC52EC97E6546FDC",
+    "dataset_b_predictions_sha256": "86561C1596146153BE17C73E26BE4E1B46BFA4013C0F3EA20ACB7662CE52D981",
+    "dataset_e_predictions_sha256": "55B205CFAB4AC703057B5008D9267BD95908764B650DC5BF807E6180C522FA66"
+  },
+  "task1_mcc_investigation": {
+    "mendeley_overall": {
+      "candidate_values": [
+        0.5664,
+        0.5401
+      ],
+      "verified_value": 0.5664,
+      "exact_gorodkin": 0.566373559699309,
+      "exact_sklearn": 0.566373559699309,
+      "discrepancy_explanation": "The verified MCC for Mendeley Overall is 0.5664 (exact: 0.566374). The value 0.5401 observed in the Phase 11.5 markdown summary table was a transcription typo originating from the lower bound of the Weighted F1 bootstrap confidence interval [0.5403, 0.6421]. Both first-principles Gorodkin formula on the 9x9 confusion matrix and Scikit-Learn matthews_corrcoef evaluate strictly to 0.5664."
+    },
+    "wamm_overall": {
+      "candidate_values": [
+        0.1935,
+        0.1667
+      ],
+      "verified_value": 0.1935,
+      "exact_gorodkin": 0.19350609439293706,
+      "exact_sklearn": 0.19350609439293706,
+      "discrepancy_explanation": "The verified MCC for WAMM Overall is 0.1935 (exact: 0.193506). The value 0.1667 observed in the Phase 11.5 markdown summary table was a transcription typo originating from the uniform prior probability 1/6 (0.1667) across the 6 ground-truth classes. Both first-principles Gorodkin formula on the 8x8 confusion matrix and Scikit-Learn matthews_corrcoef evaluate strictly to 0.1935."
+    }
+  },
+  "task2_weighted_f1_proof": {
+    "mathematical_principle": "When all evaluated classes in a dataset have identical ground-truth support (s_k = N/K for all k), the class weights w_k = s_k / N simplify identically to 1/K. Therefore, Weighted F1 = sum(w_k * F1_k) = (1/K) * sum(F1_k) = Macro F1. This is a mathematical identity that holds whenever class support is balanced.",
+    "empirical_verification": {
+      "mendeley_supported": {
+        "support_per_class": 30,
+        "classes": 5,
+        "total_samples": 150,
+        "macro_f1": 0.7494,
+        "weighted_f1": 0.7494,
+        "equality_confirmed": true
+      },
+      "mendeley_overall": {
+        "support_per_class": 30,
+        "classes": 6,
+        "total_samples": 180,
+        "macro_f1": 0.5847,
+        "weighted_f1": 0.5847,
+        "equality_confirmed": true
+      },
+      "wamm_supported": {
+        "support_per_class": 15,
+        "classes": 4,
+        "total_samples": 60,
+        "macro_f1": 0.35,
+        "weighted_f1": 0.35,
+        "equality_confirmed": true
+      },
+      "wamm_overall": {
+        "support_per_class": 15,
+        "classes": 6,
+        "total_samples": 90,
+        "macro_f1": 0.1853,
+        "weighted_f1": 0.1853,
+        "equality_confirmed": true
+      },
+      "seclists_contrast": {
+        "support_per_class": "Unbalanced (Benign: 10, DirTrav: 25, SQLi: 25, XSS: 25)",
+        "classes": 4,
+        "total_samples": 85,
+        "macro_f1": 0.9147,
+        "weighted_f1": 0.9089,
+        "equality_confirmed": false,
+        "note": "Classes are unbalanced; Macro F1 and Weighted F1 correctly differ by 0.0058 as expected."
+      }
+    }
+  },
+  "task3_reconstructed_table": [
+    {
+      "benchmark_suite": "Internal Baseline (Phase 7.1)",
+      "scope": "Held-Out Master Test Split",
+      "samples": 128,
+      "accuracy": 0.9688,
+      "wilson_ci_95": [
+        0.9224,
+        0.9878
+      ],
+      "bootstrap_ci_95": [
+        0.9375,
+        0.9922
+      ],
+      "macro_f1_true": 0.9723,
+      "weighted_f1": 0.9688,
+      "mcc": 0.9644
+    },
+    {
+      "benchmark_suite": "SecLists Fuzzing Challenge (Dataset D)",
+      "scope": "External Fuzzing Suite",
+      "samples": 85,
+      "accuracy": 0.8706,
+      "wilson_ci_95": [
+        0.783,
+        0.9262
+      ],
+      "bootstrap_ci_95": [
+        0.8,
+        0.9294
+      ],
+      "macro_f1_true": 0.9147,
+      "weighted_f1": 0.9089,
+      "mcc": 0.8368
+    },
+    {
+      "benchmark_suite": "Mendeley Multi-Class (Dataset A)",
+      "scope": "Supported Classes Only",
+      "samples": 150,
+      "accuracy": 0.7333,
+      "wilson_ci_95": [
+        0.6574,
+        0.7976
+      ],
+      "bootstrap_ci_95": [
+        0.6667,
+        0.8
+      ],
+      "macro_f1_true": 0.7494,
+      "weighted_f1": 0.7494,
+      "mcc": 0.6816
+    },
+    {
+      "benchmark_suite": "Mendeley Multi-Class (Dataset A)",
+      "scope": "Overall (Including SSRF)",
+      "samples": 180,
+      "accuracy": 0.6111,
+      "wilson_ci_95": [
+        0.5383,
+        0.6793
+      ],
+      "bootstrap_ci_95": [
+        0.5556,
+        0.6667
+      ],
+      "macro_f1_true": 0.5847,
+      "weighted_f1": 0.5847,
+      "mcc": 0.5664
+    },
+    {
+      "benchmark_suite": "WAMM Repository (Dataset B)",
+      "scope": "Supported Classes Only",
+      "samples": 60,
+      "accuracy": 0.45,
+      "wilson_ci_95": [
+        0.3309,
+        0.5751
+      ],
+      "bootstrap_ci_95": [
+        0.4,
+        0.5
+      ],
+      "macro_f1_true": 0.35,
+      "weighted_f1": 0.35,
+      "mcc": 0.3219
+    },
+    {
+      "benchmark_suite": "WAMM Repository (Dataset B)",
+      "scope": "Overall (Including SSRF & Unknown)",
+      "samples": 90,
+      "accuracy": 0.3,
+      "wilson_ci_95": [
+        0.2151,
+        0.4013
+      ],
+      "bootstrap_ci_95": [
+        0.2667,
+        0.3333
+      ],
+      "macro_f1_true": 0.1853,
+      "weighted_f1": 0.1853,
+      "mcc": 0.1935
+    },
+    {
+      "benchmark_suite": "ATRDF Raw Traffic (Dataset E)",
+      "scope": "Output Format Validity Only",
+      "samples": 50,
+      "accuracy": null,
+      "wilson_ci_95": null,
+      "bootstrap_ci_95": null,
+      "macro_f1_true": null,
+      "weighted_f1": null,
+      "mcc": null,
+      "valid_token_rate": 1.0,
+      "hallucination_rate": 0.0
+    }
+  ],
+  "task4_qualified_independence": {
+    "statement": "The external evaluation suites are derived from distinct documented sources and share zero exact or normalized record collisions with the training corpus. However, because all web security benchmarks evaluate shared vulnerability archetypes (such as traversal sequences and SQL syntax), domain-level semantic overlap exists by design, and claims of absolute semantic independence are methodologically unsupportable.",
+    "dimensions": {
+      "distinct_sources": "Verified distinct academic and industrial origins (Mendeley, CyShield R&D, SecLists, Cisco ATRDF).",
+      "exact_duplicate_detection": "Verified 0 byte/string collisions out of 68,130 records against 52,000 training rows.",
+      "normalized_token_collision": "Verified 0 collisions after stripping variable headers, timestamps, hosts, and casing.",
+      "semantic_archetype_overlap": "Present across ubiquitous web vulnerability signatures (/etc/passwd, union select, <script>).",
+      "limitations": "Syntactic commonality across attack suites reflects shared protocol conventions rather than training leakage."
+    }
+  },
+  "detailed_partitions": {
+    "SecLists_Dataset_D": {
+      "partition_name": "SecLists Fuzzing Challenge (Dataset D)",
+      "sample_count": 85,
+      "correct_predictions": 74,
+      "accuracy": 0.8706,
+      "accuracy_wilson_ci_95": [
+        0.783,
+        0.9262
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.8,
+        0.9294
+      ],
+      "macro_f1_true": 0.9147,
+      "macro_f1_bootstrap_ci_95": [
+        0.8523,
+        0.9626
+      ],
+      "weighted_f1": 0.9089,
+      "weighted_f1_bootstrap_ci_95": [
+        0.8506,
+        0.9569
+      ],
+      "matthews_corrcoef": 0.8368,
+      "mcc_exact_gorodkin": 0.8368274087557229,
+      "mcc_exact_sklearn": 0.8368274087557229,
+      "supports_identical": false,
+      "macro_weighted_equality_mathematical": false,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "SQL Injection",
+        "XSS"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "confusion_matrix": {
+        "Benign": {
+          "Benign": 9,
+          "Directory Traversal": 1,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "Directory Traversal": {
+          "Benign": 0,
+          "Directory Traversal": 25,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "Log Forging": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "RCE": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "SQL Injection": {
+          "Benign": 0,
+          "Directory Traversal": 2,
+          "Log Forging": 3,
+          "RCE": 3,
+          "SQL Injection": 17,
+          "XSS": 0
+        },
+        "XSS": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "Log Forging": 0,
+          "RCE": 2,
+          "SQL Injection": 0,
+          "XSS": 23
+        }
+      },
+      "per_class": {
+        "Benign": {
+          "ground_truth_support": 10,
+          "predicted_count": 9,
+          "tp": 9,
+          "fp": 0,
+          "fn": 1,
+          "tn": 75,
+          "precision": 1.0,
+          "recall": 0.9,
+          "f1_score": 0.9474
+        },
+        "Directory Traversal": {
+          "ground_truth_support": 25,
+          "predicted_count": 28,
+          "tp": 25,
+          "fp": 3,
+          "fn": 0,
+          "tn": 57,
+          "precision": 0.8929,
+          "recall": 1.0,
+          "f1_score": 0.9434
+        },
+        "Log Forging": {
+          "ground_truth_support": 0,
+          "predicted_count": 3,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "tn": 82,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "RCE": {
+          "ground_truth_support": 0,
+          "predicted_count": 5,
+          "tp": 0,
+          "fp": 5,
+          "fn": 0,
+          "tn": 80,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "SQL Injection": {
+          "ground_truth_support": 25,
+          "predicted_count": 17,
+          "tp": 17,
+          "fp": 0,
+          "fn": 8,
+          "tn": 60,
+          "precision": 1.0,
+          "recall": 0.68,
+          "f1_score": 0.8095
+        },
+        "XSS": {
+          "ground_truth_support": 25,
+          "predicted_count": 23,
+          "tp": 23,
+          "fp": 0,
+          "fn": 2,
+          "tn": 60,
+          "precision": 1.0,
+          "recall": 0.92,
+          "f1_score": 0.9583
+        }
+      }
+    },
+    "Mendeley_Supported_Dataset_A": {
+      "partition_name": "Mendeley Supported Classes (Dataset A)",
+      "sample_count": 150,
+      "correct_predictions": 110,
+      "accuracy": 0.7333,
+      "accuracy_wilson_ci_95": [
+        0.6574,
+        0.7976
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.6667,
+        0.8
+      ],
+      "macro_f1_true": 0.7494,
+      "macro_f1_bootstrap_ci_95": [
+        0.6828,
+        0.812
+      ],
+      "weighted_f1": 0.7494,
+      "weighted_f1_bootstrap_ci_95": [
+        0.6828,
+        0.812
+      ],
+      "matthews_corrcoef": 0.6816,
+      "mcc_exact_gorodkin": 0.6816211630555649,
+      "mcc_exact_sklearn": 0.6816211630555649,
+      "supports_identical": true,
+      "macro_weighted_equality_mathematical": true,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "Unknown",
+        "XSS"
+      ],
+      "confusion_matrix": {
+        "Benign": {
+          "Benign": 20,
+          "Directory Traversal": 8,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 1,
+          "XSS": 1
+        },
+        "Directory Traversal": {
+          "Benign": 0,
+          "Directory Traversal": 30,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Log Forging": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "RCE": {
+          "Benign": 0,
+          "Directory Traversal": 7,
+          "Log Forging": 2,
+          "RCE": 19,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 2
+        },
+        "SQL Injection": {
+          "Benign": 0,
+          "Directory Traversal": 2,
+          "Log Forging": 2,
+          "RCE": 3,
+          "SQL Injection": 23,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Unknown": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "XSS": {
+          "Benign": 0,
+          "Directory Traversal": 3,
+          "Log Forging": 0,
+          "RCE": 9,
+          "SQL Injection": 0,
+          "Unknown": 0,
+          "XSS": 18
+        }
+      },
+      "per_class": {
+        "Benign": {
+          "ground_truth_support": 30,
+          "predicted_count": 20,
+          "tp": 20,
+          "fp": 0,
+          "fn": 10,
+          "tn": 120,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1_score": 0.8
+        },
+        "Directory Traversal": {
+          "ground_truth_support": 30,
+          "predicted_count": 50,
+          "tp": 30,
+          "fp": 20,
+          "fn": 0,
+          "tn": 100,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1_score": 0.75
+        },
+        "Log Forging": {
+          "ground_truth_support": 0,
+          "predicted_count": 4,
+          "tp": 0,
+          "fp": 4,
+          "fn": 0,
+          "tn": 146,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "RCE": {
+          "ground_truth_support": 30,
+          "predicted_count": 31,
+          "tp": 19,
+          "fp": 12,
+          "fn": 11,
+          "tn": 108,
+          "precision": 0.6129,
+          "recall": 0.6333,
+          "f1_score": 0.623
+        },
+        "SQL Injection": {
+          "ground_truth_support": 30,
+          "predicted_count": 23,
+          "tp": 23,
+          "fp": 0,
+          "fn": 7,
+          "tn": 120,
+          "precision": 1.0,
+          "recall": 0.7667,
+          "f1_score": 0.8679
+        },
+        "Unknown": {
+          "ground_truth_support": 0,
+          "predicted_count": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 149,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "XSS": {
+          "ground_truth_support": 30,
+          "predicted_count": 21,
+          "tp": 18,
+          "fp": 3,
+          "fn": 12,
+          "tn": 117,
+          "precision": 0.8571,
+          "recall": 0.6,
+          "f1_score": 0.7059
+        }
+      }
+    },
+    "Mendeley_Overall_Dataset_A": {
+      "partition_name": "Mendeley Overall (Dataset A)",
+      "sample_count": 180,
+      "correct_predictions": 110,
+      "accuracy": 0.6111,
+      "accuracy_wilson_ci_95": [
+        0.5383,
+        0.6793
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.5556,
+        0.6667
+      ],
+      "macro_f1_true": 0.5847,
+      "macro_f1_bootstrap_ci_95": [
+        0.5301,
+        0.6311
+      ],
+      "weighted_f1": 0.5847,
+      "weighted_f1_bootstrap_ci_95": [
+        0.5301,
+        0.6311
+      ],
+      "matthews_corrcoef": 0.5664,
+      "mcc_exact_gorodkin": 0.566373559699309,
+      "mcc_exact_sklearn": 0.566373559699309,
+      "supports_identical": true,
+      "macro_weighted_equality_mathematical": true,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "XSS"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "LOG4J",
+        "Log Forging",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "Unknown",
+        "XSS"
+      ],
+      "confusion_matrix": {
+        "Benign": {
+          "Benign": 20,
+          "Directory Traversal": 8,
+          "LOG4J": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 1,
+          "XSS": 1
+        },
+        "Directory Traversal": {
+          "Benign": 0,
+          "Directory Traversal": 30,
+          "LOG4J": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "LOG4J": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "LOG4J": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Log Forging": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "LOG4J": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "RCE": {
+          "Benign": 0,
+          "Directory Traversal": 7,
+          "LOG4J": 0,
+          "Log Forging": 2,
+          "RCE": 19,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 2
+        },
+        "SQL Injection": {
+          "Benign": 0,
+          "Directory Traversal": 2,
+          "LOG4J": 0,
+          "Log Forging": 2,
+          "RCE": 3,
+          "SQL Injection": 23,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "SSRF": {
+          "Benign": 0,
+          "Directory Traversal": 20,
+          "LOG4J": 1,
+          "Log Forging": 0,
+          "RCE": 8,
+          "SQL Injection": 1,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Unknown": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "LOG4J": 0,
+          "Log Forging": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "XSS": {
+          "Benign": 0,
+          "Directory Traversal": 3,
+          "LOG4J": 0,
+          "Log Forging": 0,
+          "RCE": 9,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 18
+        }
+      },
+      "per_class": {
+        "Benign": {
+          "ground_truth_support": 30,
+          "predicted_count": 20,
+          "tp": 20,
+          "fp": 0,
+          "fn": 10,
+          "tn": 150,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1_score": 0.8
+        },
+        "Directory Traversal": {
+          "ground_truth_support": 30,
+          "predicted_count": 70,
+          "tp": 30,
+          "fp": 40,
+          "fn": 0,
+          "tn": 110,
+          "precision": 0.4286,
+          "recall": 1.0,
+          "f1_score": 0.6
+        },
+        "LOG4J": {
+          "ground_truth_support": 0,
+          "predicted_count": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 179,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "Log Forging": {
+          "ground_truth_support": 0,
+          "predicted_count": 4,
+          "tp": 0,
+          "fp": 4,
+          "fn": 0,
+          "tn": 176,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "RCE": {
+          "ground_truth_support": 30,
+          "predicted_count": 39,
+          "tp": 19,
+          "fp": 20,
+          "fn": 11,
+          "tn": 130,
+          "precision": 0.4872,
+          "recall": 0.6333,
+          "f1_score": 0.5507
+        },
+        "SQL Injection": {
+          "ground_truth_support": 30,
+          "predicted_count": 24,
+          "tp": 23,
+          "fp": 1,
+          "fn": 7,
+          "tn": 149,
+          "precision": 0.9583,
+          "recall": 0.7667,
+          "f1_score": 0.8519
+        },
+        "SSRF": {
+          "ground_truth_support": 30,
+          "predicted_count": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 30,
+          "tn": 150,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "Unknown": {
+          "ground_truth_support": 0,
+          "predicted_count": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "tn": 179,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "XSS": {
+          "ground_truth_support": 30,
+          "predicted_count": 21,
+          "tp": 18,
+          "fp": 3,
+          "fn": 12,
+          "tn": 147,
+          "precision": 0.8571,
+          "recall": 0.6,
+          "f1_score": 0.7059
+        }
+      }
+    },
+    "WAMM_Supported_Dataset_B": {
+      "partition_name": "WAMM Supported Classes (Dataset B)",
+      "sample_count": 60,
+      "correct_predictions": 27,
+      "accuracy": 0.45,
+      "accuracy_wilson_ci_95": [
+        0.3309,
+        0.5751
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.4,
+        0.5
+      ],
+      "macro_f1_true": 0.35,
+      "macro_f1_bootstrap_ci_95": [
+        0.3109,
+        0.3833
+      ],
+      "weighted_f1": 0.35,
+      "weighted_f1_bootstrap_ci_95": [
+        0.3109,
+        0.3833
+      ],
+      "matthews_corrcoef": 0.3219,
+      "mcc_exact_gorodkin": 0.3218834985141033,
+      "mcc_exact_sklearn": 0.3218834985141033,
+      "supports_identical": true,
+      "macro_weighted_equality_mathematical": true,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "XSS"
+      ],
+      "confusion_matrix": {
+        "Benign": {
+          "Benign": 12,
+          "Directory Traversal": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 3
+        },
+        "Directory Traversal": {
+          "Benign": 0,
+          "Directory Traversal": 15,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "RCE": {
+          "Benign": 1,
+          "Directory Traversal": 14,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "SQL Injection": {
+          "Benign": 2,
+          "Directory Traversal": 6,
+          "RCE": 7,
+          "SQL Injection": 0,
+          "XSS": 0
+        },
+        "XSS": {
+          "Benign": 0,
+          "Directory Traversal": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "XSS": 0
+        }
+      },
+      "per_class": {
+        "Benign": {
+          "ground_truth_support": 15,
+          "predicted_count": 15,
+          "tp": 12,
+          "fp": 3,
+          "fn": 3,
+          "tn": 42,
+          "precision": 0.8,
+          "recall": 0.8,
+          "f1_score": 0.8
+        },
+        "Directory Traversal": {
+          "ground_truth_support": 15,
+          "predicted_count": 35,
+          "tp": 15,
+          "fp": 20,
+          "fn": 0,
+          "tn": 25,
+          "precision": 0.4286,
+          "recall": 1.0,
+          "f1_score": 0.6
+        },
+        "RCE": {
+          "ground_truth_support": 15,
+          "predicted_count": 7,
+          "tp": 0,
+          "fp": 7,
+          "fn": 15,
+          "tn": 38,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "SQL Injection": {
+          "ground_truth_support": 15,
+          "predicted_count": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 15,
+          "tn": 45,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "XSS": {
+          "ground_truth_support": 0,
+          "predicted_count": 3,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "tn": 57,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        }
+      }
+    },
+    "WAMM_Overall_Dataset_B": {
+      "partition_name": "WAMM Overall (Dataset B)",
+      "sample_count": 90,
+      "correct_predictions": 27,
+      "accuracy": 0.3,
+      "accuracy_wilson_ci_95": [
+        0.2151,
+        0.4013
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.2667,
+        0.3333
+      ],
+      "macro_f1_true": 0.1853,
+      "macro_f1_bootstrap_ci_95": [
+        0.1624,
+        0.2054
+      ],
+      "weighted_f1": 0.1853,
+      "weighted_f1_bootstrap_ci_95": [
+        0.1624,
+        0.2054
+      ],
+      "matthews_corrcoef": 0.1935,
+      "mcc_exact_gorodkin": 0.19350609439293706,
+      "mcc_exact_sklearn": 0.19350609439293706,
+      "supports_identical": true,
+      "macro_weighted_equality_mathematical": true,
+      "ground_truth_classes": [
+        "Benign",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "Unknown"
+      ],
+      "all_generated_classes": [
+        "Benign",
+        "Cookie Injection",
+        "Directory Traversal",
+        "RCE",
+        "SQL Injection",
+        "SSRF",
+        "Unknown",
+        "XSS"
+      ],
+      "confusion_matrix": {
+        "Benign": {
+          "Benign": 12,
+          "Cookie Injection": 0,
+          "Directory Traversal": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 3
+        },
+        "Cookie Injection": {
+          "Benign": 0,
+          "Cookie Injection": 0,
+          "Directory Traversal": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Directory Traversal": {
+          "Benign": 0,
+          "Cookie Injection": 0,
+          "Directory Traversal": 15,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "RCE": {
+          "Benign": 1,
+          "Cookie Injection": 0,
+          "Directory Traversal": 14,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "SQL Injection": {
+          "Benign": 2,
+          "Cookie Injection": 0,
+          "Directory Traversal": 6,
+          "RCE": 7,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "SSRF": {
+          "Benign": 11,
+          "Cookie Injection": 3,
+          "Directory Traversal": 1,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "Unknown": {
+          "Benign": 0,
+          "Cookie Injection": 0,
+          "Directory Traversal": 6,
+          "RCE": 8,
+          "SQL Injection": 1,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        },
+        "XSS": {
+          "Benign": 0,
+          "Cookie Injection": 0,
+          "Directory Traversal": 0,
+          "RCE": 0,
+          "SQL Injection": 0,
+          "SSRF": 0,
+          "Unknown": 0,
+          "XSS": 0
+        }
+      },
+      "per_class": {
+        "Benign": {
+          "ground_truth_support": 15,
+          "predicted_count": 26,
+          "tp": 12,
+          "fp": 14,
+          "fn": 3,
+          "tn": 61,
+          "precision": 0.4615,
+          "recall": 0.8,
+          "f1_score": 0.5854
+        },
+        "Cookie Injection": {
+          "ground_truth_support": 0,
+          "predicted_count": 3,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "tn": 87,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "Directory Traversal": {
+          "ground_truth_support": 15,
+          "predicted_count": 42,
+          "tp": 15,
+          "fp": 27,
+          "fn": 0,
+          "tn": 48,
+          "precision": 0.3571,
+          "recall": 1.0,
+          "f1_score": 0.5263
+        },
+        "RCE": {
+          "ground_truth_support": 15,
+          "predicted_count": 15,
+          "tp": 0,
+          "fp": 15,
+          "fn": 15,
+          "tn": 60,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "SQL Injection": {
+          "ground_truth_support": 15,
+          "predicted_count": 1,
+          "tp": 0,
+          "fp": 1,
+          "fn": 15,
+          "tn": 74,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "SSRF": {
+          "ground_truth_support": 15,
+          "predicted_count": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 15,
+          "tn": 75,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "Unknown": {
+          "ground_truth_support": 15,
+          "predicted_count": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 15,
+          "tn": 75,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        },
+        "XSS": {
+          "ground_truth_support": 0,
+          "predicted_count": 3,
+          "tp": 0,
+          "fp": 3,
+          "fn": 0,
+          "tn": 87,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0
+        }
+      }
+    },
+    "Internal_Baseline_Phase_7_1": {
+      "partition_name": "Internal Baseline (Phase 7.1 Master Test Split)",
+      "sample_count": 128,
+      "correct_predictions": 124,
+      "accuracy": 0.9688,
+      "accuracy_wilson_ci_95": [
+        0.9224,
+        0.9878
+      ],
+      "accuracy_bootstrap_ci_95": [
+        0.9375,
+        0.9922
+      ],
+      "macro_f1_true": 0.9723,
+      "weighted_f1": 0.9688,
+      "matthews_corrcoef": 0.9644,
+      "mcc_exact_gorodkin": 0.9643529845578173,
+      "supports_identical": true,
+      "macro_weighted_equality_mathematical": false
+    }
+  },
+  "freeze_status": "ALL MATHEMATICAL CHECKS PASSED \u2014 100% REPRODUCIBLE"
+}

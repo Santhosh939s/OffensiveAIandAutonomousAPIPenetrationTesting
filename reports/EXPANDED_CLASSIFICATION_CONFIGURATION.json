@@ -1,0 +1,122 @@
+{
+  "experiment_name": "EXPANDED_CLASSIFICATION_TRAINING_30000",
+  "status": "CONFIGURED_AND_VERIFIED",
+  "date": "2026-11-01",
+  "initialization": {
+    "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "initial_adapter": "initial_training_checkpoint_final",
+    "baseline_adapter_preserved": "staging_baseline_checkpoints/checkpoint-200"
+  },
+  "hardware_and_distributed": {
+    "device": "2x Tesla T4 GPUs",
+    "backend": "PyTorch DDP (torchrun --nproc_per_node=2)",
+    "world_size": 2,
+    "per_device_train_batch_size": 2,
+    "gradient_accumulation_steps": 4,
+    "effective_batch_size": 16,
+    "samples_per_rank": 15000,
+    "batches_per_rank": 7500,
+    "optimizer_steps_exact": 1875,
+    "epochs": 1.0,
+    "learning_rate": 5e-05,
+    "lr_scheduler": "cosine",
+    "warmup_ratio": 0.05,
+    "optimizations": [
+      "dynamic_sequence_padding",
+      "group_by_length=True",
+      "gradient_checkpointing"
+    ]
+  },
+  "datasets": {
+    "training_dataset_30000": {
+      "path": "dataset\\splits\\classification_training_30000.jsonl",
+      "records": 30000,
+      "sha256": "394b43a16dba4e959e7d7b1e8f93dc22aa4f0af24a36b9db34b2b25c76f873dc",
+      "class_distribution": {
+        "XSS": 3250,
+        "LOG4J": 3750,
+        "RCE": 3750,
+        "Log Forging": 3600,
+        "SQL Injection": 4050,
+        "Cookie Injection": 3250,
+        "Benign": 3950,
+        "Directory Traversal": 4400
+      },
+      "component_distribution": {
+        "ATRDF_Classification_Pool": 22446,
+        "External_Classification_Shortage": 2554,
+        "Difficult_Classification": 5000
+      },
+      "internal_duplicates": 0,
+      "overlap_initial_train": 0,
+      "overlap_validation": 0,
+      "reasoning_traces_excluded": 5000
+    },
+    "validation_benchmark_original_1000": {
+      "path": "dataset\\splits\\validation_benchmark_original_1000.jsonl",
+      "records": 1000,
+      "sha256": "d97fc2fb3921a4ca503d1d664c1aa9d2b3427decbf7ed4fd1f31b9e9f82b4bdb",
+      "class_distribution": {
+        "Cookie Injection": 125,
+        "Benign": 125,
+        "LOG4J": 125,
+        "Directory Traversal": 125,
+        "SQL Injection": 125,
+        "RCE": 125,
+        "XSS": 125,
+        "Log Forging": 125
+      },
+      "status": "UNTOUCHED_AND_PRESERVED"
+    },
+    "validation_benchmark_corrected_1000": {
+      "path": "dataset\\splits\\validation_benchmark_corrected_1000.jsonl",
+      "records": 1000,
+      "sha256": "15bd1439a0e9a276529f61936ae2d51e644e52606c6715109c882d84d62b06bf",
+      "class_distribution": {
+        "Cookie Injection": 125,
+        "Benign": 177,
+        "LOG4J": 125,
+        "Directory Traversal": 125,
+        "SQL Injection": 125,
+        "RCE": 125,
+        "XSS": 73,
+        "Log Forging": 125
+      },
+      "relabeled_records_count": 52,
+      "audit_trail": "reports/STAGE2_VAL_CORRECTION_AUDIT.csv"
+    },
+    "boundary_contrast_subset_700": {
+      "path": "dataset\\splits\\boundary_contrast_subset_700.jsonl",
+      "records": 700,
+      "sha256": "1e3f90d5d73936bb30d7e02c44820bf7133726a01c45b9454460caeaa186ea5e",
+      "class_distribution": {
+        "RCE": 350,
+        "XSS": 350
+      },
+      "role": "targeted_xss_rce_diagnostic"
+    }
+  },
+  "evaluation_plan": {
+    "models_evaluated": [
+      "Baseline Adapter (Checkpoint-200)",
+      "Initial Adapter (Initial Training)",
+      "Expanded Classification Adapter (30,000 Records)"
+    ],
+    "benchmarks_evaluated": [
+      "Original Validation Benchmark (1,000 samples, 125/class)",
+      "Corrected Validation Benchmark (1,000 samples, 52 setup traffic relabeled to Benign)",
+      "Boundary Contrast Diagnostic Subset (700 samples, 350 XSS / 350 RCE)"
+    ],
+    "metrics_reported": [
+      "accuracy",
+      "macro_f1",
+      "weighted_f1",
+      "validation_loss",
+      "per_class_precision",
+      "per_class_recall",
+      "per_class_f1",
+      "confusion_matrices",
+      "xss_rce_confusion_delta"
+    ]
+  }
+}

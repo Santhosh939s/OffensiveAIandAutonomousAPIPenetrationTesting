@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Offensive AI - Architecture & Data Flow</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #0b0f19;
+            color: #f1f5f9;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1e293b;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            color: #38bdf8;
+            font-weight: 700;
+        }
+        .header p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-secondary {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+        }
+        .btn-secondary:hover { background: #334155; }
+        .diagram-container {
+            max-width: 1200px;
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            overflow-x: auto;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>Autonomous Offensive AI: Architecture & Command Flow</h1>
+            <p>End-to-End ReAct Decision Cycle, Policy Guardrails, and Network Verification</p>
+        </div>
+        <div class="actions">
+            <a href="architecture_data_control_flow.png" download="Autonomous_Offensive_AI_Architecture.png" class="btn">
+                ⬇️ Download High-Res PNG
+            </a>
+            <button onclick="downloadSVG()" class="btn btn-secondary">
+                ⬇️ Download Vector SVG
+            </button>
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <div class="mermaid" id="mermaid-diag">
+sequenceDiagram
+    autonumber
+    actor Operator as Operator (Browser UI)
+    participant Dash as Dashboard (Flask :8088)
+    participant Ctrl as AutonomousController
+    participant Brain as Local Qwen AI (llama-cli)
+    participant Guard as Policy Guardrails (ScopeValidator)
+    participant Tools as ToolRegistry (HTTPX / Fuzzer)
+    participant Target as Target API (Vercel / Lab :5050)
+    participant DB as EvidenceStore (SQLite)
+
+    Operator->>Dash: 1. Launch Assessment (URL, Turns, Mode)
+    Dash->>Ctrl: 2. Initialize Session Thread & EventEmitter
+    Ctrl->>Target: 3. Reconnaissance Probe (/openapi.json, /, /api)
+    Target-->>Ctrl: 4. Returns Mapped Endpoints & Schemas
+    Ctrl->>Brain: 5. format_test_planning_prompt(endpoints, tools)
+    Brain-->>Ctrl: 6. Returns Multi-Step Attack Strategy
+    Ctrl->>DB: 7. Record Active Test Plan (ACTIVE)
+
+    rect rgb(20, 28, 48)
+    note right of Ctrl: ReAct Autonomous Iteration Loop (Turns 1 to N)
+    Ctrl->>Brain: 8. format_action_selection_prompt(plan, observations)
+    Brain-->>Ctrl: 9. action_proposal (tool, url, payload, reasoning)
+    Ctrl->>Dash: 10. Emit ACTION_PROPOSED (🧠 reasoning card)
+    
+    Ctrl->>Guard: 11. evaluate_action(tool, arguments, policy)
+    Guard-->>Ctrl: 12. PolicyDecision (APPROVED / BLOCKED)
+    Ctrl->>Dash: 13. Emit POLICY_DECISION (🛡️ guardrail card)
+    
+    Ctrl->>Tools: 14. execute(tool_name, arguments)
+    Tools->>Target: 15. Outbound Network Probe (DNS & Layer 1 checked)
+    Target-->>Tools: 16. HTTP Response (Status, Headers, Body, Latency)
+    Tools-->>Ctrl: 17. Return tool_result dictionary
+    Ctrl->>DB: 18. Store Raw Traffic & Execution Receipt
+    Ctrl->>Dash: 19. Emit TOOL_EXECUTED (⚡ status & latency)
+    
+    Ctrl->>Brain: 20. format_evidence_analysis_prompt(response, payload)
+    Brain-->>Ctrl: 21. Vulnerability Analysis (CONFIRMED / SUSPECTED / SAFE)
+    
+    opt If Vulnerability Verified
+        Ctrl->>DB: 22. record_finding(category, severity, proof, traffic_id)
+        Ctrl->>Dash: 23. Emit FINDING_RECORDED (🚨 red badge & card)
+    end
+    end
+
+    Ctrl->>DB: 24. Generate Multi-Format Report (HTML, MD, JSON)
+    Ctrl->>Dash: 25. Emit ASSESSMENT_COMPLETED (🏁 completed)
+    Dash-->>Operator: 26. Display Audit Report & Risk Rating
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#0f172a',
+                primaryColor: '#3b82f6',
+                primaryBorderColor: '#60a5fa',
+                primaryTextColor: '#f8fafc',
+                lineColor: '#64748b',
+                secondaryColor: '#a855f7',
+                tertiaryColor: '#1e293b'
+            }
+        });
+
+        function downloadSVG() {
+            const svg = document.querySelector("#mermaid-diag svg");
+            if (!svg) { alert("Please wait for diagram to render."); return; }
+            const serializer = new XMLSerializer();
+            const source = serializer.serializeToString(svg);
+            const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "Autonomous_Offensive_AI_Architecture.svg";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

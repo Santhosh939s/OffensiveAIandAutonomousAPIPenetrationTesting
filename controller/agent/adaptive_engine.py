@@ -53,8 +53,17 @@ class PrioritizedCandidate:
 class AdaptiveTestSelector:
     """Computes evidence-driven test prioritization to minimize testing steps."""
 
-    def __init__(self, context_manager: CompactContextManager):
+    def __init__(
+        self,
+        context_manager: CompactContextManager,
+        selected_categories: Optional[List[str]] = None,
+        assessment_type: str = "auto",
+        assessment_depth: str = "standard",
+    ):
         self.context = context_manager
+        self.selected_categories = [c.upper() for c in (selected_categories or [])]
+        self.assessment_type = assessment_type.lower()
+        self.assessment_depth = assessment_depth.lower()
 
     def evaluate_and_rank_candidates(
         self,
@@ -63,6 +72,20 @@ class AdaptiveTestSelector:
     ) -> List[PrioritizedCandidate]:
         """Rank candidate endpoints and tools by expected information gain."""
         candidates: List[PrioritizedCandidate] = []
+
+        # Category booster mapping
+        cat_keywords = {
+            "API1": ["user", "account", "profile", "order", "item", "id", "{id}", "record"],
+            "API2": ["login", "auth", "token", "session", "jwt", "password"],
+            "API3": ["user", "profile", "update", "role", "patch", "put"],
+            "API4": ["search", "query", "filter", "list", "items", "limit", "pagination"],
+            "API5": ["admin", "manage", "config", "internal", "dashboard", "super"],
+            "API6": ["checkout", "cart", "pay", "coupon", "promo", "transfer", "redeem", "order"],
+            "API7": ["url", "fetch", "proxy", "webhook", "callback", "redirect", "import"],
+            "API8": ["graphql", "debug", "test", "swagger", "openapi", "error"],
+            "API9": ["v1", "v2", "beta", "old", "legacy", "internal", "metrics"],
+            "API10": ["webhook", "partner", "external", "thirdparty", "integration"],
+        }
 
         for key, meta in self.context.endpoints_meta.items():
             if self.context.is_endpoint_exhausted(key):
@@ -75,74 +98,138 @@ class AdaptiveTestSelector:
 
             score = 5.0
             reasons = []
+            path_lower = path.lower()
+
+            # Assessment type constraints
+            if self.assessment_type == "graphql" and "graphql" not in path_lower:
+                score -= 10.0
+                reasons.append("Filtered: Non-GraphQL endpoint in GraphQL-only assessment")
+            elif self.assessment_type == "rest" and "graphql" in path_lower:
+                score -= 10.0
+                reasons.append("Filtered: GraphQL endpoint in REST-only assessment")
 
             # 1. Base architectural relevance
-            path_lower = path.lower()
-            if any(term in path_lower for term in ["login", "auth", "token", "session"]):
+            if "graphql" in path_lower:
+                score += 4.5
+                reasons.append("GraphQL interface surface (API8/API4 potential)")
+            elif any(term in path_lower for term in ["login", "auth", "token", "session"]):
                 score += 4.0
-                reasons.append("High-value authentication/session surface")
-            elif any(term in path_lower for term in ["user", "account", "profile", "admin"]):
+                reasons.append("High-value authentication/session boundary (API2)")
+            elif any(term in path_lower for term in ["admin", "manage", "role", "internal"]):
+                score += 4.0
+                reasons.append("Privilege / function authorization boundary (API5)")
+            elif any(term in path_lower for term in ["checkout", "pay", "promo", "coupon", "transfer"]):
+                score += 3.8
+                reasons.append("Sensitive business transaction flow (API6)")
+            elif any(term in path_lower for term in ["user", "account", "profile", "order"]):
                 score += 3.5
-                reasons.append("High-value authorization/privilege boundary")
+                reasons.append("Object authorization boundary (API1/API3)")
             elif any(term in path_lower for term in ["search", "query", "find", "filter"]):
                 score += 3.0
-                reasons.append("High-value parameterized search surface")
+                reasons.append("Parameterized search query surface (API8/API4)")
+            elif any(term in path_lower for term in ["v1", "v2", "beta", "old", "test"]):
+                score += 3.0
+                reasons.append("Inventory versioning / deprecated route (API9)")
 
-            # 2. Parameterization indicators
+            # 2. Selected Category Filtering and Boosting
+            if self.selected_categories:
+                matched_sel_cat = False
+                for cat in self.selected_categories:
+                    cat_key = cat.split(":")[0].strip()
+                    relevant_terms = cat_keywords.get(cat_key, [])
+                    if any(t in path_lower for t in relevant_terms):
+                        matched_sel_cat = True
+                        score += 5.0
+                        reasons.append(f"Explicitly prioritized by selected category {cat_key}")
+                        break
+                if not matched_sel_cat:
+                    score -= 4.0
+                    reasons.append("Not matching selected OWASP categories")
+
+            # 3. Parameterization indicators
             if "{" in path or "?" in path or meta.get("parameters"):
                 score += 2.5
                 reasons.append("Parameterized endpoint (BOLA / Injection potential)")
 
-            # 3. Status and historical evidence
+            # 4. Status and historical evidence
             if status == "UNTESTED":
                 score += 3.0
                 reasons.append("Unexplored endpoint surface")
             elif status == "SUSPECTED":
-                score += 4.5
+                score += 5.0
                 reasons.append("Prior evidence suggests vulnerability (requires verification probe)")
             elif status == "VULNERABLE":
-                score -= 3.0
+                score -= 4.0
                 reasons.append("Vulnerability already confirmed on this endpoint")
             elif status == "CLEAN":
-                score -= 2.0
+                score -= 3.0
                 reasons.append("Previous probe returned clean baseline")
 
-            # 4. Check recent anomalies or 500 errors in observations
+            # 5. Check recent anomalies or 500 errors in observations
             for obs in recent_observations[-3:]:
                 obs_url = str(obs.get("arguments", {}).get("url", ""))
                 obs_status = obs.get("result_status")
                 if path in obs_url:
                     if obs_status == 500:
-                        score += 3.5
+                        score += 4.0
                         reasons.append("Server returned 500 Internal Error (investigate SQLi / unhandled crash)")
+                    elif obs_status in (401, 403) and "admin" in path_lower:
+                        score += 2.0
+                        reasons.append("Protected administrative boundary; probe for BFLA bypass")
                     elif obs.get("status") == "POLICY_DENIED":
-                        score -= 4.0
+                        score -= 5.0
                         reasons.append("Previous probe blocked by policy")
 
-            # 5. Penalize repeated probes on same route
+            # 6. Penalize redundant / repeated probes on same route
             score -= probes_done * 2.5
 
-            # 6. Tool Recommendation
+            # 7. Tool Recommendation
             full_url = f"{target_base_url.rstrip('/')}/{path.lstrip('/')}"
             rec_tool = "httpx_request"
             test_params: Dict[str, Any] = {"url": full_url, "method": method}
 
-            if "search" in path_lower or "q=" in path_lower:
+            if "graphql" in path_lower:
+                rec_tool = "graphql_probe"
+                test_params = {
+                    "target_url": full_url,
+                    "probe_types": ["introspection", "field_suggestion"] if probes_done == 0 else ["deep_query"],
+                }
+            elif any(term in path_lower for term in ["checkout", "promo", "coupon", "order", "transfer"]):
+                if probes_done > 0:
+                    rec_tool = "business_flow_probe"
+                    test_params = {
+                        "target_url": full_url,
+                        "method": method,
+                        "probe_count": 5,
+                    }
+            elif "search" in path_lower or "q=" in path_lower:
                 if probes_done > 0:
                     rec_tool = "parameter_fuzzer"
                     test_params = {
-                        "url": full_url.split("?")[0],
-                        "parameters": {"q": "'"},
+                        "target_url": full_url.split("?")[0],
+                        "parameter_name": "q",
+                        "attack_type": "sqli",
+                        "method": method,
+                    }
+            elif any(term in path_lower for term in ["url", "fetch", "webhook", "proxy", "redirect"]):
+                if probes_done > 0:
+                    rec_tool = "parameter_fuzzer"
+                    test_params = {
+                        "target_url": full_url.split("?")[0],
+                        "parameter_name": "url",
+                        "attack_type": "ssrf",
+                        "method": method,
                     }
             elif "login" in path_lower:
                 if method == "POST":
                     test_params["body"] = {"username": "admin", "password": ""}
             elif "{" in path:
-                # Concrete ID substitution
-                concrete_path = path.replace("{id}", "2").replace("{userId}", "2")
+                # Concrete ID substitution for BOLA testing
+                sub_id = "2" if probes_done == 0 else "999"
+                concrete_path = path.replace("{id}", sub_id).replace("{userId}", sub_id)
                 full_url = f"{target_base_url.rstrip('/')}/{concrete_path.lstrip('/')}"
                 test_params["url"] = full_url
-                if method == "PUT":
+                if method in ("PUT", "PATCH"):
                     test_params["body"] = {"role": "admin", "is_admin": 1}
 
             rationale_text = "; ".join(reasons)

@@ -1,0 +1,152 @@
+{
+  "Dataset_D": {
+    "iterations_completed": 2000,
+    "seed": 42,
+    "eval_labels_fixed": [
+      "Benign",
+      "Directory Traversal",
+      "Log Forging",
+      "RCE",
+      "SQL Injection",
+      "XSS"
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.8,
+      0.9294
+    ],
+    "macro_f1_bootstrap_ci_95": [
+      0.8523,
+      0.9626
+    ],
+    "weighted_f1_bootstrap_ci_95": [
+      0.8506,
+      0.9569
+    ],
+    "mean_accuracy": 0.8698,
+    "mean_macro_f1": 0.9126,
+    "mean_weighted_f1": 0.9071,
+    "std_accuracy": 0.0341,
+    "std_macro_f1": 0.0286
+  },
+  "Dataset_A": {
+    "iterations_completed": 2000,
+    "seed": 42,
+    "eval_labels_fixed": [
+      "Benign",
+      "Directory Traversal",
+      "LOG4J",
+      "Log Forging",
+      "RCE",
+      "SQL Injection",
+      "SSRF",
+      "Unknown",
+      "XSS"
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.5556,
+      0.6667
+    ],
+    "macro_f1_bootstrap_ci_95": [
+      0.5301,
+      0.6311
+    ],
+    "weighted_f1_bootstrap_ci_95": [
+      0.5301,
+      0.6311
+    ],
+    "mean_accuracy": 0.6114,
+    "mean_macro_f1": 0.584,
+    "mean_weighted_f1": 0.584,
+    "std_accuracy": 0.0281,
+    "std_macro_f1": 0.0255
+  },
+  "Dataset_A_SupportedOnly": {
+    "iterations_completed": 2000,
+    "seed": 42,
+    "eval_labels_fixed": [
+      "Benign",
+      "Directory Traversal",
+      "Log Forging",
+      "RCE",
+      "SQL Injection",
+      "Unknown",
+      "XSS"
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.6667,
+      0.8
+    ],
+    "macro_f1_bootstrap_ci_95": [
+      0.6828,
+      0.812
+    ],
+    "weighted_f1_bootstrap_ci_95": [
+      0.6828,
+      0.812
+    ],
+    "mean_accuracy": 0.7348,
+    "mean_macro_f1": 0.7492,
+    "mean_weighted_f1": 0.7492,
+    "std_accuracy": 0.034,
+    "std_macro_f1": 0.0332
+  },
+  "Dataset_B": {
+    "iterations_completed": 2000,
+    "seed": 42,
+    "eval_labels_fixed": [
+      "Benign",
+      "Cookie Injection",
+      "Directory Traversal",
+      "RCE",
+      "SQL Injection",
+      "SSRF",
+      "Unknown",
+      "XSS"
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.2667,
+      0.3333
+    ],
+    "macro_f1_bootstrap_ci_95": [
+      0.1624,
+      0.2054
+    ],
+    "weighted_f1_bootstrap_ci_95": [
+      0.1624,
+      0.2054
+    ],
+    "mean_accuracy": 0.3006,
+    "mean_macro_f1": 0.1857,
+    "mean_weighted_f1": 0.1857,
+    "std_accuracy": 0.017,
+    "std_macro_f1": 0.0109
+  },
+  "Dataset_B_SupportedOnly": {
+    "iterations_completed": 2000,
+    "seed": 42,
+    "eval_labels_fixed": [
+      "Benign",
+      "Directory Traversal",
+      "RCE",
+      "SQL Injection",
+      "XSS"
+    ],
+    "accuracy_bootstrap_ci_95": [
+      0.4,
+      0.5
+    ],
+    "macro_f1_bootstrap_ci_95": [
+      0.3109,
+      0.3833
+    ],
+    "weighted_f1_bootstrap_ci_95": [
+      0.3109,
+      0.3833
+    ],
+    "mean_accuracy": 0.4509,
+    "mean_macro_f1": 0.3503,
+    "mean_weighted_f1": 0.3503,
+    "std_accuracy": 0.0258,
+    "std_macro_f1": 0.0184
+  }
+}

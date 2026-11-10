@@ -8,15 +8,99 @@ Captures comprehensive request/response evidence, timing metrics, and security h
 
 import asyncio
 import json
+import socket
+import threading
 import time
+import urllib.parse
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import httpx
 
 from controller.config import DEFAULT_CONFIG, AgentConfig
-from controller.guardrails.scope_validator import ScopeValidator
+from controller.guardrails.scope_validator import ScopeValidator, validate_destination_address, is_destination_external_allowed
 from controller.tools.http_request import STANDARD_SECURITY_HEADERS, _analyze_security_headers
 from controller.tools.registry import BaseTool
+
+# Install socket-level Layer 1 safety invariant and DNS rebinding hook for HTTPX / httpcore
+_orig_socket_create_connection = socket.create_connection
+
+def _secure_socket_create_connection(address, *args, **kwargs):
+    host, port = address
+    is_ext = is_destination_external_allowed(host)
+    ok, reason = validate_destination_address(host, port, allow_external=is_ext, allow_private=is_ext)
+    if not ok:
+        raise ConnectionError(
+            f"Layer 1 Safety Violation: Connection to prohibited destination '{host}' ({host}:{port}) blocked: {reason}"
+        )
+    return _orig_socket_create_connection(address, *args, **kwargs)
+
+socket.create_connection = _secure_socket_create_connection
+
+
+class SecureHttpxTransport(httpx.HTTPTransport):
+    """Secure HTTPX transport validating destination IP boundaries immediately prior to dispatch."""
+
+    def handle_request(self, request: httpx.Request) -> httpx.Response:
+        host = request.url.host
+        port = request.url.port or (443 if request.url.scheme == "https" else 80)
+        is_ext = is_destination_external_allowed(host)
+        ok, reason = validate_destination_address(host, port, allow_external=is_ext, allow_private=is_ext)
+        if not ok:
+            raise httpx.ConnectError(f"Layer 1 Safety Violation: Connection to '{host}' ({host}:{port}) blocked: {reason}")
+        return super().handle_request(request)
+
+
+class SecureAsyncHttpxTransport(httpx.AsyncHTTPTransport):
+    """Secure async HTTPX transport validating destination IP boundaries immediately prior to dispatch."""
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        host = request.url.host
+        port = request.url.port or (443 if request.url.scheme == "https" else 80)
+        is_ext = is_destination_external_allowed(host)
+        ok, reason = validate_destination_address(host, port, allow_external=is_ext, allow_private=is_ext)
+        if not ok:
+            raise httpx.ConnectError(f"Layer 1 Safety Violation: Connection to '{host}' ({host}:{port}) blocked: {reason}")
+        return await super().handle_async_request(request)
+
+
+_local_httpx = threading.local()
+
+
+def _get_thread_local_httpx_client(cfg: AgentConfig) -> httpx.Client:
+    """Retrieve or create a thread-local persistent connection-pooled httpx.Client."""
+    client = getattr(_local_httpx, "client", None)
+    cached_timeout = getattr(_local_httpx, "read_timeout", None)
+    if client is None or client.is_closed or cached_timeout != cfg.http_read_timeout:
+        if client and not client.is_closed:
+            try:
+                client.close()
+            except Exception:
+                pass
+        timeout_config = httpx.Timeout(
+            timeout=cfg.http_read_timeout,
+            connect=cfg.http_connect_timeout,
+            read=cfg.http_read_timeout,
+            write=cfg.http_read_timeout,
+            pool=cfg.http_connect_timeout,
+        )
+        limits = httpx.Limits(
+            max_keepalive_connections=20,
+            max_connections=40,
+            keepalive_expiry=30.0,
+        )
+        transport = SecureHttpxTransport(
+            limits=limits,
+            retries=0,
+        )
+        client = httpx.Client(
+            timeout=timeout_config,
+            limits=limits,
+            transport=transport,
+            follow_redirects=False,
+        )
+        _local_httpx.client = client
+        _local_httpx.read_timeout = cfg.http_read_timeout
+    return client
 
 
 def execute_httpx_request(
@@ -26,10 +110,42 @@ def execute_httpx_request(
     body: Optional[Union[str, bytes, Dict[str, Any]]] = None,
     params: Optional[Dict[str, Any]] = None,
     config: Optional[AgentConfig] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     """Execute a single bounded HTTP request using HTTPX against an authorized target."""
     cfg = config or DEFAULT_CONFIG
     method_upper = method.strip().upper()
+
+    # Pre-dispatch Layer 1 safety & Scope validation
+    host = urllib.parse.urlsplit(url).hostname or ""
+    is_ext = is_destination_external_allowed(host) or getattr(cfg, "allow_external_domains", False)
+    scope_val = ScopeValidator(cfg)
+    scope_res = scope_val.validate_url(url, allow_external_domains=is_ext)
+    if not scope_res.is_valid:
+        return {
+            "success": False,
+            "error": f"Scope violation: {scope_res.reason}",
+            "status_code": None,
+            "url": url,
+            "method": method_upper,
+            "policy_denied": True,
+            "client": "httpx",
+        }
+
+    # Layer 1 safety invariant: Block destructive SQL operations in request body
+    if body and isinstance(body, str):
+        from controller.guardrails.policy_engine import PolicyEngine
+        for pattern in PolicyEngine.DESTRUCTIVE_DB_PATTERNS:
+            if pattern.search(body):
+                return {
+                    "success": False,
+                    "error": "Destructive database operation detected in request payload; rejected by Layer 1 guardrail.",
+                    "status_code": None,
+                    "url": url,
+                    "method": method_upper,
+                    "policy_denied": True,
+                    "client": "httpx",
+                }
 
     if method_upper not in cfg.allowed_http_methods:
         return {
@@ -72,62 +188,81 @@ def execute_httpx_request(
     )
 
     start_time = time.time()
+    client = _get_thread_local_httpx_client(cfg)
     try:
-        with httpx.Client(timeout=timeout_config, follow_redirects=False) as client:
-            response = client.request(
-                method=method_upper,
-                url=url,
-                headers=req_headers,
-                content=data_payload,
-                params=params,
-            )
+        # Clear cookies to ensure strict request isolation
+        client.cookies.clear()
+        response = client.request(
+            method=method_upper,
+            url=url,
+            headers=req_headers,
+            content=data_payload,
+            params=params,
+        )
 
-            elapsed_ms = round((time.time() - start_time) * 1000, 2)
+        elapsed_ms = round((time.time() - start_time) * 1000, 2)
 
-            # Enforce body size limit
-            raw_bytes = response.content
-            bytes_received = len(raw_bytes)
-            truncated = False
-            if bytes_received > cfg.max_response_body_bytes:
-                raw_bytes = raw_bytes[: cfg.max_response_body_bytes]
-                truncated = True
+        # Enforce body size limit
+        raw_bytes = response.content
+        bytes_received = len(raw_bytes)
+        effective_max_body = min(int(kwargs.get("max_response_body_bytes", cfg.max_response_body_bytes)), 65536)
+        truncated = False
+        if bytes_received > effective_max_body:
+            raw_bytes = raw_bytes[: effective_max_body]
+            truncated = True
 
+        try:
+            body_text = raw_bytes.decode("utf-8", errors="replace")
+        except Exception:
+            body_text = str(raw_bytes)
+
+        resp_headers = dict(response.headers)
+        content_type = resp_headers.get("content-type", "")
+
+        # Attempt JSON parse
+        json_body = None
+        if "application/json" in content_type.lower() and body_text:
             try:
-                body_text = raw_bytes.decode("utf-8", errors="replace")
+                json_body = json.loads(body_text)
             except Exception:
-                body_text = str(raw_bytes)
+                json_body = None
 
-            resp_headers = dict(response.headers)
-            content_type = resp_headers.get("content-type", "")
+        security_headers_eval = _analyze_security_headers(resp_headers)
 
-            # Attempt JSON parse
-            json_body = None
-            if "application/json" in content_type.lower() and body_text:
-                try:
-                    json_body = json.loads(body_text)
-                except Exception:
-                    json_body = None
+        # Check redirect target scope if redirect returned
+        redirect_url = resp_headers.get("location") or resp_headers.get("Location")
+        redirect_in_scope = None
+        if redirect_url:
+            scope_val = ScopeValidator(cfg)
+            try:
+                resolved_redirect = str(response.url.join(redirect_url))
+                redirect_in_scope = scope_val.validate_url(resolved_redirect).is_valid
+            except Exception:
+                redirect_in_scope = False
 
-            security_headers_eval = _analyze_security_headers(resp_headers)
+        # Clean cookies to preserve strict isolation
+        client.cookies.clear()
 
-            return {
-                "success": True,
-                "status_code": response.status_code,
-                "status_reason": response.reason_phrase,
-                "elapsed_ms": elapsed_ms,
-                "url": str(response.url),
-                "method": method_upper,
-                "request_metadata": request_metadata,
-                "headers": resp_headers,
-                "content_type": content_type,
-                "body": body_text,
-                "json_body": json_body,
-                "security_headers": security_headers_eval,
-                "bytes_received": bytes_received,
-                "truncated": truncated,
-                "error": None,
-                "client": "httpx",
-            }
+        return {
+            "success": True,
+            "status_code": response.status_code,
+            "status_reason": response.reason_phrase,
+            "elapsed_ms": elapsed_ms,
+            "url": str(response.url),
+            "method": method_upper,
+            "request_metadata": request_metadata,
+            "headers": resp_headers,
+            "content_type": content_type,
+            "body": body_text,
+            "json_body": json_body,
+            "security_headers": security_headers_eval,
+            "bytes_received": bytes_received,
+            "truncated": truncated,
+            "redirect_url": redirect_url,
+            "redirect_in_scope": redirect_in_scope,
+            "error": None,
+            "client": "httpx",
+        }
 
     except httpx.TimeoutException as exc:
         elapsed_ms = round((time.time() - start_time) * 1000, 2)
@@ -257,7 +392,8 @@ async def _run_batch_probes_async(
         pool=cfg.http_connect_timeout,
     )
 
-    async with httpx.AsyncClient(timeout=timeout_config, follow_redirects=False) as client:
+    transport = SecureAsyncHttpxTransport()
+    async with httpx.AsyncClient(timeout=timeout_config, transport=transport, follow_redirects=False) as client:
         tasks = []
         for item in endpoints_to_probe:
             path = item.get("path", "")
@@ -366,4 +502,12 @@ class HttpxRequestTool(BaseTool):
         )
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        return execute_httpx_request(config=self.config, **kwargs)
+        policy_ok, pol_err, clean_kwargs = self._check_execution_policy(kwargs)
+        if not policy_ok:
+            return {
+                "success": False,
+                "error": pol_err,
+                "tool_name": self.name,
+                "policy_denied": True,
+            }
+        return execute_httpx_request(config=self.config, **clean_kwargs)

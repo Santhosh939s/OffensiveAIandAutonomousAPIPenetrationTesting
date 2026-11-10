@@ -1,0 +1,31 @@
+{
+  "startup_latencies_ms": {
+    "evidence_store_init_ms": 2.41,
+    "tool_registry_init_ms": 0.09,
+    "policy_engine_init_ms": 0.03,
+    "local_cpu_brain_init_ms": 1.33,
+    "total_subsystems_init_ms": 3.86
+  },
+  "database_performance": {
+    "traffic_insert_duration_sec": 0.027,
+    "traffic_inserts_per_sec": 37384.3,
+    "findings_insert_duration_sec": 0.008,
+    "findings_inserts_per_sec": 12052.0,
+    "traffic_indexed_query_latency_ms": 0.433,
+    "findings_indexed_query_latency_ms": 0.382
+  },
+  "model_inference_caching": {
+    "uncached_cold_latency_ms": 12035.33,
+    "cached_hot_latency_ms": 0.1325,
+    "cache_speedup_factor": "90832.7x",
+    "predicted_category": "SQL Injection",
+    "cache_hits_recorded": 1
+  },
+  "memory_profile_mb": {
+    "baseline_rss_mb": 33.35,
+    "peak_loaded_rss_mb": 30.04,
+    "delta_rss_mb": -3.31,
+    "target_ram_budget_mb": 8192.0,
+    "ram_budget_utilization_pct": 0.37
+  }
+}

@@ -58,6 +58,39 @@ class LabDatabase:
                 )
             """)
 
+            # 3. Orders table (for multi-tenant BOLA / IDOR demonstration across controlled test accounts)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS orders (
+                    id INTEGER PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    item_name TEXT NOT NULL,
+                    total_amount REAL NOT NULL,
+                    shipping_address TEXT NOT NULL,
+                    order_status TEXT NOT NULL DEFAULT 'CONFIRMED',
+                    FOREIGN KEY(user_id) REFERENCES users(id)
+                )
+            """)
+
+            # 4. Coupons table (for API6:2023 Unrestricted Business Flow testing)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS coupons (
+                    code TEXT PRIMARY KEY,
+                    discount_percent REAL NOT NULL,
+                    times_applied INTEGER NOT NULL DEFAULT 0
+                )
+            """)
+
+            # 5. Audit logs table (for API5:2023 BFLA administrative action audit)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS audit_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    action TEXT NOT NULL,
+                    target_user_id INTEGER,
+                    details TEXT NOT NULL,
+                    timestamp REAL NOT NULL
+                )
+            """)
+
     def execute_query(self, query: str, params: Optional[tuple] = None) -> List[Dict[str, Any]]:
         """Execute a SELECT query and return list of dict rows."""
         conn = self.get_connection()

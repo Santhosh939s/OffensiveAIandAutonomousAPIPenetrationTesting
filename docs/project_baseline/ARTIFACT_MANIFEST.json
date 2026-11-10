@@ -1,0 +1,153 @@
+{
+  "manifest_metadata": {
+    "project": "Offensive AI and Autonomous API Penetration Testing",
+    "generated_at": "2026-11-04T18:28:30+05:30",
+    "target_architecture": "Standalone Windows x86_64 CPU (8 GB RAM, no GPU required)"
+  },
+  "core_model_artifacts": {
+    "models/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf": {
+      "relative_path": "models/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf",
+      "size_bytes": 986048288,
+      "sha256": "CD7DC83335B02D90F44A7FE4BD0F06EEA4D64DEB429710F238FE8C5DE3DA4DC5"
+    },
+    "models/qwen2.5-1.5b-rebuiltv4.Q4_K_M.gguf": {
+      "relative_path": "models/qwen2.5-1.5b-rebuiltv4.Q4_K_M.gguf",
+      "size_bytes": 986048320,
+      "sha256": "2A77E5CC85FAA3210DB9267C3C7A5076D3AEE2C1001A7ADB5B569FF9A567D1BB"
+    },
+    "models/training_artifacts/final_adapter/adapter_model.safetensors": {
+      "relative_path": "models/training_artifacts/final_adapter/adapter_model.safetensors",
+      "size_bytes": 73911112,
+      "sha256": "39FD053A1725E15C9F8071578965D9B7D2B58B8AFF2D0D722FC36D8796879327"
+    },
+    "models/training_artifacts/final_adapter/adapter_config.json": {
+      "relative_path": "models/training_artifacts/final_adapter/adapter_config.json",
+      "size_bytes": 1159,
+      "sha256": "1FD3853682BFC0AE733502D1A9FA32CEEA486D7C8908608BD16E0DBEDC5ACCEA"
+    },
+    "models/training_artifacts/final_adapter/tokenizer.json": {
+      "relative_path": "models/training_artifacts/final_adapter/tokenizer.json",
+      "size_bytes": 11421892,
+      "sha256": "3FD169731D2CBDE95E10BF356D66D5997FD885DD8DBB6FB4684DA3F23B2585D8"
+    },
+    "models/training_artifacts/final_adapter/tokenizer_config.json": {
+      "relative_path": "models/training_artifacts/final_adapter/tokenizer_config.json",
+      "size_bytes": 693,
+      "sha256": "2E3BD3CB5055F7A903A54E7062B2FD14D21B70F4174C3FFCD9FC81EC50A25631"
+    },
+    "models/final_export_manifest.json": {
+      "relative_path": "models/final_export_manifest.json",
+      "size_bytes": 843,
+      "sha256": "56AA67D3E0EB80A825757FD57276C9403A480D15A579DD6E6F2E3002ED6CC8DC"
+    }
+  },
+  "training_checkpoints": {
+    "checkpoint-1875": {
+      "adapter_model.safetensors": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1875/adapter_model.safetensors",
+        "size_bytes": 73911112,
+        "sha256": "39FD053A1725E15C9F8071578965D9B7D2B58B8AFF2D0D722FC36D8796879327"
+      },
+      "adapter_config.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1875/adapter_config.json",
+        "size_bytes": 1159,
+        "sha256": "1FD3853682BFC0AE733502D1A9FA32CEEA486D7C8908608BD16E0DBEDC5ACCEA"
+      },
+      "trainer_state.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1875/trainer_state.json",
+        "size_bytes": 14876,
+        "sha256": "DE0923954A3EDC587A01AC688793E42EE55CCA9027A9D97775D5A8B174B99714"
+      }
+    },
+    "checkpoint-1750": {
+      "adapter_model.safetensors": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1750/adapter_model.safetensors",
+        "size_bytes": 73911112,
+        "sha256": "BFD715E259439B8A6A7D5A5E3DC89087E4E1F2DE49111AA7BF17015FB190B240"
+      },
+      "adapter_config.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1750/adapter_config.json",
+        "size_bytes": 1159,
+        "sha256": "1FD3853682BFC0AE733502D1A9FA32CEEA486D7C8908608BD16E0DBEDC5ACCEA"
+      },
+      "trainer_state.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1750/trainer_state.json",
+        "size_bytes": 13951,
+        "sha256": "8415B03E0DDDF4070F8895F07E8A3454980322222C1D7EBB7CEE0056DCB70604"
+      }
+    },
+    "checkpoint-1500": {
+      "adapter_model.safetensors": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1500/adapter_model.safetensors",
+        "size_bytes": 73911112,
+        "sha256": "014A54BF547FF78DE5837757AFF59660976C5A206F6FF8DB69CC50066E353F90"
+      },
+      "adapter_config.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1500/adapter_config.json",
+        "size_bytes": 1159,
+        "sha256": "1FD3853682BFC0AE733502D1A9FA32CEEA486D7C8908608BD16E0DBEDC5ACCEA"
+      },
+      "trainer_state.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1500/trainer_state.json",
+        "size_bytes": 12042,
+        "sha256": "0D4D6F045FF3438EB825A59F170F295BBBBF5BBB0A4CDC19982335EF83DC1FDA"
+      }
+    },
+    "checkpoint-1250": {
+      "adapter_model.safetensors": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1250/adapter_model.safetensors",
+        "size_bytes": 73911112,
+        "sha256": "F042C72D4DB1756031FA8BB808FADB81E6E3CF4A97E5AC95031A8FAE0CAA759D"
+      },
+      "adapter_config.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1250/adapter_config.json",
+        "size_bytes": 1159,
+        "sha256": "779FD48D7673BA73A5B460FC0FF13EDFE856134FFC3C6954E16DE829358B8C62"
+      },
+      "trainer_state.json": {
+        "relative_path": "models/training_artifacts/resumed_checkpoints/checkpoint-1250/trainer_state.json",
+        "size_bytes": 10177,
+        "sha256": "917FE3D05ADA9EF2221B3BBFE1EF28543B47B781D1E4CC8FF3A3497B0FAC1D29"
+      }
+    }
+  },
+  "datasets": {
+    "classification_40000.csv": {
+      "relative_path": "classification_40000.csv",
+      "size_bytes": 147189148,
+      "sha256": "62B264D5EA0F6374B9B6D5EE1ABDA9D1D26583847F886FC3A9823175653838DA"
+    },
+    "classification_40000_repaired.csv": {
+      "relative_path": "classification_40000_repaired.csv",
+      "size_bytes": 147329401,
+      "sha256": "ACBE451017AED84AFB1E607EC709764BC35793371DC8B32A52BF04D26E82C395"
+    },
+    "difficult_classification_5000.csv": {
+      "relative_path": "difficult_classification_5000.csv",
+      "size_bytes": 10253751,
+      "sha256": "A8C7B19F71E28A57119ED22101E933B7749865F47114A309BC81247044F66E46"
+    },
+    "difficult_classification_5000_repaired.csv": {
+      "relative_path": "difficult_classification_5000_repaired.csv",
+      "size_bytes": 10292494,
+      "sha256": "7C8A5809709F249CBFE11602299B39B49607FB6E7FA66E7E32E44BD108280CA4"
+    },
+    "reasoning_traces_5000.csv": {
+      "relative_path": "reasoning_traces_5000.csv",
+      "size_bytes": 32471175,
+      "sha256": "31670A20B341277497132F0A1DFD66F186518882DFCB73EBEC0BDF08829B3582"
+    },
+    "reasoning_traces_5000_repaired.csv": {
+      "relative_path": "reasoning_traces_5000_repaired.csv",
+      "size_bytes": 34698629,
+      "sha256": "55EE506BD4C86E2F52B1F7963C3A3555462E2F1C73A17C27FFEC828E4CFBF4E3"
+    }
+  },
+  "master_notebook": {
+    "urop_offensive_ai_master_all_executions.ipynb": {
+      "relative_path": "urop_offensive_ai_master_all_executions.ipynb",
+      "size_bytes": 675713,
+      "sha256": "76CD7D3FE9057699295F635165CC29AAA31CC7F2A75070CA1FA7ADFF4D8751B3"
+    }
+  }
+}

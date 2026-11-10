@@ -1,0 +1,27 @@
+{
+  "Test_A_Preflight": {
+    "status": "PASS",
+    "duration_sec": 1.509
+  },
+  "Test_B_Auth": {
+    "status": "PASS",
+    "duration_sec": 1.571
+  },
+  "Test_C_Model": {
+    "status": "PASS",
+    "category": "SQL Injection",
+    "latency_sec": 11.06,
+    "python_rss_mb": 14.33
+  },
+  "Test_D_E_Assessment": {
+    "status": "PASS",
+    "duration_sec": 77.082,
+    "session_id": "session_05923c6e1e40",
+    "turns": 3,
+    "requests": 1
+  },
+  "Test_F_Persistence": {
+    "status": "PASS",
+    "duration_sec": 0.304
+  }
+}

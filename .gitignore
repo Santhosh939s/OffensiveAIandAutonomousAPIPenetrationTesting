@@ -14,6 +14,7 @@ __pycache__/
 *.db
 *.sqlite
 *.sqlite3
+models/training_artifacts/
 
 # Local environments & credentials
 .venv/
@@ -21,11 +22,27 @@ venv/
 .env
 kaggle.json
 access_token
+.agent_services.pid
 
 # Scratch and OS metadata
 *.log
 .DS_Store
 Thumbs.db
+scratch/
+dist/
+exported_models/
+classification_training_output/
+*.db-shm
+*.db-wal
+*.csv
+dataset/
+scripts/llama_cpp_tools/
+research/phase11/external_datasets/
+evaluation/expanded_classification_training/
+evaluation/stage1_initial_training/
+evaluation/pilot_v30_optimization/
+evaluation/pilot_v28_preservation/
+evaluation/pilot_v29_preservation/
 
 # Automation & Local Runs
 runs/

@@ -6,13 +6,53 @@ Captures comprehensive request/response evidence and security header analysis.
 """
 
 import json
+import socket
+import threading
 import time
+import urllib.parse
 from typing import Any, Dict, Optional
 
 import requests
+import requests.adapters
+import urllib3.util.connection as urllib3_conn
 
 from controller.config import DEFAULT_CONFIG, AgentConfig
 from controller.tools.registry import BaseTool
+from controller.guardrails.scope_validator import ScopeValidator, canonicalize_ip_str, validate_destination_address, is_destination_external_allowed
+
+# Install socket-level Layer 1 safety invariant and DNS rebinding prevention hook
+_orig_create_connection = urllib3_conn.create_connection
+
+def _secure_create_connection(address, *args, **kwargs):
+    host, port = address
+    is_ext = is_destination_external_allowed(host)
+    ok, reason = validate_destination_address(host, port, allow_external=is_ext, allow_private=is_ext)
+    if not ok:
+        raise requests.exceptions.ConnectionError(
+            f"Layer 1 Safety Violation: Connection to prohibited destination '{host}' ({host}:{port}) blocked: {reason}"
+        )
+    return _orig_create_connection(address, *args, **kwargs)
+
+urllib3_conn.create_connection = _secure_create_connection
+
+_local_sessions = threading.local()
+
+
+def _get_thread_local_session(cfg: AgentConfig) -> requests.Session:
+    """Retrieve or create a thread-local persistent connection-pooled requests.Session."""
+    session = getattr(_local_sessions, "session", None)
+    if session is None:
+        session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(
+            pool_connections=10,
+            pool_maxsize=20,
+            max_retries=1,
+            pool_block=False,
+        )
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        _local_sessions.session = session
+    return session
 
 
 STANDARD_SECURITY_HEADERS = [
@@ -50,6 +90,7 @@ def execute_http_request(
     body: Optional[str] = None,
     params: Optional[Dict[str, Any]] = None,
     config: Optional[AgentConfig] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     """Execute a single bounded HTTP request against an authorized target."""
     cfg = config or DEFAULT_CONFIG
@@ -63,6 +104,20 @@ def execute_http_request(
             "url": url,
             "method": method_upper,
         }
+
+    # Layer 1 safety invariant: Block destructive SQL operations in request body
+    if body and isinstance(body, str):
+        from controller.guardrails.policy_engine import PolicyEngine
+        for pattern in PolicyEngine.DESTRUCTIVE_DB_PATTERNS:
+            if pattern.search(body):
+                return {
+                    "success": False,
+                    "error": "Destructive database operation detected in request payload; rejected by Layer 1 guardrail.",
+                    "status_code": None,
+                    "url": url,
+                    "method": method_upper,
+                    "policy_denied": True,
+                }
 
     req_headers = dict(headers or {})
     if "User-Agent" not in req_headers:
@@ -87,8 +142,10 @@ def execute_http_request(
     }
 
     start_time = time.time()
+    session = _get_thread_local_session(cfg)
     try:
-        response = requests.request(
+        session.cookies.clear()
+        response = session.request(
             method=method_upper,
             url=url,
             headers=req_headers,
@@ -106,11 +163,12 @@ def execute_http_request(
         bytes_read = 0
         truncated = False
 
+        effective_max_body = min(int(kwargs.get("max_response_body_bytes", cfg.max_response_body_bytes)), 65536)
         for chunk in response.iter_content(chunk_size=4096):
             if chunk:
                 bytes_read += len(chunk)
-                if bytes_read > cfg.max_response_body_bytes:
-                    excess = bytes_read - cfg.max_response_body_bytes
+                if bytes_read > effective_max_body:
+                    excess = bytes_read - effective_max_body
                     keep_len = len(chunk) - excess
                     if keep_len > 0:
                         content_chunks.append(chunk[:keep_len])
@@ -137,6 +195,18 @@ def execute_http_request(
 
         security_headers_eval = _analyze_security_headers(resp_headers)
 
+        # Check redirect target scope if redirect returned
+        redirect_url = resp_headers.get("Location") or resp_headers.get("location")
+        redirect_in_scope = None
+        if redirect_url:
+            from controller.guardrails.scope_validator import ScopeValidator
+            resolved_redirect = urllib.parse.urljoin(url, redirect_url)
+            scope_val = ScopeValidator(cfg)
+            redirect_in_scope = scope_val.validate_url(resolved_redirect).is_valid
+
+        # Clean session cookies to maintain strict request isolation
+        session.cookies.clear()
+
         return {
             "success": True,
             "status_code": response.status_code,
@@ -152,6 +222,8 @@ def execute_http_request(
             "security_headers": security_headers_eval,
             "bytes_received": bytes_read,
             "truncated": truncated,
+            "redirect_url": redirect_url,
+            "redirect_in_scope": redirect_in_scope,
             "error": None,
         }
 
@@ -223,4 +295,12 @@ class HttpRequestTool(BaseTool):
         )
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        return execute_http_request(config=self.config, **kwargs)
+        policy_ok, pol_err, clean_kwargs = self._check_execution_policy(kwargs)
+        if not policy_ok:
+            return {
+                "success": False,
+                "error": pol_err,
+                "tool_name": self.name,
+                "policy_denied": True,
+            }
+        return execute_http_request(config=self.config, **clean_kwargs)

@@ -1,0 +1,200 @@
+{
+  "timestamp": 1794032058.6634848,
+  "total_test_cases": 15,
+  "contingency_table": {
+    "true_positives": 10,
+    "false_positives": 0,
+    "true_negatives": 5,
+    "false_negatives": 0
+  },
+  "metrics": {
+    "accuracy": 1.0,
+    "sensitivity_recall": 1.0,
+    "specificity": 1.0,
+    "precision": 1.0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0
+  },
+  "cases": [
+    {
+      "test_id": "GT-VULN-01",
+      "name": "BOLA / IDOR User PII Exposure",
+      "category": "API1:2023 - Broken Object Level Authorization",
+      "endpoint": "/api/users/2",
+      "method": "GET",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Returns Bob's private password hash and API token without authorization",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-02",
+      "name": "BOLA / IDOR Cross-Account Orders",
+      "category": "API1:2023 - Broken Object Level Authorization",
+      "endpoint": "/api/orders/102",
+      "method": "GET",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Returns Order 102 shipping address without ownership check",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-03",
+      "name": "Broken Auth Empty Password Bypass",
+      "category": "API2:2023 - Broken Authentication",
+      "endpoint": "/api/login",
+      "method": "POST",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Admin login succeeds with empty password and issues unsigned JWT",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-04",
+      "name": "BOPLA / Mass Assignment Role Elevation",
+      "category": "API3:2023 - Broken Object Property Level Authorization",
+      "endpoint": "/api/users/2",
+      "method": "PUT",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "User 2 role elevated to admin via unrestricted property binding",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-05",
+      "name": "BFLA Unprivileged Role Modification",
+      "category": "API5:2023 - Broken Function Level Authorization",
+      "endpoint": "/api/admin/users/2/role",
+      "method": "POST",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Unauthenticated caller modified user role via admin endpoint",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-06",
+      "name": "BFLA Administrative System Dump",
+      "category": "API5:2023 - Broken Function Level Authorization",
+      "endpoint": "/api/admin/export",
+      "method": "GET",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Unauthenticated caller retrieved full system dump with audit logs",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-07",
+      "name": "Business Flow Abuse Unlimited Coupons",
+      "category": "API6:2023 - Unrestricted Access to Sensitive Business Flows",
+      "endpoint": "/api/coupons/apply",
+      "method": "POST",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Coupon code applied repeatedly without rate limits or quotas",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-08",
+      "name": "SQL Injection Raw Error Disclosure",
+      "category": "API8:2023 - Security Misconfiguration / Injection",
+      "endpoint": "/api/search?q='",
+      "method": "GET",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Single quote triggers unhandled SQL syntax/token error in response",
+      "http_status": null
+    },
+    {
+      "test_id": "GT-VULN-09",
+      "name": "Improper Inventory Shadow API Export",
+      "category": "API9:2023 - Improper Inventory Management",
+      "endpoint": "/api/v1/users/export",
+      "method": "GET",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Unadvertised deprecated v1 endpoint accessible leaking user tokens",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-VULN-10",
+      "name": "GraphQL Unrestricted Introspection",
+      "category": "GraphQL Misconfiguration",
+      "endpoint": "/graphql",
+      "method": "POST",
+      "expected_ground_truth": "VULNERABLE",
+      "detected_as_vulnerable": true,
+      "outcome": "TRUE_POSITIVE",
+      "evidence_description": "Full schema introspection exposed without authentication",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-SAFE-01",
+      "name": "Health Check Service Status",
+      "category": "Safe Baseline",
+      "endpoint": "/health",
+      "method": "GET",
+      "expected_ground_truth": "SAFE",
+      "detected_as_vulnerable": false,
+      "outcome": "TRUE_NEGATIVE",
+      "evidence_description": "Standard health check returns healthy status without sensitive data",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-SAFE-02",
+      "name": "Public User Directory (Safe Fields)",
+      "category": "Safe Baseline",
+      "endpoint": "/api/users",
+      "method": "GET",
+      "expected_ground_truth": "SAFE",
+      "detected_as_vulnerable": false,
+      "outcome": "TRUE_NEGATIVE",
+      "evidence_description": "Public listing returns only public user attributes (id, username, full_name, role)",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-SAFE-03",
+      "name": "Item Catalog List",
+      "category": "Safe Baseline",
+      "endpoint": "/api/items",
+      "method": "GET",
+      "expected_ground_truth": "SAFE",
+      "detected_as_vulnerable": false,
+      "outcome": "TRUE_NEGATIVE",
+      "evidence_description": "Standard catalog list returns public item details",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-SAFE-04",
+      "name": "Alphanumeric Benign Search Query",
+      "category": "Safe Baseline",
+      "endpoint": "/api/search?q=laptop",
+      "method": "GET",
+      "expected_ground_truth": "SAFE",
+      "detected_as_vulnerable": false,
+      "outcome": "TRUE_NEGATIVE",
+      "evidence_description": "Benign search query succeeds normally without error or leak",
+      "http_status": 200
+    },
+    {
+      "test_id": "GT-SAFE-05",
+      "name": "Benign GraphQL Catalog Query",
+      "category": "Safe Baseline",
+      "endpoint": "/graphql",
+      "method": "POST",
+      "expected_ground_truth": "SAFE",
+      "detected_as_vulnerable": false,
+      "outcome": "TRUE_NEGATIVE",
+      "evidence_description": "Legitimate item catalog query succeeds without schema leakage",
+      "http_status": 200
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+================================================================================
+OFFENSIVE AI AND AUTONOMOUS API PENETRATION TESTING: PROJECT STRUCTURE
+================================================================================
+
+PROJECT ROOT: S:\UROP\offensive AI and autonomous APi penetration testing
+
+├── controller/                     # Core autonomous agent & security logic
+│   ├── agent/                      # Autonomous controller & reasoning engine
+│   │   ├── adaptive_engine.py      # Dynamic context memory & priority adjustment
+│   │   ├── autonomous_controller.py# Multi-turn autonomous pen-testing controller
+│   │   ├── event_emitter.py        # Real-time event pub/sub for UI streaming
+│   │   └── trace_collector.py      # Execution trace and step logging
+│   ├── brain/                      # Model brain gateway & local inference
+│   │   ├── local_cpu_client.py     # llama-cli GGUF CPU engine (8 GB RAM target)
+│   │   ├── model_gateway.py        # Gateway abstraction (Local CPU / Remote GPU / Mock)
+│   │   ├── prompts.py              # ChatML structured reasoning system prompts
+│   │   └── resource_profile.py     # CPU & memory telemetry collector
+│   ├── guardrails/                 # Ethical & operational safety enforcement
+│   │   ├── policy_engine.py        # Command filtering, tool & budget validation
+│   │   ├── sanitizer.py            # Credential & token redaction across logs/reports
+│   │   └── scope_validator.py      # RFC 1918, domain, & cloud metadata blocking
+│   ├── reporting/                  # Risk engine & report export
+│   │   ├── report_generator.py     # Multi-format report exporter (MD, HTML, JSON)
+│   │   └── risk_engine.py          # CVSS v3.1 quantitative severity calculator
+│   ├── storage/                    # ACID persistence layer
+│   │   └── evidence_store.py       # SQLite findings, sessions, and traffic store
+│   ├── tools/                      # Security assessment tool registry
+│   │   ├── business_flow_probe.py  # API6:2023 Business flow logic probe
+│   │   ├── graphql_client.py       # API8:2023 GraphQL introspection & query tool
+│   │   ├── httpx_tool.py           # HTTP/HTTPS probe tool
+│   │   ├── inventory_scanner.py    # API9:2023 Shadow & deprecated API scanner
+│   │   ├── jwt_inspector.py        # API2:2023 JWT security flaw analyzer
+│   │   ├── openapi_parser.py       # OpenAPI 3.0 schema discovery & endpoint parser
+│   │   ├── parameter_fuzzer.py     # API8:2023 Injection & parameter fuzzer
+│   │   ├── zap_client.py           # OWASP ZAP proxy & active scan integration
+│   │   └── __init__.py             # Unified tool registry builder
+│   └── config.py                   # Central AgentConfig dataclass
+│
+├── dashboard/                      # Native operational web dashboard
+│   ├── static/                     # CSS, JavaScript, and asset files
+│   │   ├── css/dashboard.css       # Dark-themed high-contrast interface styles
+│   │   └── js/dashboard.js         # Reactive SSE telemetry & interactive UI logic
+│   ├── templates/                  # Jinja2 dashboard templates
+│   │   └── index.html              # Single-page operations console
+│   ├── app.py                      # Flask REST API blueprint & HTTP server
+│   └── session_manager.py          # Multi-session lifecycle & background manager
+│
+├── lab/                            # Authentic vulnerable API testbed
+│   ├── app.py                      # Realistic Flask API lab (OWASP API Top 10)
+│   ├── database.py                 # SQLite in-memory / persistent lab database
+│   └── seed_data.py                # Synthetic vulnerable accounts, items, orders
+│
+├── models/                         # Model weights, adapters & manifests
+│   ├── final_export_manifest.json  # Provenance & hash manifest of final export
+│   ├── qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf # Fine-tuned 4-bit CPU model (940 MB)
+│   ├── qwen2.5-1.5b-rebuiltv4.Q4_K_M.gguf    # Base stage model
+│   └── training_artifacts/         # Training runs, checkpoints & LoRA adapters
+│       ├── final_adapter/          # Stage 2 completion LoRA adapter
+│       │   ├── adapter_config.json
+│       │   ├── adapter_model.safetensors # 33.72 MB LoRA weights
+│       │   └── tokenizer.json
+│       └── resumed_checkpoints/    # Checkpoints 1250, 1500, 1750, 1875
+│           └── checkpoint-1875/    # Final training step adapter weights
+│
+├── dataset/                        # Datasets (CSV & JSONL)
+│   ├── classification_40000.csv    # 40,000 multi-turn offensive API samples
+│   ├── difficult_classification_5000.csv # 5,000 hard boundary cases
+│   └── reasoning_traces_5000.csv   # 5,000 step-by-step reasoning traces
+│
+├── tests/                          # 29 automated test files (220 passing tests)
+│   ├── test_adaptive_engine.py
+│   ├── test_architecture_integration.py
+│   ├── test_automation.py
+│   ├── test_business_flow_probe.py
+│   ├── test_controller.py
+│   ├── test_dashboard.py
+│   ├── test_evidence_store.py
+│   ├── test_graphql_client.py
+│   ├── test_guardrails.py
+│   ├── test_inventory_scanner.py
+│   ├── test_lab.py
+│   ├── test_lab_e2e_assessment.py
+│   ├── test_local_cpu_client.py
+│   ├── test_openapi_parser.py
+│   ├── test_product_functionality.py
+│   ├── test_qa_finalization_phase1.py
+│   ├── test_qa_phase1_real_gguf.py
+│   ├── test_qa_phase2_owasp_top10.py
+│   ├── test_qa_phase3_auth_and_config.py
+│   ├── test_qa_phase4_lifecycle.py
+│   ├── test_qa_phase5_dashboard_reports.py
+│   ├── test_qa_phase6_security_robustness.py
+│   ├── test_qwen_integration.py
+│   ├── test_report_generator.py
+│   ├── test_risk_engine.py
+│   ├── test_tools.py
+│   └── test_zap_client.py
+│
+├── docs/                           # Documentation, reports & baseline
+│   ├── AUTONOMOUS_AGENT_WORKFLOW.md
+│   ├── COMPONENT_DATA_FLOW.md
+│   ├── FINAL_FEATURE_MATRIX.md
+│   ├── FINAL_PROJECT_AUDIT.md
+│   ├── FINAL_PROJECT_STATUS.md
+│   ├── PRODUCT_FEATURE_CHECKLIST.md
+│   ├── SOFTWARE_TESTING_CHECKLIST.md
+│   ├── SOFTWARE_TESTING_REPORT.md
+│   ├── SYSTEM_ARCHITECTURE.md
+│   ├── TOOL_INTEGRATION.md
+│   └── project_baseline/           # Local baseline preservation checkpoint
+│       ├── BASELINE_README.md
+│       ├── GIT_STATE.txt
+│       ├── ARTIFACT_MANIFEST.json
+│       ├── TEST_BASELINE.md
+│       ├── ENVIRONMENT_BASELINE.md
+│       ├── PROJECT_STRUCTURE.txt
+│       ├── RESUME_INSTRUCTIONS.md
+│       └── BASELINE_CHECKSUMS.txt
+│
+└── urop_offensive_ai_master_all_executions.ipynb # Final Master Execution Notebook

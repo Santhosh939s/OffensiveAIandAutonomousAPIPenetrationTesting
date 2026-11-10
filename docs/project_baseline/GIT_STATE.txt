@@ -1,0 +1,257 @@
+================================================================================
+GIT REPOSITORY WORKING-TREE STATE BASELINE
+================================================================================
+Project: Offensive AI and Autonomous API Penetration Testing
+Captured At: 2026-11-04T18:28:00+05:30
+Status: Working tree contains uncommitted development work (Strictly Preserved)
+Policy: Zero commit, zero push, zero reset, zero stash, zero checkout, zero clean
+
+--------------------------------------------------------------------------------
+1. BRANCH & HEAD COMMIT
+--------------------------------------------------------------------------------
+Active Branch: main
+HEAD Commit Hash: eae4e95e825f1335cc60064351883a8e493b3be1
+
+--------------------------------------------------------------------------------
+2. WORKING-TREE DIFF SUMMARY (TRACKED FILES)
+--------------------------------------------------------------------------------
+ controller/agent/adaptive_engine.py           | 133 +++-
+ controller/agent/autonomous_controller.py     | 178 ++++-
+ controller/agent/event_emitter.py             |   1 +
+ controller/brain/local_cpu_client.py          |  74 ++-
+ controller/brain/model_gateway.py             | 159 ++++-
+ controller/brain/prompts.py                   |  89 ++-
+ controller/guardrails/policy_engine.py        |  51 +-
+ controller/reporting/report_generator.py      | 401 +++++++++++-
+ controller/storage/evidence_store.py          |  68 +-
+ controller/tools/__init__.py                  |   9 +
+ dashboard/app.py                              |  75 +++
+ dashboard/session_manager.py                  | 295 +++++++--
+ dashboard/static/css/dashboard.css            |   3 +
+ dashboard/static/js/dashboard.js              | 233 ++++++-
+ dashboard/templates/index.html                | 223 ++++++-
+ kaggle_kernel/kernel-metadata.json            |  18 +-
+ kaggle_kernel/urop-offensive-ai.ipynb         | 559 +++++-----------
+ lab/app.py                                    | 464 +++++++++++++
+ lab/database.py                               |  33 +
+ lab/seed_data.py                              |  64 ++
+ scratch/build_master_cumulative_notebook.py   | 384 ++++++++++-
+ tests/test_controller.py                      |   4 +-
+ tests/test_dashboard.py                       |  60 ++
+ tests/test_lab.py                             | 104 +++
+ urop_offensive_ai_master_all_executions.ipynb | 904 +++++++++++++++++++++++++-
+ 25 files changed, 3998 insertions(+), 588 deletions(-)
+
+
+--------------------------------------------------------------------------------
+3. FULL WORKING-TREE STATUS (SHORT FORMAT)
+--------------------------------------------------------------------------------
+ M .gitignore
+ M controller/agent/adaptive_engine.py
+ M controller/agent/autonomous_controller.py
+ M controller/agent/event_emitter.py
+ M controller/brain/local_cpu_client.py
+ M controller/brain/model_gateway.py
+ M controller/brain/prompts.py
+ M controller/guardrails/policy_engine.py
+ M controller/reporting/report_generator.py
+ M controller/storage/evidence_store.py
+ M controller/tools/__init__.py
+ M dashboard/app.py
+ M dashboard/session_manager.py
+ M dashboard/static/css/dashboard.css
+ M dashboard/static/js/dashboard.js
+ M dashboard/templates/index.html
+ M kaggle_kernel/kernel-metadata.json
+ M kaggle_kernel/urop-offensive-ai.ipynb
+ M lab/app.py
+ M lab/database.py
+ M lab/seed_data.py
+ M scratch/build_master_cumulative_notebook.py
+ M tests/test_controller.py
+ M tests/test_dashboard.py
+ M tests/test_lab.py
+ M urop_offensive_ai_master_all_executions.ipynb
+?? classification_40000.csv
+?? classification_40000_repaired.csv
+?? classification_training_output/
+?? controller/agent/trace_collector.py
+?? controller/guardrails/sanitizer.py
+?? controller/reporting/risk_engine.py
+?? controller/tools/business_flow_probe.py
+?? controller/tools/graphql_client.py
+?? controller/tools/inventory_scanner.py
+?? dataset/
+?? difficult_classification_5000.csv
+?? difficult_classification_5000_repaired.csv
+?? docs/
+?? evaluation/expanded_classification_training/
+?? evaluation/pilot_v28_preservation/
+?? evaluation/pilot_v29_preservation/
+?? evaluation/pilot_v30_optimization/
+?? evaluation/stage1_initial_training/
+?? exported_models/
+?? finetuning/resume_expanded_classification.py
+?? finetuning/train_expanded_classification.py
+?? finetuning/train_phase_c_pilot.py
+?? finetuning/train_phase_d_optimized.py
+?? finetuning/train_stage1_5000.py
+?? kaggle_export_kernel/
+?? kaggle_kernel/create_pilot_notebook.py
+?? kaggle_kernel/create_resumption_notebook.py
+?? kaggle_kernel/create_stage1_notebook.py
+?? kaggle_kernel/error_log/
+?? kaggle_kernel/offensive-ai-completion.ipynb
+?? models/final_export_manifest.json
+?? models/training_artifacts/
+?? reasoning_traces_5000.csv
+?? reasoning_traces_5000_repaired.csv
+?? reports/API_SECURITY_TOOLS_STATUS.md
+?? reports/AUTONOMOUS_CONTROLLER_STATUS.md
+?? reports/CPU_ONLY_DEPLOYMENT_ARCHITECTURE.md
+?? reports/DATASET_50K_AUDIT_AND_CSV_EXPORT_REPORT.md
+?? reports/DUPLICATE_GROUPS_AUDIT.csv
+?? reports/END_TO_END_TEST_REPORT.md
+?? reports/EXPANDED_CLASSIFICATION_CONFIGURATION.json
+?? reports/FINAL_MODEL_EVALUATION_REPORT.md
+?? reports/FINAL_MODEL_EXPORT_REPORT.md
+?? reports/FINAL_PROJECT_READINESS_REPORT.md
+?? reports/FINAL_TRAINING_PROVENANCE_REPORT.md
+?? reports/GLOBAL_UNIQUENESS_AUDIT_REPORT.md
+?? reports/GLOBAL_UNIQUENESS_REPAIR_REPORT.md
+?? reports/INITIAL_TRAINING_STAGE1_REPORT.md
+?? reports/KAGGLE_PILOT_VERSION_28_REPORT.md
+?? reports/KAGGLE_VERSION_29_OPTIMIZATION_REPORT.md
+?? reports/MODEL_PHASE_A1_RECONCILIATION.md
+?? reports/MODEL_PHASE_A_DATASET_AUDIT.md
+?? reports/MODEL_PHASE_B1_FINAL_COLLECTION_READINESS.md
+?? reports/MODEL_PHASE_B_DATASET_EXPANSION_BLUEPRINT.md
+?? reports/POST_TRAINING_STAGE1_DIAGNOSTIC_REPORT.md
+?? reports/REPAIRED_DUPLICATE_AUDIT.csv
+?? reports/STAGE2_PREPARATION_AND_PLANNING_REPORT.md
+?? reports/STAGE2_VAL_CORRECTION_AUDIT.csv
+?? reports/STAGE2_VAL_CORRECTION_AUDIT.json
+?? scratch/analyze_remaining_pool.py
+?? scratch/analyze_val_records.py
+?? scratch/append_part9_to_master_notebook.py
+?? scratch/atrdf_audit_summary.json
+?? scratch/audit_all_splits_overlap.py
+?? scratch/audit_atrdf_datasets.py
+?? scratch/audit_search_nb.py
+?? scratch/audit_splits_and_leakage.py
+?? scratch/audit_train_vs_val.py
+?? scratch/build_boundary_contrast_subset.py
+?? scratch/build_export_kernel.py
+?? scratch/build_kaggle_notebook.py
+?? scratch/build_phase_b_artifacts.py
+?? scratch/build_reconciled_reports.py
+?? scratch/build_stage2_dataset.py
+?? scratch/check_1074.py
+?? scratch/check_absolute_paths.py
+?? scratch/check_boundary_in_30000.py
+?? scratch/check_leakage_and_generalization.py
+?? scratch/check_notebook_output.py
+?? scratch/check_shutdown_detail.py
+?? scratch/check_shutdown_origin.py
+?? scratch/check_shutdown_origin2.py
+?? scratch/check_shutdown_origin3.py
+?? scratch/check_test2000_origin.py
+?? scratch/check_thermal_memory.py
+?? scratch/compute_final_configuration.py
+?? scratch/count_empty_forum_remaining.py
+?? scratch/create_corrected_validation.py
+?? scratch/create_unseen_test_set.py
+?? scratch/diagnose_shutdown_events.py
+?? scratch/export_output/
+?? scratch/find_7z_extraction.py
+?? scratch/generate_dataset_reports.py
+?? scratch/inspect_boundary_xss_rce.py
+?? scratch/inspect_cells_27_30.py
+?? scratch/inspect_d3_d4_xss.py
+?? scratch/inspect_notebooks.py
+?? scratch/inspect_raw_json_files.py
+?? scratch/inspect_rebuiltv4_cells.py
+?? scratch/inspect_seclists_non_tag.py
+?? scratch/inspect_specific_cells.py
+?? scratch/inspect_xss_val_records.py
+?? scratch/investigate_discrepancy.py
+?? scratch/kaggle_pull_v27/
+?? scratch/kaggle_v29_output/
+?? scratch/kaggle_v30_output/
+?? scratch/pilot_final_adapter_config.json
+?? scratch/prepare_checkpoint_1250_dataset.py
+?? scratch/prepare_final_adapter_dataset.py
+?? scratch/prepare_staging_classification.py
+?? scratch/print_non_tag_xss.py
+?? scratch/pulled_kernel/
+?? scratch/read_cell_outputs.py
+?? scratch/rebuilt_v4_audit_details.json
+?? scratch/recalculate_corrected_validation.py
+?? scratch/recalculate_metrics.py
+?? scratch/reconcile_all_counts.py
+?? scratch/reconciliation_data.json
+?? scratch/reconstruct_rebuiltv4_audit.py
+?? scratch/sample_boundary_dataset.py
+?? scratch/temp_1074.ps1
+?? scratch/temp_query.ps1
+?? scratch/temp_shutdown.ps1
+?? scratch/temp_shutdown2.ps1
+?? scratch/temp_shutdown3.ps1
+?? scratch/temp_shutdown4.ps1
+?? scratch/temp_thermal.ps1
+?? scratch/test_model_inference.py
+?? scratch/train_val_audit_details.json
+?? scratch/trainer_state_v28.json
+?? scratch/update_licensing_allocations.py
+?? scratch/update_notebook_phase_x.py
+?? scratch/v28_all_stdout.txt
+?? scratch/v29_all_stderr.txt
+?? scratch/v29_all_stdout.txt
+?? scratch/v30_all_stderr.txt
+?? scratch/v30_all_stdout.txt
+?? scratch/verify_checkpoint_resumption.py
+?? scratch/verify_checks_3_4_5.py
+?? scratch/verify_master.py
+?? scratch/verify_stage2_readiness.py
+?? scripts/assemble_full_50k_corpus.py
+?? scripts/assemble_repaired_50k_corpus.py
+?? scripts/audit_and_export_csv.py
+?? scripts/build_hard_classification_dataset.py
+?? scripts/build_pilot_1000_dataset.py
+?? scripts/convert_hf_to_gguf.py
+?? scripts/create_training_views.py
+?? scripts/download_final_gguf.py
+?? scripts/download_training_artifacts.py
+?? scripts/export_repaired_csv.py
+?? scripts/generate_reasoning_traces.py
+?? scripts/generate_repaired_reasoning_traces.py
+?? scripts/llama_cpp_tools/
+?? scripts/merge_quantize_deliver.py
+?? scripts/prepare_and_upload_50k_dataset.py
+?? scripts/prepare_atrdf_classification_pool.py
+?? scripts/prepare_external_sources.py
+?? scripts/repair_atrdf_pool.py
+?? scripts/repair_difficult_classification.py
+?? scripts/repair_external_sources.py
+?? scripts/strict_uniqueness_audit.py
+?? scripts/test_controller_with_local_model.py
+?? scripts/validate_pilot_configuration.py
+?? scripts/verify_repaired_corpus_uniqueness.py
+?? scripts/wait_for_export_kernel.py
+?? tests/test_architecture_integration.py
+?? tests/test_business_flow_probe.py
+?? tests/test_graphql_client.py
+?? tests/test_inventory_scanner.py
+?? tests/test_lab_e2e_assessment.py
+?? tests/test_product_functionality.py
+?? tests/test_qa_finalization_phase1.py
+?? tests/test_qa_phase1_real_gguf.py
+?? tests/test_qa_phase2_owasp_top10.py
+?? tests/test_qa_phase3_auth_and_config.py
+?? tests/test_qa_phase4_lifecycle.py
+?? tests/test_qa_phase5_dashboard_reports.py
+?? tests/test_qa_phase6_security_robustness.py
+?? tests/test_report_generator.py
+?? tests/test_risk_engine.py
+
+================================================================================

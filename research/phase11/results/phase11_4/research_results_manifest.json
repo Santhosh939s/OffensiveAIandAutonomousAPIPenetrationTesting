@@ -1,0 +1,92 @@
+{
+  "project": "Offensive AI and Autonomous API Penetration Testing",
+  "phase": "Phase 11.4 \u2014 Final Statistical Verification and Research Results Freeze",
+  "freeze_timestamp": "2026-11-07T18:00:00+05:30",
+  "freeze_status": "FROZEN_FOR_ACADEMIC_PUBLICATION",
+  "frozen_models": {
+    "gguf_model": {
+      "path": "models/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf",
+      "sha256": "CD7DC83335B02D90F44A7FE4BD0F06EEA4D64DEB429710F238FE8C5DE3DA4DC5",
+      "status": "FROZEN"
+    },
+    "lora_adapter": {
+      "path": "models/training_artifacts/final_adapter/adapter_model.safetensors",
+      "sha256": "39FD053A1725E15C9F8071578965D9B7D2B58B8AFF2D0D722FC36D8796879327",
+      "status": "FROZEN"
+    },
+    "inference_engine": "models/bin/llama-cli.exe (Native local Windows binary, offline CPU)"
+  },
+  "source_prediction_csvs": {
+    "dataset_a": {
+      "path": "research/phase11/results/phase11_2/dataset_a_phase11_2_predictions.csv",
+      "sha256": "06FD2505193A09183FB25DCD7D397CEB62C10094340AB27EFC52EC97E6546FDC",
+      "sample_count": 180,
+      "supported_samples": 150,
+      "unsupported_samples": 30
+    },
+    "dataset_b": {
+      "path": "research/phase11/results/phase11_2/dataset_b_phase11_2_predictions.csv",
+      "sha256": "86561C1596146153BE17C73E26BE4E1B46BFA4013C0F3EA20ACB7662CE52D981",
+      "sample_count": 90,
+      "supported_samples": 60,
+      "unsupported_samples": 30
+    },
+    "dataset_d": {
+      "path": "research/phase11/results/phase11_2/dataset_d_phase11_2_predictions.csv",
+      "sha256": "65C8EE40827AE04FD9C7578002D5D94F2B2608D6CE9AFEA331C0CC4CED73040A",
+      "sample_count": 85,
+      "supported_samples": 85,
+      "unsupported_samples": 0
+    },
+    "dataset_e": {
+      "path": "research/phase11/results/phase11_2/dataset_e_phase11_2_predictions.csv",
+      "sha256": "55B205CFAB4AC703057B5008D9267BD95908764B650DC5BF807E6180C522FA66",
+      "sample_count": 50,
+      "nature": "Unlabelled Raw Network Traffic (Output Token Validity Only)"
+    }
+  },
+  "converted_benchmark_corpora": {
+    "dataset_a_external.csv": {
+      "path": "research/phase11/external_datasets/converted/dataset_a_external.csv",
+      "sha256": "EF1C10E35C0B0B22881A1FD49F37AD526B3A9EC454ED54464EF767F9E2734629",
+      "records": 27805
+    },
+    "dataset_b_external.csv": {
+      "path": "research/phase11/external_datasets/converted/dataset_b_external.csv",
+      "sha256": "C311263288C5E224672756B2E5CE036144BABB5BE01BC8A06FB4DBE1323B11A3",
+      "records": 6000
+    },
+    "dataset_c_sqli.csv": {
+      "path": "research/phase11/external_datasets/converted/dataset_c_sqli.csv",
+      "sha256": "1CF8B3081DB514E7A572A477AFB8B72BD98D7AEE15129A3F3225F4E46B1721D8",
+      "records": 47463,
+      "status": "Ineligible: Tabular Scalar Features (No Raw SQL Text)"
+    },
+    "dataset_d_seclists_challenge.csv": {
+      "path": "research/phase11/external_datasets/converted/dataset_d_seclists_challenge.csv",
+      "sha256": "0989BFCDCB7C2FB7B205BD0982C1BC68926D35C265D9F70D3DCF2EF857E7E040",
+      "records": 1317
+    },
+    "dataset_e_atrdf.csv": {
+      "path": "research/phase11/external_datasets/converted/dataset_e_atrdf.csv",
+      "sha256": "897D3BCED5347EE0AD72FF0782AC6731C9C539CAAF95069BB853A6FD82146288",
+      "records": 33008
+    },
+    "combined_external_independent.csv": {
+      "path": "research/phase11/external_datasets/converted/combined_external_independent.csv",
+      "sha256": "8CDC33B783C0D957A3DF3D0F0D25131B35312AB42FC17D7824D3678A354F0C91",
+      "records": 68130
+    }
+  },
+  "statistical_bootstrap_parameters": {
+    "iterations": 2000,
+    "resampling_strategy": "Stratified within ground-truth classes",
+    "seed": 42,
+    "confidence_level": 0.95,
+    "percentiles": [
+      2.5,
+      97.5
+    ],
+    "independent_implementations_verified": 2
+  }
+}

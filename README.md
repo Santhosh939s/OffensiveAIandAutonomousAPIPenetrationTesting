@@ -1,6 +1,137 @@
 # Offensive AI and Autonomous API Penetration Testing
 
-An automated machine learning and security evaluation framework for API vulnerability classification, multi-task offensive reasoning, and autonomous penetration testing, powered by fine-tuned **Qwen2.5-1.5B-Instruct** with parameter-efficient LoRA adapters.
+An automated machine learning, deterministic policy guardrail, and security evaluation framework for API vulnerability classification, multi-task offensive reasoning, and autonomous penetration testing, powered by fine-tuned **Qwen2.5-1.5B-Instruct** with parameter-efficient LoRA adapters and local CPU GGUF inference.
+
+---
+
+## 🚀 Quick Start – 1-Click Windows Launcher
+
+The entire platform runs 100% locally and offline on Windows 10/11 x64 (8 GB RAM target) with zero cloud dependencies:
+
+```cmd
+:: 1. Launch all services (Pre-flight checks, Lab server :8088, Dashboard :5050, Browser auto-launch)
+launch.bat
+
+:: 2. Stop all running background services cleanly
+stop.bat
+```
+
+* **Interactive Security Dashboard:** `http://127.0.0.1:8088`
+* **Vulnerable Test Lab (OWASP API Top 10):** `http://127.0.0.1:5050`
+* **Bootstrap Admin Credentials:** Provisioned securely on first boot or easily reset using `reset_password.bat` (`admin` / `Cyber@2026!`). No hardcoded cloud dependencies.
+
+---
+
+## 💻 Friend's Laptop Installation Guide (Windows x64 Step-by-Step)
+
+Follow these exact steps to run the complete platform on any Windows 10 or 11 laptop with 8 GB RAM and no dedicated GPU:
+
+### 1. System Requirements & Prerequisites
+* **Operating System:** Windows 10 or 11 (64-bit strictly required).
+* **RAM:** Minimum 8 GB Physical RAM (Uses ~1.5 GB working set; leaves >2.5 GB free).
+* **Processor:** Intel Core i3 / AMD Ryzen 3 or higher (Uses 2–4 CPU threads).
+* **GPU:** Integrated graphics supported (Intel UHD, Iris Xe, AMD Radeon). **No NVIDIA CUDA GPU needed.**
+* **Required Software:**
+  * **Git for Windows:** Download from [git-scm.com](https://git-scm.com/download/win)
+  * **Python 3.8 to 3.11 (64-bit):** Download from [python.org](https://www.python.org/downloads/windows/).  
+    ⚠️ **CRITICAL:** Check the box **"Add Python to PATH"** in the Python installer!
+
+---
+
+### 2. Clone the Repository
+Open PowerShell or Command Prompt and clone the repository:
+```powershell
+git clone https://github.com/Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting.git
+cd OffensiveAIandAutonomousAPIPenetrationTesting
+```
+
+---
+
+### 3. Obtain the 4-bit Qwen GGUF Model
+Because the quantized model is **~940 MB**, it is hosted as a release artifact rather than a raw Git commit:
+
+1. **Download the GGUF model artifact:**
+   * **Direct Download:** Download [`qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf`](https://github.com/Santhosh939s/OffensiveAIandAutonomousAPIPenetrationTesting/releases/download/v1.0.0/qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf)
+   * *(Alternative: If transferred via USB drive, simply copy the file).*
+2. **Place the file into the `models/` folder:**
+   ```text
+   OffensiveAIandAutonomousAPIPenetrationTesting/
+   └── models/
+       └── qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf
+   ```
+3. **Verify cryptographic integrity:**
+   Run the verification utility to confirm the model is authentic and uncorrupted:
+   ```cmd
+   python scripts\verify_or_download_model.py
+   ```
+   * **Expected SHA-256 Digest:** `cd7dc83335b02d90f44a7fe4bd0f06eea4d64deb429710f238fe8c5de3da4dc5`
+
+---
+
+### 4. 1-Click Automated Environment Setup
+Run the automated Windows setup script:
+```cmd
+setup_windows.bat
+```
+*(Or in PowerShell: `powershell -ExecutionPolicy Bypass -File setup_windows.ps1`)*
+
+**What this script does automatically:**
+1. Checks that 64-bit Python is present and on your PATH.
+2. Checks available system RAM and confirms the 8 GB ceiling.
+3. Automatically installs all Python dependencies (`pip install -r requirements.txt`).
+4. Verifies the standalone `llama-cli.exe` inference engine in `models/bin/`.
+5. Verifies the GGUF model SHA-256 integrity.
+6. Runs `deployment/verify_installation.py` to confirm the system is 100% ready.
+
+---
+
+### 5. Launch the Application
+Simply double-click:
+```cmd
+launch.bat
+```
+* **Auto-Diagnostics:** The launcher runs pre-flight diagnostics, starts the **Vulnerable API Lab** on port `5050`, starts the **Dashboard Console** on port `8088`, and automatically opens your web browser to:
+  ```text
+  http://127.0.0.1:8088
+  ```
+* **Sign In:**
+  * **Username:** `admin`
+  * **Password:** `Cyber@2026!`  
+  *(If you ever need to reset the admin password, double-click `reset_password.bat`).*
+
+---
+
+### 6. Run Your First Autonomous Assessment
+1. In the Dashboard sidebar, click **New Assessment**.
+2. **Target Base API URL:** Enter the local vulnerable lab target:
+   ```text
+   http://127.0.0.1:5050
+   ```
+3. Click **Start Autonomous Assessment**.
+4. Switch to the **Live Activity** tab to watch the AI's real-time ReAct loop:
+   * 🧠 **AI Reasoning:** The model analyzes discovered endpoints and plans attack vectors.
+   * 🛡️ **Policy Guardrail:** Validates scope and checks parameter safety bounds.
+   * ⚡ **Tool Execution:** Sends the probe via `HTTPX` and receives real status codes.
+   * 🚨 **Findings Recorded:** As soon as an injection or broken authorization flaw is confirmed, finding cards appear with proof.
+5. Once completed, view and download the executive audit report in the **Reports** tab (**HTML**, **Markdown**, and **JSON** formats).
+
+---
+
+### 7. Clean Shutdown & Cleanup
+* **To stop all running services:** Double-click `stop.bat`.
+* **To clean temporary cache files without deleting databases or reports:** Double-click `cleanup_temporary_files.bat`.
+
+---
+
+### 8. Troubleshooting & Common Issues
+
+| Issue | Cause | Solution |
+| :--- | :--- | :--- |
+| `'python' is not recognized` | Python was installed without checking "Add to PATH" | Re-run Python installer, choose "Modify", and check "Add Python to PATH". |
+| `32-bit Python detected` | Installed 32-bit Python instead of 64-bit | Install 64-bit Python 3.8+ from python.org. |
+| `GGUF model artifact not found` | The `.gguf` file is missing from `models/` | Download `qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf` (see Step 3) and place it in `models/`. |
+| `Port 8088 or 5050 already in use` | A previous background process is still running | Run `stop.bat` to terminate all lingering listeners. |
+| `Invalid credentials` on login | Password entered incorrectly or out of sync | Double-click `reset_password.bat` to restore credentials to `admin` / `Cyber@2026!`. |
 
 ---
 
@@ -11,9 +142,11 @@ Anyone exploring this repository can immediately locate all datasets, models, co
 ### 1. 📓 Master Notebook (All Executions & Manual Code)
 | File | Description |
 | :--- | :--- |
-| **[`urop_offensive_ai_master_all_executions.ipynb`](./urop_offensive_ai_master_all_executions.ipynb)** | **The primary cumulative archive (284 cells).** Contains 100% of the manual code, exploratory data analysis, ATRDF ingestion, RebuiltV1–V4 pipeline (Cell 199 selection), Checkpoint Restore Verification run, and the 20-case Multi-Task Capability Evaluation run. |
+| **[`urop_offensive_ai_master_all_executions.ipynb`](./urop_offensive_ai_master_all_executions.ipynb)** | **The primary cumulative archive (353 cells, Parts I through XXVII).** Contains 100% of the manual code, exploratory data analysis, ATRDF ingestion, RebuiltV1–V4 pipeline (Cell 199 selection), Checkpoint Restore Verification run, 20-case Multi-Task Capability Evaluation, PolicyService, Policy Management UI, Multi-Layer Policy Enforcement, End-to-End Simulation, and Standalone Deployment. |
 | **[`capability_eval_kaggle.ipynb`](./capability_eval_kaggle.ipynb)** | Dedicated standalone notebook for the 20-case RebuiltV4 Checkpoint-200 capability evaluation. |
 | **[`urop-offensive-ai.ipynb`](./urop-offensive-ai.ipynb)** | Dedicated standalone notebook for the 6-step Checkpoint Restoration & Health verification run. |
+| **[`docs/ACADEMIC_RESEARCH_REPORT.md`](./docs/ACADEMIC_RESEARCH_REPORT.md)** | **Formal 12-Section Academic Research Paper:** Theoretical formulation, dual-layer guardrails, socket interception proofs, OWASP API Top 10 empirical benchmarks, and ethical audit trail admissibility. |
+
 
 ---
 
@@ -156,3 +289,80 @@ During training, the dataset loader maps this into the canonical Qwen2.5 chat te
          urop_offensive_ai_master_...       [ Headless GPU Run ]      [ Model Checkpoints ]
          (All Cumulative Executions)         (Batch Execution)        (Private Dataset)
 ```
+
+---
+
+## 🛡️ Autonomous Penetration Testing & Policy Architecture
+
+The system transitions from pure ML classification into a fully governed, autonomous API penetration testing framework:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                          OPERATOR / DASHBOARD                          │
+│               Interactive Web UI (Port 5050) & REST API                │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Policy Activation & Target Scope
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                   DETERMINISTIC POLICY GUARDRAILS                      │
+│  • PolicyEngine (16 Invariant Checks, Tool Authorization, Budgets)     │
+│  • ScopeValidator (SSRF/Rebinding Defense, IP/Port/Method Whitelist)   │
+│  • Socket-Level Interception Hook (_secure_create_connection)          │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Authorized Actions Only
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                   AUTONOMOUS CONTROLLER & TOOL ENGINE                  │
+│  • Offline LLM Inference: Qwen2.5-1.5B Q4_K_M GGUF (llama-cli.exe)     │
+│  • Multi-Turn Reasoning: Recon -> Attack -> Verify -> Evidence         │
+│  • Tool Registry: HTTP, GraphQL, Inventory, Business Flow Probes       │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Filtered Network Traffic
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        TARGET ENVIRONMENT / LAB                        │
+│          Vulnerable API Lab (Port 8088): OWASP API Top 10              │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Tamper-Evident Artifacts
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                      AUDIT TRAIL & MULTI-FORMAT REPORTS                │
+│  • SHA-256 Digest-Chained Evidence Store                               │
+│  • Admin Audit Log (Actor attribution, tamper-evident action trail)    │
+│  • Reports Generated: reports/assessment_*.json, *.html, *.md          │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📦 Standalone Deployment & Verification
+
+For cold-start deployments on fresh Windows machines, run the self-contained installation verifier:
+
+```cmd
+python deployment/verify_installation.py
+```
+
+This verifies:
+1. Directory structure and required Python dependencies
+2. Real Qwen GGUF model existence and cryptographic SHA-256 integrity
+3. `llama.cpp` inference engine binaries (`llama-cli.exe`)
+4. Offline self-containment (zero external network requirements)
+
+Refer to [`deployment/README.md`](./deployment/README.md) and [`deployment/deployment_manifest.json`](./deployment/deployment_manifest.json) for the full release manifest and operator instructions.
+
+---
+
+## 🧪 Comprehensive Automated Test Regression Suite
+
+The entire platform is continuously tested and verified through comprehensive unit, integration, security, and end-to-end simulation suites:
+
+```cmd
+python -m pytest tests/
+```
+
+* **Total Test Suites:** 43 test modules
+* **Total Passing Tests:** **381 passed** (0 failures, 0 errors, 100% pass rate)
+* **Model Integrity:** Verified bit-for-bit against production SHA-256 hashes
+* **Execution Environment:** Windows 10/11 x64, Python 3.8.10, offline localhost (`127.0.0.1`), 8 GB RAM target
+

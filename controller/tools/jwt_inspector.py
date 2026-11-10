@@ -195,5 +195,13 @@ class JwtInspectorTool(BaseTool):
         )
 
     def execute(self, **kwargs) -> Dict[str, Any]:
-        token = kwargs.get("token", "")
+        policy_ok, pol_err, clean_kwargs = self._check_execution_policy(kwargs)
+        if not policy_ok:
+            return {
+                "success": False,
+                "error": pol_err,
+                "tool_name": self.name,
+                "policy_denied": True,
+            }
+        token = clean_kwargs.get("token", "")
         return inspect_jwt(token)

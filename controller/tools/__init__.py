@@ -7,6 +7,9 @@ from .openapi_parser import OpenApiParserTool
 from .jwt_inspector import inspect_jwt, extract_jwt_token, JwtInspectorTool
 from .parameter_fuzzer import probe_api_parameters, ParameterFuzzerTool
 from .zap_client import ZapSecurityScanTool
+from .graphql_client import GraphQLProbeTool
+from .inventory_scanner import ApiInventoryScannerTool
+from .business_flow_probe import BusinessFlowProbeTool
 
 
 def build_default_tool_registry() -> ToolRegistry:
@@ -20,6 +23,9 @@ def build_default_tool_registry() -> ToolRegistry:
     registry.register_tool(JwtInspectorTool())
     registry.register_tool(ParameterFuzzerTool())
     registry.register_tool(ZapSecurityScanTool())
+    registry.register_tool(GraphQLProbeTool())
+    registry.register_tool(ApiInventoryScannerTool())
+    registry.register_tool(BusinessFlowProbeTool())
 
     return registry
 
@@ -34,6 +40,9 @@ __all__ = [
     "JwtInspectorTool",
     "ParameterFuzzerTool",
     "ZapSecurityScanTool",
+    "GraphQLProbeTool",
+    "ApiInventoryScannerTool",
+    "BusinessFlowProbeTool",
     "execute_http_request",
     "execute_httpx_request",
     "probe_multiple_endpoints_httpx",

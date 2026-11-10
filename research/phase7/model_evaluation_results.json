@@ -1,0 +1,836 @@
+{
+  "model_file": "qwen2.5-1.5b-offensive-ai.Q4_K_M.gguf",
+  "evaluation_dataset": "evaluation/test_sample_2000.jsonl (Stratified Held-Out)",
+  "total_samples": 64,
+  "classes_evaluated": 8,
+  "samples_per_class": 8,
+  "total_duration_seconds": 327.67,
+  "metrics": {
+    "accuracy": 0.9531,
+    "accuracy_percent": 95.31,
+    "macro_f1": 0.9665,
+    "weighted_f1": 0.9665,
+    "valid_structured_response_rate": 0.9688,
+    "valid_structured_response_percent": 96.88,
+    "total_correct": 61,
+    "total_incorrect": 3,
+    "average_latency_seconds": 5.12,
+    "min_latency_seconds": 1.708,
+    "max_latency_seconds": 7.499,
+    "average_tokens_per_second": 0.53
+  },
+  "per_class_metrics": {
+    "Benign": {
+      "samples": 8,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "tn": 56,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "Cookie Injection": {
+      "samples": 8,
+      "tp": 6,
+      "fp": 0,
+      "fn": 2,
+      "tn": 56,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1_score": 0.8571
+    },
+    "Directory Traversal": {
+      "samples": 8,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "tn": 56,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "LOG4J": {
+      "samples": 8,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "tn": 56,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "Log Forging": {
+      "samples": 8,
+      "tp": 7,
+      "fp": 0,
+      "fn": 1,
+      "tn": 56,
+      "precision": 1.0,
+      "recall": 0.875,
+      "f1_score": 0.9333
+    },
+    "RCE": {
+      "samples": 8,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "tn": 56,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "SQL Injection": {
+      "samples": 8,
+      "tp": 8,
+      "fp": 1,
+      "fn": 0,
+      "tn": 55,
+      "precision": 0.8889,
+      "recall": 1.0,
+      "f1_score": 0.9412
+    },
+    "XSS": {
+      "samples": 8,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "tn": 56,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    }
+  },
+  "confusion_matrix": {
+    "Benign": {
+      "Benign": 8,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0,
+      "Unknown": 0
+    },
+    "Cookie Injection": {
+      "Benign": 0,
+      "Cookie Injection": 6,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0,
+      "Unknown": 2
+    },
+    "Directory Traversal": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 8,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0,
+      "Unknown": 0
+    },
+    "LOG4J": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 8,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 0,
+      "Unknown": 0
+    },
+    "Log Forging": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 7,
+      "RCE": 0,
+      "SQL Injection": 1,
+      "XSS": 0,
+      "Unknown": 0
+    },
+    "RCE": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 8,
+      "SQL Injection": 0,
+      "XSS": 0,
+      "Unknown": 0
+    },
+    "SQL Injection": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 8,
+      "XSS": 0,
+      "Unknown": 0
+    },
+    "XSS": {
+      "Benign": 0,
+      "Cookie Injection": 0,
+      "Directory Traversal": 0,
+      "LOG4J": 0,
+      "Log Forging": 0,
+      "RCE": 0,
+      "SQL Injection": 0,
+      "XSS": 8,
+      "Unknown": 0
+    }
+  },
+  "raw_results": [
+    {
+      "index": 1,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 7.499,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.13
+    },
+    {
+      "index": 2,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 6.303,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.32
+    },
+    {
+      "index": 3,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 5.55,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.18
+    },
+    {
+      "index": 4,
+      "expected": "Log Forging",
+      "predicted": "Log Forging",
+      "raw_output": "Log Forging",
+      "is_correct": true,
+      "latency_seconds": 5.462,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.37
+    },
+    {
+      "index": 5,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 4.694,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.43
+    },
+    {
+      "index": 6,
+      "expected": "Log Forging",
+      "predicted": "Log Forging",
+      "raw_output": "Log Forging",
+      "is_correct": true,
+      "latency_seconds": 5.867,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.34
+    },
+    {
+      "index": 7,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 4.866,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.41
+    },
+    {
+      "index": 8,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 5.331,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.19
+    },
+    {
+      "index": 9,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 5.083,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.39
+    },
+    {
+      "index": 10,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 5.691,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.18
+    },
+    {
+      "index": 11,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 5.552,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.18
+    },
+    {
+      "index": 12,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 4.279,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.23
+    },
+    {
+      "index": 13,
+      "expected": "Cookie Injection",
+      "predicted": "Cookie Injection",
+      "raw_output": "Cookie",
+      "is_correct": true,
+      "latency_seconds": 6.505,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.15
+    },
+    {
+      "index": 14,
+      "expected": "Cookie Injection",
+      "predicted": "Cookie Injection",
+      "raw_output": "Cookie Injection",
+      "is_correct": true,
+      "latency_seconds": 6.023,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.33
+    },
+    {
+      "index": 15,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 4.281,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.23
+    },
+    {
+      "index": 16,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 4.762,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.42
+    },
+    {
+      "index": 17,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 5.734,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.17
+    },
+    {
+      "index": 18,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 4.854,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.41
+    },
+    {
+      "index": 19,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 4.853,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.21
+    },
+    {
+      "index": 20,
+      "expected": "Log Forging",
+      "predicted": "Log Forging",
+      "raw_output": "Log Forging",
+      "is_correct": true,
+      "latency_seconds": 5.721,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.35
+    },
+    {
+      "index": 21,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 4.739,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.21
+    },
+    {
+      "index": 22,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 4.881,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.2
+    },
+    {
+      "index": 23,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 5.454,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.18
+    },
+    {
+      "index": 24,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 4.636,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.43
+    },
+    {
+      "index": 25,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 5.647,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.18
+    },
+    {
+      "index": 26,
+      "expected": "Log Forging",
+      "predicted": "Log Forging",
+      "raw_output": "Log Forging",
+      "is_correct": true,
+      "latency_seconds": 4.371,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.46
+    },
+    {
+      "index": 27,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 5.115,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.2
+    },
+    {
+      "index": 28,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 4.891,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.41
+    },
+    {
+      "index": 29,
+      "expected": "Cookie Injection",
+      "predicted": "Unknown",
+      "raw_output": "Error: request (1058 tokens) exceeds the available context size (1024 tokens), try increasing it",
+      "is_correct": false,
+      "latency_seconds": 1.726,
+      "tokens_generated": 14,
+      "tokens_per_second": 8.11
+    },
+    {
+      "index": 30,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 4.606,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.22
+    },
+    {
+      "index": 31,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 4.782,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.21
+    },
+    {
+      "index": 32,
+      "expected": "Log Forging",
+      "predicted": "Log Forging",
+      "raw_output": "Log Forging",
+      "is_correct": true,
+      "latency_seconds": 5.848,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.34
+    },
+    {
+      "index": 33,
+      "expected": "Cookie Injection",
+      "predicted": "Cookie Injection",
+      "raw_output": "Cookie Injection",
+      "is_correct": true,
+      "latency_seconds": 5.67,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.35
+    },
+    {
+      "index": 34,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 4.318,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.23
+    },
+    {
+      "index": 35,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 5.734,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.17
+    },
+    {
+      "index": 36,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 5.397,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.19
+    },
+    {
+      "index": 37,
+      "expected": "Cookie Injection",
+      "predicted": "Cookie Injection",
+      "raw_output": "Cookie Injection",
+      "is_correct": true,
+      "latency_seconds": 6.275,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.32
+    },
+    {
+      "index": 38,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 4.94,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.4
+    },
+    {
+      "index": 39,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 4.76,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.21
+    },
+    {
+      "index": 40,
+      "expected": "Cookie Injection",
+      "predicted": "Cookie Injection",
+      "raw_output": "Cookie Injection",
+      "is_correct": true,
+      "latency_seconds": 5.88,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.34
+    },
+    {
+      "index": 41,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 5.719,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.17
+    },
+    {
+      "index": 42,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 6.008,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.17
+    },
+    {
+      "index": 43,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 5.137,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.19
+    },
+    {
+      "index": 44,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 5.705,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.35
+    },
+    {
+      "index": 45,
+      "expected": "LOG4J",
+      "predicted": "LOG4J",
+      "raw_output": "LOG4J",
+      "is_correct": true,
+      "latency_seconds": 5.364,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.19
+    },
+    {
+      "index": 46,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 4.865,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.21
+    },
+    {
+      "index": 47,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 4.459,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.45
+    },
+    {
+      "index": 48,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 4.33,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.23
+    },
+    {
+      "index": 49,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 5.796,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.35
+    },
+    {
+      "index": 50,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 4.854,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.41
+    },
+    {
+      "index": 51,
+      "expected": "Cookie Injection",
+      "predicted": "Unknown",
+      "raw_output": "Error: request (1053 tokens) exceeds the available context size (1024 tokens), try increasing it",
+      "is_correct": false,
+      "latency_seconds": 1.708,
+      "tokens_generated": 14,
+      "tokens_per_second": 8.2
+    },
+    {
+      "index": 52,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 4.597,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.22
+    },
+    {
+      "index": 53,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 5.143,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.19
+    },
+    {
+      "index": 54,
+      "expected": "Benign",
+      "predicted": "Benign",
+      "raw_output": "Benign",
+      "is_correct": true,
+      "latency_seconds": 4.847,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.21
+    },
+    {
+      "index": 55,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 4.339,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.23
+    },
+    {
+      "index": 56,
+      "expected": "Cookie Injection",
+      "predicted": "Cookie Injection",
+      "raw_output": "Cookie Injection",
+      "is_correct": true,
+      "latency_seconds": 5.768,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.35
+    },
+    {
+      "index": 57,
+      "expected": "Log Forging",
+      "predicted": "Log Forging",
+      "raw_output": "Log Forging",
+      "is_correct": true,
+      "latency_seconds": 5.138,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.39
+    },
+    {
+      "index": 58,
+      "expected": "Directory Traversal",
+      "predicted": "Directory Traversal",
+      "raw_output": "Directory Traversal",
+      "is_correct": true,
+      "latency_seconds": 5.167,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.39
+    },
+    {
+      "index": 59,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 4.3,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.47
+    },
+    {
+      "index": 60,
+      "expected": "XSS",
+      "predicted": "XSS",
+      "raw_output": "XSS",
+      "is_correct": true,
+      "latency_seconds": 5.057,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.2
+    },
+    {
+      "index": 61,
+      "expected": "Log Forging",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": false,
+      "latency_seconds": 5.106,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.39
+    },
+    {
+      "index": 62,
+      "expected": "RCE",
+      "predicted": "RCE",
+      "raw_output": "RCE",
+      "is_correct": true,
+      "latency_seconds": 4.553,
+      "tokens_generated": 1,
+      "tokens_per_second": 0.22
+    },
+    {
+      "index": 63,
+      "expected": "SQL Injection",
+      "predicted": "SQL Injection",
+      "raw_output": "SQL Injection",
+      "is_correct": true,
+      "latency_seconds": 5.694,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.35
+    },
+    {
+      "index": 64,
+      "expected": "Log Forging",
+      "predicted": "Log Forging",
+      "raw_output": "Log Forging",
+      "is_correct": true,
+      "latency_seconds": 5.429,
+      "tokens_generated": 2,
+      "tokens_per_second": 0.37
+    }
+  ]
+}

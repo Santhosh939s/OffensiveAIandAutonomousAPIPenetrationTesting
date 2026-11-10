@@ -1,23 +1,17 @@
 {
-  "id": "santhosh939s/urop-offensive-ai",
-  "id_no": 136606346,
-  "title": "UROP Offensive AI ",
-  "code_file": "urop-offensive-ai.ipynb",
+  "id": "santhosh939s/offensive-ai-completion",
+  "title": "Offensive AI Completion",
+  "code_file": "offensive-ai-completion.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": false,
   "enable_gpu": true,
   "enable_tpu": false,
   "enable_internet": true,
-  "docker_image_pinning_type": "latest",
-  "keywords": [
-    "restoration",
-    "verification"
-  ],
   "dataset_sources": [
-    "santhosh939s/recovery",
-    "santhosh939s/rebuiltv4-adapters",
-    "santhosh939s/rebuiltv4-training-checkpoints"
+    "santhosh939s/offensive-ai-classification-training",
+    "santhosh939s/offensive-ai-quarantined-test",
+    "santhosh939s/offensive-ai-checkpoint-1250"
   ],
   "kernel_sources": [],
   "competition_sources": [],

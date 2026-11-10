@@ -112,8 +112,8 @@ class TestAutonomousController(unittest.TestCase):
 
         self.assertIn("# API Security Penetration Testing Assessment Report", report)
         self.assertIn(session_id, report)
-        self.assertIn("Scope and Authorization Verification", report)
-        self.assertIn("Tool Activity and Execution Audit Trail", report)
+        self.assertIn("Scope & Authorization Verification", report)
+        self.assertIn("Tool Activity & Execution Audit Trail", report)
 
     def test_controller_handles_no_action_gracefully(self):
         class ImmediateExitBrain(DeterministicMockBrainClient):
